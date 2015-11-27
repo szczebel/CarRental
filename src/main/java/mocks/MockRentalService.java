@@ -18,14 +18,20 @@ public class MockRentalService implements RentalService {
         if (!mockClientService.clients.contains(client))
             throw new IllegalArgumentException("Nonexisting client " + client);
         if (!mockFleetService.fleet.contains(car)) throw new IllegalArgumentException("Nonexisting car " + car);
-        if (currentRentals.containsKey(car)) throw new RuntimeException(car + " already rented to " + client);
+        if (!isAvailable(car)) throw new RuntimeException(car + " already rented to " + currentRentals.get(car));
         currentRentals.put(car, client);
     }
 
+    public boolean isAvailable(Car car) {
+        return !currentRentals.containsKey(car);
+    }
+
+    @SuppressWarnings("unused")
     public void setMockClientService(MockClientService mockClientService) {
         this.mockClientService = mockClientService;
     }
 
+    @SuppressWarnings("unused")
     public void setMockFleetService(MockFleetService mockFleetService) {
         this.mockFleetService = mockFleetService;
     }
