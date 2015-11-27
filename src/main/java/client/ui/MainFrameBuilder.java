@@ -11,6 +11,7 @@ public class MainFrameBuilder {
 
     private FleetViewBuilder fleetViewBuilder;
     private ClientListViewBuilder clientListViewBuilder;
+    private AvailableCarsViewBuilder availableCarsViewBuilder;
 
     @SuppressWarnings("unused")
     public void buildAndShow() {
@@ -18,6 +19,7 @@ public class MainFrameBuilder {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         JTabbedPane tabs = new JTabbedPane(SwingConstants.LEFT);
+        tabs.addTab("Available cars", availableCarsViewBuilder.build());
         tabs.addTab("Fleet", fleetViewBuilder.build());
         tabs.addTab("Clients", clientListViewBuilder.build());
         tabs.addTab("Other", createOther());
@@ -57,5 +59,10 @@ public class MainFrameBuilder {
     @SuppressWarnings("unused")
     public void setTestService(TestService testService) {
         this.testService = testService;
+    }
+
+    @SuppressWarnings("unused")
+    public void setAvailableCarsViewBuilder(AvailableCarsViewBuilder availableCarsViewBuilder) {
+        this.availableCarsViewBuilder = availableCarsViewBuilder;
     }
 }

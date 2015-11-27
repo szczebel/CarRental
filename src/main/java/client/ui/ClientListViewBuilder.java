@@ -32,7 +32,7 @@ public class ClientListViewBuilder {
     private JComponent buildToolbar(ClientListTableModel tableModel) {
         JPanel panel = new JPanel();
 
-        panel.add(new JButton(new AbstractAction("(Re)Load") {
+        panel.add(new JButton(new AbstractAction("Refresh") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 BackgroundOperation.execute(

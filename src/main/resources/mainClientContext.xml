@@ -18,6 +18,14 @@
     <!--todo: replace with real remote services-->
     <bean id="remoteFleetService" class="mocks.MockFleetService"/>
     <bean id="remoteClientService" class="mocks.MockClientService"/>
+    <bean id="remoteRentalService" class="mocks.MockRentalService">
+        <property name="mockFleetService" ref="remoteFleetService"/>
+        <property name="mockClientService" ref="remoteClientService"/>
+    </bean>
+    <bean id="remoteAvailabilityService" class="mocks.MockAvailabilityService">
+        <property name="mockFleetService" ref="remoteFleetService"/>
+        <property name="mockRentalService" ref="remoteRentalService"/>
+    </bean>
 
 
     <bean class="client.ui.MainFrameBuilder" init-method="buildAndShow">
@@ -31,6 +39,13 @@
         <property name="clientListViewBuilder">
             <bean class="client.ui.ClientListViewBuilder">
                 <property name="clientService" ref="remoteClientService"/>
+            </bean>
+        </property>
+
+        <property name="availableCarsViewBuilder">
+            <bean class="client.ui.AvailableCarsViewBuilder">
+                <property name="availabilityService" ref="remoteAvailabilityService"/>
+                <property name="rentalService" ref="remoteRentalService"/>
             </bean>
         </property>
     </bean>

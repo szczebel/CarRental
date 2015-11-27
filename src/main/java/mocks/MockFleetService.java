@@ -23,7 +23,7 @@ public class MockFleetService implements FleetService{
 
     @Override
     public List<Car> fetchAll() {
-        return fleet;
+        return new ArrayList<>(fleet);
     }
 
     @Override

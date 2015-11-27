@@ -12,7 +12,7 @@ public class BackgroundOperation {
 
     private static void onException(Exception e) {
         e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Error occured");
+        JOptionPane.showMessageDialog(null, "Error occured : " + (e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
     }
 
     public static <Result> void execute(

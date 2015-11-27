@@ -26,7 +26,7 @@ public class MockClientService implements ClientService{
 
     @Override
     public List<Client> fetchAll() {
-        return clients;
+        return new ArrayList<>(clients);
     }
 
     @Override
