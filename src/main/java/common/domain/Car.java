@@ -18,4 +18,12 @@ public class Car implements Serializable{
     public String getModel() {
         return model;
     }
+
+    @Override
+    public String toString() {
+        return "Car{" +
+                "registration='" + registration + '\'' +
+                ", model='" + model + '\'' +
+                '}';
+    }
 }

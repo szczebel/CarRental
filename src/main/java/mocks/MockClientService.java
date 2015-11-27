@@ -6,6 +6,7 @@ import common.service.ClientService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
 
 public class MockClientService implements ClientService{
     List<Client> clients = new ArrayList<>();
@@ -16,8 +17,10 @@ public class MockClientService implements ClientService{
         String[] names = {"John", "Thomas", "Christopher", "Wesley", "Lucas", "Gregory", "Rhonda", "Leticia", "Jane", "Courtney", "Kathy", "Angela", "David", "Brett", "Michael", "Sean", "Ross", "Monica", "Chandler"};
         String[] surnames = {"Suzuki", "White", "Fonda", "Griffin", "Nistor", "Washington", "Rainman", "Butterfly", "Zappa", "Johnson", "Beckham", "Dean", "Fowler", "Beck", "Petty", "Brinkworth", "Nasdac", "Williams", "Cox", "Arquette", "Greene", "Geller", "Bink", "Tribbiani", "Clunky", "Wright", "Bentley", "Coppola", "Pitt", "Jolie", "Padaki"};
         Random random = new Random();
-        for (int i = 0; i < 20 ; i++) {
-            create(new Client(names[random.nextInt(names.length)] + " " + surnames[random.nextInt(surnames.length)],"+("+random.nextInt(90)+") "+(random.nextInt(900000000)+100000000)));
+        for (int i = 0; i < 200; i++) {
+            String name = names[random.nextInt(names.length)];
+            String surname = surnames[random.nextInt(surnames.length)];
+            create(new Client(name + " " + surname, name + "." + surname + "." + random.nextInt(10000) + "@gmail.com"));
         }
     }
 
@@ -28,7 +31,13 @@ public class MockClientService implements ClientService{
 
     @Override
     public Client create(Client client) {
+        if (clients.stream().anyMatch(email(client)))
+            throw new IllegalArgumentException("Client already exists: " + client);
         clients.add(client);
         return client;
+    }
+
+    private Predicate<Client> email(Client newClient) {
+        return client -> client.getEmail().equals(newClient.getEmail());
     }
 }

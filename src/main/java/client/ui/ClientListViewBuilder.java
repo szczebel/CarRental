@@ -99,7 +99,7 @@ public class ClientListViewBuilder {
         public Object getValueAt(int rowIndex, int columnIndex) {
             Client c = clients.get(rowIndex);
             if (columnIndex == 0) return c.getName();
-            if (columnIndex == 1) return c.getPhone();
+            if (columnIndex == 1) return c.getEmail();
             throw new IllegalArgumentException("Unknown column index : " + columnIndex);
         }
     }
