@@ -15,12 +15,12 @@ public class BackgroundOperation {
         JOptionPane.showMessageDialog(null, "Error occured : " + (e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
     }
 
-    public static <Result> void execute(
+    public static <Result> Cancellable execute(
             Callable<Result> task,
             Consumer<Result> successHandler,
             Consumer<Exception> failureHandler) {
 
-        new SwingWorker<Result, Object>(){
+        SwingWorker<Result, Object> swingWorker = new SwingWorker<Result, Object>() {
             @Override
             protected Result doInBackground() throws Exception {
                 return task.call();
@@ -34,6 +34,17 @@ public class BackgroundOperation {
                     failureHandler.accept(e);
                 }
             }
-        }.execute();
+        };
+        swingWorker.execute();
+        return new Cancellable() {
+            @Override
+            public void cancel() {
+                swingWorker.cancel(true);
+            }
+        };
+    }
+
+    public interface Cancellable {
+        void cancel();
     }
 }
