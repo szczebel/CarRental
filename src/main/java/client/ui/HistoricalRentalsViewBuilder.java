@@ -1,6 +1,9 @@
 package client.ui;
 
 import common.service.HistoryService;
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import org.springframework.core.convert.converter.Converter;
 
 import javax.swing.*;
@@ -9,8 +12,10 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.time.Duration;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class HistoricalRentalsViewBuilder {
 
@@ -41,25 +46,31 @@ public class HistoricalRentalsViewBuilder {
     private JComponent buildToolbar(HistoricalRentalsTableModel tableModel) {
         JPanel panel = new JPanel();
 
+
+        UtilDateModel start = new UtilDateModel(Date.from(ZonedDateTime.now().minusDays(30).toInstant()));
+        UtilDateModel end = new UtilDateModel(Date.from(ZonedDateTime.now().toInstant()));
+        panel.add(new JLabel("Find historical rentals from:"));
+        panel.add(new JDatePickerImpl(new JDatePanelImpl(start)));
+        panel.add(new JLabel("to:"));
+        panel.add(new JDatePickerImpl(new JDatePanelImpl(end)));
+
         panel.add(new JButton(new AbstractAction("Search") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                refresh(tableModel);
+
+                HistoryService.Query query = new HistoryService.Query(
+                        ZonedDateTime.ofInstant(start.getValue().toInstant(), ZoneId.systemDefault()),
+                        ZonedDateTime.ofInstant(end.getValue().toInstant(), ZoneId.systemDefault())
+                );
+                BackgroundOperation.execute(
+                        () -> historyService.fetchHistory(query),
+                        tableModel::setData
+                );
             }
         }));
 
 
         return panel;
-    }
-
-    private void refresh(HistoricalRentalsTableModel tableModel) {
-        ZonedDateTime now = ZonedDateTime.now();
-        ZonedDateTime weekAgo = now.minusDays(7);
-        HistoryService.Query query = new HistoryService.Query(weekAgo, now);//todo: read from GUI
-        BackgroundOperation.execute(
-                () -> historyService.fetchHistory(query),
-                tableModel::setData
-        );
     }
 
 
