@@ -6,10 +6,7 @@ import common.domain.CurrentRental;
 import common.service.RentalService;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MockRentalService implements RentalService {
     MockClientService mockClientService;
@@ -24,6 +21,14 @@ public class MockRentalService implements RentalService {
         if (!mockFleetService.fleet.contains(car)) throw new IllegalArgumentException("Nonexisting car " + car);
         if (!isAvailable(car)) throw new RuntimeException(car + " already rented to " + currentRentals.get(car));
         currentRentals.put(car, new CurrentRental(car, client, ZonedDateTime.now()));
+    }
+
+    @Override
+    public void returnCar(String registration) {
+        Optional<Car> found = currentRentals.keySet().stream().filter(car -> registration.equals(car.getRegistration())).findFirst();
+        if (!found.isPresent())
+            throw new IllegalArgumentException("Returning a car which is not rented: " + registration);
+        currentRentals.remove(found.get());
     }
 
     @Override

@@ -26,6 +26,7 @@ public class AvailableCarsViewBuilder {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         panel.add(new JScrollPane(table));
         panel.add(buildToolbar(tableModel, table), BorderLayout.NORTH);
+        refresh(tableModel);
 
         return panel;
     }
@@ -36,10 +37,7 @@ public class AvailableCarsViewBuilder {
         panel.add(new JButton(new AbstractAction("Refresh") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                BackgroundOperation.execute(
-                        availabilityService::findAvailableCars,
-                        tableModel::setData
-                );
+                refresh(tableModel);
             }
         }));
 
@@ -52,7 +50,7 @@ public class AvailableCarsViewBuilder {
                 } else {
                     BackgroundOperation.execute(
                             clientService::fetchAll,
-                            clients -> showRentDialog(panel, clients, tableModel.getCarAt(table.convertRowIndexToModel(selectedRow)))
+                            clients -> showRentDialog(panel, clients, tableModel.getCarAt(table.convertRowIndexToModel(selectedRow)), tableModel)
                     );
                 }
 
@@ -63,7 +61,7 @@ public class AvailableCarsViewBuilder {
         return panel;
     }
 
-    private void showRentDialog(JComponent parent, List<Client> clients, Car carToRent) {
+    private void showRentDialog(JComponent parent, List<Client> clients, Car carToRent, CarsTableModel tableModel) {
 
         ClientListTableModel clientsModel = new ClientListTableModel();
         clientsModel.setData(clients);
@@ -76,9 +74,19 @@ public class AvailableCarsViewBuilder {
             int selectedRow = clientsTable.getSelectedRow();
             if (selectedRow >= 0) {
                 Client client = clientsModel.getClientAt(clientsTable.convertRowIndexToModel(selectedRow));
-                BackgroundOperation.execute(() -> rentalService.rent(carToRent, client));
+                BackgroundOperation.execute(
+                        () -> rentalService.rent(carToRent, client),
+                        () -> refresh(tableModel)
+                );
             }
         }
+    }
+
+    private void refresh(CarsTableModel tableModel) {
+        BackgroundOperation.execute(
+                availabilityService::findAvailableCars,
+                tableModel::setData
+        );
     }
 
     @SuppressWarnings("unused")

@@ -11,4 +11,6 @@ public interface RentalService {
     void rent(Car car, Client client);
 
     List<CurrentRental> getCurrentRentals();
+
+    void returnCar(String registration);
 }

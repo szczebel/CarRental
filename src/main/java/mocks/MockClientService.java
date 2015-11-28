@@ -30,11 +30,10 @@ public class MockClientService implements ClientService{
     }
 
     @Override
-    public Client create(Client client) {
+    public void create(Client client) {
         if (clients.stream().anyMatch(email(client)))
             throw new IllegalArgumentException("Client already exists: " + client);
         clients.add(client);
-        return client;
     }
 
     private Predicate<Client> email(Client newClient) {

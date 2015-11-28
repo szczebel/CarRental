@@ -16,12 +16,6 @@ class ClientListTableModel extends AbstractTableModel {
         fireTableStructureChanged();
     }
 
-    void add(Client client) {
-        clients.add(client);
-        fireTableStructureChanged();
-    }
-
-
     @Override
     public int getRowCount() {
         return clients.size();

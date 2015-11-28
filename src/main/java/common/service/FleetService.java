@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface FleetService {
     List<Car> fetchAll();
-    Car create(Car car);
+
+    void create(Car car);
 }

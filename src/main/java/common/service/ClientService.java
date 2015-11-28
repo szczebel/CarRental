@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface ClientService {
     List<Client> fetchAll();
-    Client create(Client client);
+
+    void create(Client client);
 }

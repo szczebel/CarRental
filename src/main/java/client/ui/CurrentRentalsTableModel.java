@@ -48,4 +48,8 @@ class CurrentRentalsTableModel extends AbstractTableModel {
         if (columnIndex == 4) return ZonedDateTime.class;
         return super.getColumnClass(columnIndex);
     }
+
+    public CurrentRental getAt(int index) {
+        return currentRentals.get(index);
+    }
 }

@@ -16,12 +16,6 @@ class CarsTableModel extends AbstractTableModel {
         fireTableStructureChanged();
     }
 
-    void add(Car car) {
-        fleet.add(car);
-        fireTableStructureChanged();
-    }
-
-
     @Override
     public int getRowCount() {
         return fleet.size();

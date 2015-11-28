@@ -18,7 +18,7 @@ public class ClientListViewBuilder {
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(buildToolbar(tableModel), BorderLayout.NORTH);
         panel.add(new JScrollPane(buildTable(tableModel)));
-
+        refresh(tableModel);
         return panel;
     }
 
@@ -32,10 +32,7 @@ public class ClientListViewBuilder {
         panel.add(new JButton(new AbstractAction("Refresh") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                BackgroundOperation.execute(
-                        clientService::fetchAll,
-                        tableModel::setData
-                );
+                refresh(tableModel);
             }
         }));
 
@@ -46,13 +43,20 @@ public class ClientListViewBuilder {
                 String phone = JOptionPane.showInputDialog(panel, "Phone", "Add new client", JOptionPane.QUESTION_MESSAGE);
                 BackgroundOperation.execute(
                         () -> clientService.create(new Client(name, phone)),
-                        tableModel::add
+                        () -> refresh(tableModel)
                 );
             }
         }));
 
 
         return panel;
+    }
+
+    private void refresh(ClientListTableModel tableModel) {
+        BackgroundOperation.execute(
+                clientService::fetchAll,
+                tableModel::setData
+        );
     }
 
     @SuppressWarnings("unused")

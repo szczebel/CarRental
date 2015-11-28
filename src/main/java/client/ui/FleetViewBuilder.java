@@ -18,6 +18,7 @@ public class FleetViewBuilder {
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(buildToolbar(tableModel), BorderLayout.NORTH);
         panel.add(new JScrollPane(new JTable(tableModel)));
+        refresh(tableModel);
 
         return panel;
     }
@@ -28,10 +29,7 @@ public class FleetViewBuilder {
         panel.add(new JButton(new AbstractAction("Refresh") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                BackgroundOperation.execute(
-                        fleetService::fetchAll,
-                        tableModel::setData
-                );
+                refresh(tableModel);
             }
         }));
 
@@ -42,13 +40,20 @@ public class FleetViewBuilder {
                 String model = JOptionPane.showInputDialog(panel, "Model", "Add car to fleet", JOptionPane.QUESTION_MESSAGE);
                 BackgroundOperation.execute(
                         () -> fleetService.create(new Car(model, registration)),
-                        tableModel::add
+                        () -> refresh(tableModel)
                 );
             }
         }));
 
 
         return panel;
+    }
+
+    private void refresh(CarsTableModel tableModel) {
+        BackgroundOperation.execute(
+                fleetService::fetchAll,
+                tableModel::setData
+        );
     }
 
     @SuppressWarnings("unused")
