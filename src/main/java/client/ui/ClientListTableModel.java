@@ -1,30 +1,30 @@
 package client.ui;
 
-import common.domain.Car;
+import common.domain.Client;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-class CarsTableModel extends AbstractTableModel {
+class ClientListTableModel extends AbstractTableModel {
 
-    final static String[] COLUMN = {"Registration", "Model"};
-    private List<Car> fleet = new ArrayList<>();
+    final static String[] COLUMN = {"Name", "Email"};
+    private List<Client> clients = new ArrayList<>();
 
-    void setData(List<Car> fleet) {
-        this.fleet = fleet;
+    void setData(List<Client> clients) {
+        this.clients = clients;
         fireTableStructureChanged();
     }
 
-    void add(Car car) {
-        fleet.add(car);
+    void add(Client client) {
+        clients.add(client);
         fireTableStructureChanged();
     }
 
 
     @Override
     public int getRowCount() {
-        return fleet.size();
+        return clients.size();
     }
 
     @Override
@@ -39,13 +39,13 @@ class CarsTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Car car = fleet.get(rowIndex);
-        if (columnIndex == 0) return car.getRegistration();
-        if (columnIndex == 1) return car.getModel();
+        Client c = clients.get(rowIndex);
+        if (columnIndex == 0) return c.getName();
+        if (columnIndex == 1) return c.getEmail();
         throw new IllegalArgumentException("Unknown column index : " + columnIndex);
     }
 
-    public Car getCarAt(int index) {
-        return fleet.get(index);
+    public Client getClientAt(int index) {
+        return clients.get(index);
     }
 }

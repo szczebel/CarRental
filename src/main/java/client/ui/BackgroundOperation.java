@@ -6,8 +6,29 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 public class BackgroundOperation {
+
+    public static void execute(final Runnable backgroundTask) {
+        execute(backgroundTask, () -> {
+            //noop
+        });
+    }
+
+    public static void execute(final Runnable backgroundTask, final Runnable successHandler) {
+        execute(backgroundTask, successHandler, BackgroundOperation::onException);
+    }
+
+    public static void execute(final Runnable backgroundTask, final Runnable successHandler, Consumer<Exception> failureHandler) {
+        execute(
+                () -> {
+                    backgroundTask.run();
+                    return null;
+                },
+                o -> successHandler.run(),
+                failureHandler);
+    }
+
     public static <Result> void execute(final Callable<Result> backgroundTask, final Consumer<Result> successHandler) {
-        execute( backgroundTask, successHandler, BackgroundOperation::onException);
+        execute(backgroundTask, successHandler, BackgroundOperation::onException);
     }
 
     private static void onException(Exception e) {
@@ -36,12 +57,7 @@ public class BackgroundOperation {
             }
         };
         swingWorker.execute();
-        return new Cancellable() {
-            @Override
-            public void cancel() {
-                swingWorker.cancel(true);
-            }
-        };
+        return () -> swingWorker.cancel(true);
     }
 
     public interface Cancellable {

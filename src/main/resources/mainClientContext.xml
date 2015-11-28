@@ -46,6 +46,7 @@
             <bean class="client.ui.AvailableCarsViewBuilder">
                 <property name="availabilityService" ref="remoteAvailabilityService"/>
                 <property name="rentalService" ref="remoteRentalService"/>
+                <property name="clientService" ref="remoteClientService"/>
             </bean>
         </property>
     </bean>
