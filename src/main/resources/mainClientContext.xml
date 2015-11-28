@@ -49,6 +49,12 @@
                 <property name="clientService" ref="remoteClientService"/>
             </bean>
         </property>
+
+        <property name="currentRentalsViewBuilder">
+            <bean class="client.ui.CurrentRentalsViewBuilder">
+                <property name="rentalService" ref="remoteRentalService"/>
+            </bean>
+        </property>
     </bean>
 
 
