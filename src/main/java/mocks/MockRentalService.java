@@ -4,13 +4,32 @@ import common.domain.Car;
 import common.domain.Client;
 import common.domain.CurrentRental;
 import common.service.RentalService;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.time.ZonedDateTime;
 import java.util.*;
 
-public class MockRentalService implements RentalService {
+public class MockRentalService implements RentalService, InitializingBean {
     MockClientService mockClientService;
     MockFleetService mockFleetService;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        //initialize some data
+        int fleetSize = mockFleetService.fleet.size();
+        int clientbaseSize = mockClientService.clients.size();
+        Random r = new Random();
+        for (int i = 0; i < fleetSize / 3; ++i) {
+            try {
+                rent(
+                        mockFleetService.fleet.get(r.nextInt(fleetSize)),
+                        mockClientService.clients.get(r.nextInt(clientbaseSize))
+                );
+            } catch (IllegalArgumentException e) {
+                //do nothing, we can skip some rentals in generated data
+            }
+        }
+    }
 
     Map<Car, CurrentRental> currentRentals = new HashMap<>();
 
