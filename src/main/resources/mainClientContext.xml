@@ -53,6 +53,13 @@
                 <property name="rentalService" ref="remoteRentalService"/>
             </bean>
         </property>
+
+        <property name="historicalRentalsViewBuilder">
+            <bean class="client.ui.HistoricalRentalsViewBuilder">
+                <property name="historyService" ref="remoteHistoryService"/>
+            </bean>
+        </property>
+
     </bean>
 
 

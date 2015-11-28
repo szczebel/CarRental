@@ -3,6 +3,7 @@ package mocks;
 import common.domain.Car;
 import common.domain.Client;
 import common.domain.CurrentRental;
+import common.domain.HistoricalRental;
 import common.service.RentalService;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -49,7 +50,10 @@ public class MockRentalService implements RentalService, InitializingBean {
         Optional<Car> found = currentRentals.keySet().stream().filter(car -> registration.equals(car.getRegistration())).findFirst();
         if (!found.isPresent())
             throw new IllegalArgumentException("Returning a car which is not rented: " + registration);
-        currentRentals.remove(found.get());
+        Car key = found.get();
+        CurrentRental currentRental = currentRentals.get(key);
+        currentRentals.remove(key);
+        mockHistoryService.saveEvent(new HistoricalRental(currentRental, ZonedDateTime.now()));
     }
 
     @Override

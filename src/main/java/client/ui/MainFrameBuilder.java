@@ -13,6 +13,7 @@ public class MainFrameBuilder {
     private ClientListViewBuilder clientListViewBuilder;
     private AvailableCarsViewBuilder availableCarsViewBuilder;
     private CurrentRentalsViewBuilder currentRentalsViewBuilder;
+    private HistoricalRentalsViewBuilder historicalRentalsViewBuilder;
 
     @SuppressWarnings("unused")
     public void buildAndShow() {
@@ -22,6 +23,7 @@ public class MainFrameBuilder {
         JTabbedPane tabs = new JTabbedPane(SwingConstants.LEFT);
         tabs.addTab("Available cars", availableCarsViewBuilder.build());
         tabs.addTab("Current rentals", currentRentalsViewBuilder.build());
+        tabs.addTab("Rental history", historicalRentalsViewBuilder.build());
         tabs.addTab("Fleet", fleetViewBuilder.build());
         tabs.addTab("Clients", clientListViewBuilder.build());
         tabs.addTab("Other", createOther());
@@ -68,7 +70,13 @@ public class MainFrameBuilder {
         this.availableCarsViewBuilder = availableCarsViewBuilder;
     }
 
+    @SuppressWarnings("unused")
     public void setCurrentRentalsViewBuilder(CurrentRentalsViewBuilder currentRentalsViewBuilder) {
         this.currentRentalsViewBuilder = currentRentalsViewBuilder;
+    }
+
+    @SuppressWarnings("unused")
+    public void setHistoricalRentalsViewBuilder(HistoricalRentalsViewBuilder historicalRentalsViewBuilder) {
+        this.historicalRentalsViewBuilder = historicalRentalsViewBuilder;
     }
 }
