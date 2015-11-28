@@ -5,6 +5,7 @@ import common.service.HistoryService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MockHistoryService implements HistoryService {
 
@@ -16,6 +17,6 @@ public class MockHistoryService implements HistoryService {
 
     @Override
     public List<HistoricalRental> fetchHistory(Query query) {
-        return new ArrayList<>(records);
+        return records.stream().filter(query).collect(Collectors.toList());
     }
 }
