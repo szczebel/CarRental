@@ -1,11 +1,14 @@
 package client.ui;
 
 import common.service.HistoryService;
+import org.springframework.core.convert.converter.Converter;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -19,18 +22,23 @@ public class HistoricalRentalsViewBuilder {
 
         JPanel panel = new JPanel(new BorderLayout());
         JTable table = new JTable(tableModel);
-        panel.add(buildToolbar(tableModel, table), BorderLayout.NORTH);
-        table.setDefaultRenderer(ZonedDateTime.class, new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                return super.getTableCellRendererComponent(table, ((ZonedDateTime) value).format(DateTimeFormatter.ofPattern("dd.MM.yyy '@' HH:mm")), isSelected, hasFocus, row, column);
-            }
-        });
+        panel.add(buildToolbar(tableModel), BorderLayout.NORTH);
+        table.setDefaultRenderer(ZonedDateTime.class, convertingRenderer(value -> ((ZonedDateTime) value).format(DateTimeFormatter.ofPattern("dd.MM.yyy '@' HH:mm"))));
+        table.setDefaultRenderer(Duration.class, convertingRenderer(value -> ((Duration) value).toHours() + " hours"));
         panel.add(new JScrollPane(table));
         return panel;
     }
 
-    private JComponent buildToolbar(HistoricalRentalsTableModel tableModel, JTable table) {
+    private TableCellRenderer convertingRenderer(Converter<Object, Object> converter) {
+        return new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                return super.getTableCellRendererComponent(table, converter.convert(value), isSelected, hasFocus, row, column);
+            }
+        };
+    }
+
+    private JComponent buildToolbar(HistoricalRentalsTableModel tableModel) {
         JPanel panel = new JPanel();
 
         panel.add(new JButton(new AbstractAction("Search") {

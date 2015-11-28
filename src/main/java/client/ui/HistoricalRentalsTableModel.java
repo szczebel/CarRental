@@ -3,13 +3,14 @@ package client.ui;
 import common.domain.HistoricalRental;
 
 import javax.swing.table.AbstractTableModel;
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 class HistoricalRentalsTableModel extends AbstractTableModel {
 
-    final static String[] COLUMN = {"Registration", "Model", "Client name", "Client email", "Start", "End"};
+    final static String[] COLUMN = {"Registration", "Model", "Client name", "Client email", "Start", "End", "Duration"};
     private List<HistoricalRental> history = new ArrayList<>();
 
     void setData(List<HistoricalRental> history) {
@@ -41,12 +42,14 @@ class HistoricalRentalsTableModel extends AbstractTableModel {
         if (columnIndex == 3) return event.getClientEmail();
         if (columnIndex == 4) return event.getStart();
         if (columnIndex == 5) return event.getEnd();
+        if (columnIndex == 6) return Duration.between(event.getStart(), event.getEnd());
         throw new IllegalArgumentException("Unknown column index : " + columnIndex);
     }
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         if (columnIndex == 4 || columnIndex == 5) return ZonedDateTime.class;
+        if (columnIndex == 6) return Duration.class;
         return super.getColumnClass(columnIndex);
     }
 }

@@ -6,10 +6,15 @@ import common.domain.CurrentRental;
 import common.domain.HistoricalRental;
 import common.service.RentalService;
 
+import java.time.Clock;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 
 public class MockRentalService implements RentalService {
+    static final Clock SystemClock = Clock.system(ZoneId.systemDefault());
+    Clock clock = SystemClock;
+
     MockClientService mockClientService;
     MockFleetService mockFleetService;
     MockHistoryService mockHistoryService;
@@ -17,13 +22,15 @@ public class MockRentalService implements RentalService {
     Map<Car, CurrentRental> currentRentals = new HashMap<>();
 
     @Override
-    public void rent(Car car, Client client) {
+    public CurrentRental rent(Car car, Client client) {
         if (!mockClientService.clients.contains(client))
             throw new IllegalArgumentException("Nonexisting client " + client);
         if (!mockFleetService.fleet.contains(car)) throw new IllegalArgumentException("Nonexisting car " + car);
         if (!isAvailable(car))
             throw new IllegalArgumentException(car + " already rented to " + currentRentals.get(car));
-        currentRentals.put(car, new CurrentRental(car, client, ZonedDateTime.now()));
+        CurrentRental currentRental = new CurrentRental(car, client, ZonedDateTime.now(clock));
+        currentRentals.put(car, currentRental);
+        return currentRental;
     }
 
     @Override
@@ -34,7 +41,7 @@ public class MockRentalService implements RentalService {
         Car key = found.get();
         CurrentRental currentRental = currentRentals.get(key);
         currentRentals.remove(key);
-        mockHistoryService.saveEvent(new HistoricalRental(currentRental, ZonedDateTime.now()));
+        mockHistoryService.saveEvent(new HistoricalRental(currentRental, ZonedDateTime.now(clock)));
     }
 
     @Override

@@ -2,8 +2,13 @@ package mocks;
 
 import common.domain.Car;
 import common.domain.Client;
+import common.domain.CurrentRental;
 import org.springframework.beans.factory.InitializingBean;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Random;
 
 public class DataGenerator implements InitializingBean {
@@ -18,7 +23,7 @@ public class DataGenerator implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         generateFleet();
         generateClients();
-        generateRentalData();
+        generateBetterRentalData();
     }
 
     private void generateFleet() {
@@ -38,35 +43,48 @@ public class DataGenerator implements InitializingBean {
         }
     }
 
-    private void generateRentalData() {
-        int fleetSize = fleetService.fleet.size();
-        for (int i = 0; i < fleetSize / 2; ++i) {
-            try {
-                rentalService.rent(randomCar(), randomClient());
-            } catch (IllegalArgumentException e) {
-                System.out.println("");
-                //do nothing, we can skip some rentals in generated data
-            }
-        }
+    private void generateBetterRentalData() {
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime weekAgo = now.minusDays(30);
+        fleetService.fetchAll().forEach(car -> buildLineOfWork(car, weekAgo, now));
     }
+
+    private void buildLineOfWork(Car car, ZonedDateTime start, ZonedDateTime end) {
+        ZonedDateTime currentTime = start;
+        CurrentRental currentRental = null;
+        while (currentTime.isBefore(end)) {
+            if (currentRental != null) rentalService.returnCar(car.getRegistration());
+            currentTime = fastForward(currentTime);
+            if (currentTime.isBefore(end)) currentRental = rentalService.rent(car, randomClient());
+            currentTime = fastForward(currentTime);
+        }
+        rentalService.clock = MockRentalService.SystemClock;
+
+    }
+
+    private ZonedDateTime fastForward(ZonedDateTime currentTime) {
+        currentTime = currentTime.plusHours(12 + random.nextInt(144)).plusMinutes(random.nextInt(60));
+        rentalService.clock = Clock.fixed(Instant.from(currentTime), ZoneId.systemDefault());
+        return currentTime;
+    }
+
 
     private Client randomClient() {
         return clientService.clients.get(random.nextInt(clientService.clients.size()));
     }
 
 
-    private Car randomCar() {
-        return fleetService.fleet.get(random.nextInt(fleetService.fleet.size()));
-    }
-
+    @SuppressWarnings("unused")
     public void setFleetService(MockFleetService fleetService) {
         this.fleetService = fleetService;
     }
 
+    @SuppressWarnings("unused")
     public void setClientService(MockClientService clientService) {
         this.clientService = clientService;
     }
 
+    @SuppressWarnings("unused")
     public void setRentalService(MockRentalService rentalService) {
         this.rentalService = rentalService;
     }
