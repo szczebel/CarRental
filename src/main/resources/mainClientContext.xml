@@ -7,20 +7,18 @@
 
     <bean id="remoteTestService"
           class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-        <property name="serviceUrl"
-                  value="http://localhost:8088/http/TestService">
-        </property>
-        <property name="serviceInterface"
-                  value="common.service.TestService">
-        </property>
+        <property name="serviceUrl" value="http://localhost:8088/http/TestService"/>
+        <property name="serviceInterface" value="common.service.TestService"/>
     </bean>
 
     <!--todo: replace with real remote services-->
     <bean id="remoteFleetService" class="mocks.MockFleetService"/>
     <bean id="remoteClientService" class="mocks.MockClientService"/>
+    <bean id="remoteHistoryService" class="mocks.MockHistoryService"/>
     <bean id="remoteRentalService" class="mocks.MockRentalService">
         <property name="mockFleetService" ref="remoteFleetService"/>
         <property name="mockClientService" ref="remoteClientService"/>
+        <property name="mockHistoryService" ref="remoteHistoryService"/>
     </bean>
     <bean id="remoteAvailabilityService" class="mocks.MockAvailabilityService">
         <property name="mockFleetService" ref="remoteFleetService"/>

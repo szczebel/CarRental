@@ -13,6 +13,8 @@ public class MockRentalService implements RentalService, InitializingBean {
     MockClientService mockClientService;
     MockFleetService mockFleetService;
 
+    MockHistoryService mockHistoryService;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         //initialize some data
@@ -55,8 +57,13 @@ public class MockRentalService implements RentalService, InitializingBean {
         return new ArrayList<>(currentRentals.values());
     }
 
-    public boolean isAvailable(Car car) {
+    boolean isAvailable(Car car) {
         return !currentRentals.containsKey(car);
+    }
+
+    @SuppressWarnings("unused")
+    public void setMockHistoryService(MockHistoryService mockHistoryService) {
+        this.mockHistoryService = mockHistoryService;
     }
 
     @SuppressWarnings("unused")

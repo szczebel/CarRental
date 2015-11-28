@@ -2,15 +2,17 @@ package common.domain;
 
 import java.time.ZonedDateTime;
 
-public class CurrentRental {
+public class HistoricalRental {
     private final Car car;
     private final Client client;
     private final ZonedDateTime start;
+    private final ZonedDateTime end;
 
-    public CurrentRental(Car car, Client client, ZonedDateTime start) {
-        this.car = car;
-        this.client = client;
-        this.start = start;
+    public HistoricalRental(CurrentRental currentRental, ZonedDateTime end) {
+        this.car = currentRental.getCar();
+        this.client = currentRental.getClient();
+        this.start = currentRental.getStart();
+        this.end = end;
     }
 
     Car getCar() {
@@ -23,6 +25,10 @@ public class CurrentRental {
 
     public ZonedDateTime getStart() {
         return start;
+    }
+
+    public ZonedDateTime getEnd() {
+        return end;
     }
 
     public String getRegistration() {
