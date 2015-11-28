@@ -5,34 +5,14 @@ import common.domain.Client;
 import common.domain.CurrentRental;
 import common.domain.HistoricalRental;
 import common.service.RentalService;
-import org.springframework.beans.factory.InitializingBean;
 
 import java.time.ZonedDateTime;
 import java.util.*;
 
-public class MockRentalService implements RentalService, InitializingBean {
+public class MockRentalService implements RentalService {
     MockClientService mockClientService;
     MockFleetService mockFleetService;
-
     MockHistoryService mockHistoryService;
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        //initialize some data
-        int fleetSize = mockFleetService.fleet.size();
-        int clientbaseSize = mockClientService.clients.size();
-        Random r = new Random();
-        for (int i = 0; i < fleetSize / 3; ++i) {
-            try {
-                rent(
-                        mockFleetService.fleet.get(r.nextInt(fleetSize)),
-                        mockClientService.clients.get(r.nextInt(clientbaseSize))
-                );
-            } catch (IllegalArgumentException e) {
-                //do nothing, we can skip some rentals in generated data
-            }
-        }
-    }
 
     Map<Car, CurrentRental> currentRentals = new HashMap<>();
 
@@ -41,7 +21,8 @@ public class MockRentalService implements RentalService, InitializingBean {
         if (!mockClientService.clients.contains(client))
             throw new IllegalArgumentException("Nonexisting client " + client);
         if (!mockFleetService.fleet.contains(car)) throw new IllegalArgumentException("Nonexisting car " + car);
-        if (!isAvailable(car)) throw new RuntimeException(car + " already rented to " + currentRentals.get(car));
+        if (!isAvailable(car))
+            throw new IllegalArgumentException(car + " already rented to " + currentRentals.get(car));
         currentRentals.put(car, new CurrentRental(car, client, ZonedDateTime.now()));
     }
 

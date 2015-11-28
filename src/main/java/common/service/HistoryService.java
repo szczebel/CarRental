@@ -20,6 +20,7 @@ public interface HistoryService {
             this.end = end;
         }
 
+        @SuppressWarnings("RedundantIfStatement")
         @Override
         public boolean test(HistoricalRental historicalRental) {
             if (historicalRental.getEnd().isBefore(start)) return false;

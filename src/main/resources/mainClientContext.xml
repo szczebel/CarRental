@@ -24,6 +24,11 @@
         <property name="mockFleetService" ref="remoteFleetService"/>
         <property name="mockRentalService" ref="remoteRentalService"/>
     </bean>
+    <bean class="mocks.DataGenerator">
+        <property name="fleetService" ref="remoteFleetService"/>
+        <property name="clientService" ref="remoteClientService"/>
+        <property name="rentalService" ref="remoteRentalService"/>
+    </bean>
 
 
     <bean class="client.ui.MainFrameBuilder" init-method="buildAndShow">

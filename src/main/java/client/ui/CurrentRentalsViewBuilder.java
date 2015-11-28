@@ -52,6 +52,8 @@ public class CurrentRentalsViewBuilder {
                             () -> rentalService.returnCar(r.getRegistration()),
                             () -> refresh(tableModel)
                     );
+                } else {
+                    JOptionPane.showMessageDialog(panel, "Please select a car being returned");
                 }
             }
         }));

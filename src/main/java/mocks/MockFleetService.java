@@ -2,26 +2,14 @@ package mocks;
 
 import common.domain.Car;
 import common.service.FleetService;
-import org.springframework.beans.factory.InitializingBean;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Predicate;
 
-public class MockFleetService implements FleetService, InitializingBean {
+public class MockFleetService implements FleetService {
     List<Car> fleet = new ArrayList<>();
 
-    @Override
-
-    public void afterPropertiesSet() throws Exception {
-        //generate some data
-        String[] models = {"Ford Mondeo", "Fiat Multipla", "Lexus", "Mercedes S", "Peugeot 307", "Renault Safrane", "Mazda 6", "Volvo XC60"};
-        Random random = new Random();
-        for (int i = 100; i <= 110; i++) {
-            create(new Car(models[random.nextInt(models.length)], 1000 + random.nextInt(9000) + "KHZ" + i));
-        }
-    }
 
     @Override
     public List<Car> fetchAll() {
