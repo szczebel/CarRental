@@ -1,8 +1,10 @@
 package client.ui;
 
 import common.domain.HistoricalRental;
+import schedule.model.BasicScheduleModel;
 import schedule.model.Resource;
 import schedule.model.ScheduleModel;
+import schedule.model.Task;
 
 import javax.swing.table.AbstractTableModel;
 import java.time.Duration;
@@ -16,29 +18,18 @@ class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel
 
     final static String[] COLUMN = {"Registration", "Model", "Client name", "Client email", "Start", "End", "Duration"};
     private List<HistoricalRental> history = new ArrayList<>();
-    private List<CarInfo> resources = new ArrayList<>();
+    private BasicScheduleModel<CarInfo, HistoricalRentalAdapter> delegate = new BasicScheduleModel<>();
     private ScheduleModel.Listener listener;
-    private ZonedDateTime end = ZonedDateTime.now();
-    private ZonedDateTime start = ZonedDateTime.now().minusDays(7);
 
     void setData(List<HistoricalRental> history) {
         this.history = history;
-        resources = new ArrayList<>(history.stream().map(CarInfo::new).collect(Collectors.toSet()));
-        recalculateStartEnd();
+        delegate.clear();
+        delegate.addResources(history.stream().map(CarInfo::new).collect(Collectors.toSet()));
+        history.forEach(hr -> delegate.assign(new CarInfo(hr), new HistoricalRentalAdapter(hr)));
         fireTableStructureChanged();
         listener.dataChanged();
     }
 
-    private void recalculateStartEnd() {
-        ZonedDateTime start = null;
-        ZonedDateTime end = null;
-        for (HistoricalRental historicalRental : history) {
-            if (start == null || historicalRental.getStart().isBefore(start)) start = historicalRental.getStart();
-            if (end == null || historicalRental.getEnd().isAfter(end)) end = historicalRental.getEnd();
-        }
-        if (start != null) this.start = start.minusHours(1);
-        if (end != null) this.end = end.plusHours(1);
-    }
 
     @Override
     public int getRowCount() {
@@ -77,13 +68,12 @@ class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel
 
     @Override
     public List<CarInfo> getResources() {
-        return resources;
+        return delegate.getResources();
     }
 
     @Override
     public Collection<HistoricalRentalAdapter> getEventsAssignedTo(CarInfo carInfo) {
-        return history.stream().filter(hr -> hr.getRegistration().equals(carInfo.registration)).
-                map(HistoricalRentalAdapter::new).collect(Collectors.toList());
+        return delegate.getEventsAssignedTo(carInfo);
     }
 
     @Override
@@ -93,12 +83,12 @@ class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel
 
     @Override
     public ZonedDateTime getEnd() {
-        return end;
+        return delegate.getEnd();
     }
 
     @Override
     public ZonedDateTime getStart() {
-        return start;
+        return delegate.getStart();
     }
 }
 
@@ -113,17 +103,17 @@ class CarInfo implements Resource {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return ((CarInfo) obj).registration.equals(this.registration);
+    public int hashCode() {
+        return registration.hashCode();
     }
 
     @Override
-    public String toString() {
-        return registration + " , " + model;
+    public boolean equals(Object obj) {
+        return ((CarInfo) obj).registration.equals(this.registration);
     }
 }
 
-class HistoricalRentalAdapter implements schedule.model.Event {
+class HistoricalRentalAdapter implements Task {
     final HistoricalRental historicalRental;
 
     HistoricalRentalAdapter(HistoricalRental historicalRental) {
@@ -138,10 +128,5 @@ class HistoricalRentalAdapter implements schedule.model.Event {
     @Override
     public ZonedDateTime getEnd() {
         return historicalRental.getEnd();
-    }
-
-    @Override
-    public String toString() {
-        return historicalRental.getClientName();
     }
 }
