@@ -25,7 +25,7 @@ public class HistoricalRentalsViewBuilder {
     public JComponent build() {
 
         HistoricalRentalsModel tableModel = new HistoricalRentalsModel();
-        ScheduleChart<CarInfo, HistoricalRentalAdapter> chart = new ScheduleChart<>(tableModel, ZonedDateTime.now().minusDays(60), ZonedDateTime.now());
+        ScheduleChart<CarInfo, HistoricalRentalAdapter> chart = new ScheduleChart<>(tableModel);
 
 
         JTable table = new JTable(tableModel);
@@ -33,7 +33,7 @@ public class HistoricalRentalsViewBuilder {
         table.setDefaultRenderer(Duration.class, convertingRenderer(value -> ((Duration) value).toHours() + " hours"));
 
         JPanel panel = new JPanel(new BorderLayout());
-        panel.add(buildToolbar(tableModel, chart), BorderLayout.NORTH);
+        panel.add(buildToolbar(tableModel), BorderLayout.NORTH);
         JTabbedPane tabs = new JTabbedPane(SwingConstants.BOTTOM);
         panel.add(tabs);
 
@@ -53,7 +53,7 @@ public class HistoricalRentalsViewBuilder {
         };
     }
 
-    private JComponent buildToolbar(HistoricalRentalsModel tableModel, ScheduleChart<CarInfo, HistoricalRentalAdapter> chart) {
+    private JComponent buildToolbar(HistoricalRentalsModel tableModel) {
         JPanel panel = new JPanel();
 
 
@@ -72,7 +72,6 @@ public class HistoricalRentalsViewBuilder {
                         ZonedDateTime.ofInstant(start.getValue().toInstant(), ZoneId.systemDefault()),
                         ZonedDateTime.ofInstant(end.getValue().toInstant(), ZoneId.systemDefault())
                 );
-                //todo: update chart.start and chart.end
                 BackgroundOperation.execute(
                         () -> historyService.fetchHistory(query),
                         tableModel::setData
