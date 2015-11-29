@@ -5,6 +5,7 @@ import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import org.springframework.core.convert.converter.Converter;
+import schedule.chart.ScheduleChart;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -24,13 +25,22 @@ public class HistoricalRentalsViewBuilder {
     public JComponent build() {
 
         HistoricalRentalsTableModel tableModel = new HistoricalRentalsTableModel();
+        ScheduleChart<CarInfo, HistoricalRentalAdapter> chart = new ScheduleChart<>(tableModel, ZonedDateTime.now().minusDays(30), ZonedDateTime.now());
 
-        JPanel panel = new JPanel(new BorderLayout());
+
         JTable table = new JTable(tableModel);
-        panel.add(buildToolbar(tableModel), BorderLayout.NORTH);
         table.setDefaultRenderer(ZonedDateTime.class, convertingRenderer(value -> ((ZonedDateTime) value).format(DateTimeFormatter.ofPattern("dd.MM.yyy '@' HH:mm"))));
         table.setDefaultRenderer(Duration.class, convertingRenderer(value -> ((Duration) value).toHours() + " hours"));
-        panel.add(new JScrollPane(table));
+
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(buildToolbar(tableModel, chart), BorderLayout.NORTH);
+        JTabbedPane tabs = new JTabbedPane(SwingConstants.BOTTOM);
+        panel.add(tabs);
+
+        tabs.addTab("Table", new JScrollPane(table));
+        tabs.addTab("Chart", chart.getComponent());
+
+
         return panel;
     }
 
@@ -43,7 +53,7 @@ public class HistoricalRentalsViewBuilder {
         };
     }
 
-    private JComponent buildToolbar(HistoricalRentalsTableModel tableModel) {
+    private JComponent buildToolbar(HistoricalRentalsTableModel tableModel, ScheduleChart<CarInfo, HistoricalRentalAdapter> chart) {
         JPanel panel = new JPanel();
 
 
@@ -62,6 +72,7 @@ public class HistoricalRentalsViewBuilder {
                         ZonedDateTime.ofInstant(start.getValue().toInstant(), ZoneId.systemDefault()),
                         ZonedDateTime.ofInstant(end.getValue().toInstant(), ZoneId.systemDefault())
                 );
+                //todo: update chart.start and chart.end
                 BackgroundOperation.execute(
                         () -> historyService.fetchHistory(query),
                         tableModel::setData
