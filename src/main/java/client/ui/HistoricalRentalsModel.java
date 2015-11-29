@@ -12,14 +12,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class HistoricalRentalsTableModel extends AbstractTableModel implements ScheduleModel<CarInfo, HistoricalRentalAdapter> {
+class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel<CarInfo, HistoricalRentalAdapter> {
 
     final static String[] COLUMN = {"Registration", "Model", "Client name", "Client email", "Start", "End", "Duration"};
     private List<HistoricalRental> history = new ArrayList<>();
+    private List<CarInfo> resources = new ArrayList<>();
     private ScheduleModel.Listener listener;
 
     void setData(List<HistoricalRental> history) {
         this.history = history;
+        resources = new ArrayList<>(history.stream().map(CarInfo::new).collect(Collectors.toSet()));
         fireTableStructureChanged();
         listener.dataChanged();
     }
@@ -61,7 +63,7 @@ class HistoricalRentalsTableModel extends AbstractTableModel implements Schedule
 
     @Override
     public List<CarInfo> getResources() {
-        return history.stream().map(CarInfo::new).distinct().collect(Collectors.toList());
+        return resources;
     }
 
     @Override
@@ -112,9 +114,5 @@ class HistoricalRentalAdapter implements schedule.model.Event {
     @Override
     public ZonedDateTime getEnd() {
         return historicalRental.getEnd();
-    }
-
-    public static HistoricalRentalAdapter create(HistoricalRental hr) {
-        return new HistoricalRentalAdapter(hr);
     }
 }

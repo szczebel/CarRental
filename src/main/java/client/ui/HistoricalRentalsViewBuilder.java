@@ -24,8 +24,8 @@ public class HistoricalRentalsViewBuilder {
 
     public JComponent build() {
 
-        HistoricalRentalsTableModel tableModel = new HistoricalRentalsTableModel();
-        ScheduleChart<CarInfo, HistoricalRentalAdapter> chart = new ScheduleChart<>(tableModel, ZonedDateTime.now().minusDays(30), ZonedDateTime.now());
+        HistoricalRentalsModel tableModel = new HistoricalRentalsModel();
+        ScheduleChart<CarInfo, HistoricalRentalAdapter> chart = new ScheduleChart<>(tableModel, ZonedDateTime.now().minusDays(60), ZonedDateTime.now());
 
 
         JTable table = new JTable(tableModel);
@@ -53,11 +53,11 @@ public class HistoricalRentalsViewBuilder {
         };
     }
 
-    private JComponent buildToolbar(HistoricalRentalsTableModel tableModel, ScheduleChart<CarInfo, HistoricalRentalAdapter> chart) {
+    private JComponent buildToolbar(HistoricalRentalsModel tableModel, ScheduleChart<CarInfo, HistoricalRentalAdapter> chart) {
         JPanel panel = new JPanel();
 
 
-        UtilDateModel start = new UtilDateModel(Date.from(ZonedDateTime.now().minusDays(30).toInstant()));
+        UtilDateModel start = new UtilDateModel(Date.from(ZonedDateTime.now().minusDays(60).toInstant()));
         UtilDateModel end = new UtilDateModel(Date.from(ZonedDateTime.now().toInstant()));
         panel.add(new JLabel("Find historical rentals from:"));
         panel.add(new JDatePickerImpl(new JDatePanelImpl(start)));

@@ -45,7 +45,7 @@ public class DataGenerator implements InitializingBean {
 
     private void generateBetterRentalData() {
         ZonedDateTime now = ZonedDateTime.now();
-        ZonedDateTime weekAgo = now.minusDays(30);
+        ZonedDateTime weekAgo = now.minusDays(60);
         fleetService.fetchAll().forEach(car -> buildLineOfWork(car, weekAgo, now));
     }
 
