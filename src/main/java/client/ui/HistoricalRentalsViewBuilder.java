@@ -3,15 +3,12 @@ package client.ui;
 import common.service.HistoryService;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.converter.Converter;
 import schedule.chart.ResourceRenderer;
 import schedule.chart.ScheduleChart;
 import schedule.chart.TaskRenderer;
 import schedule.interaction.Tooltips;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -24,28 +21,22 @@ import static client.ui.GuiHelper.*;
 @org.springframework.stereotype.Component
 public class HistoricalRentalsViewBuilder {
 
-    @Autowired
-    HistoryService historyService;
+    @Autowired HistoryService historyService;
 
     public JComponent build() {
-
         HistoricalRentalsModel model = new HistoricalRentalsModel();
         ScheduleChart<CarInfo, HistoricalRentalAdapter> chart = createChart(model);
         JTable table = createTable(model);
 
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(buildToolbar(model), BorderLayout.NORTH);
-        JTabbedPane tabs = new JTabbedPane(SwingConstants.BOTTOM);
-        panel.add(tabs);
-
-        tabs.addTab("Table", inScrollPane(table));
-        tabs.addTab("Chart", chart.getComponent());
-
-
         return borderLayout()
                 .north(buildToolbar(model))
-                .center(tabs)
-                .get();
+                .center(
+                        tabs(SwingUtilities.BOTTOM)
+                        .addTab("Table", inScrollPane(table))
+                        .addTab("Chart", chart.getComponent())
+                        .build()
+                )
+                .build();
     }
 
     private JTable createTable(HistoricalRentalsModel model) {
@@ -61,15 +52,6 @@ public class HistoricalRentalsViewBuilder {
         chart.setResourceRenderer(new CarInfoRenderer());
         chart.setInteractions(Tooltips.with(new HistoricalRentalTooltipRenderer()));
         return chart;
-    }
-
-    private TableCellRenderer convertingRenderer(Converter<Object, Object> converter) {
-        return new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                return super.getTableCellRendererComponent(table, converter.convert(value), isSelected, hasFocus, row, column);
-            }
-        };
     }
 
     private JComponent buildToolbar(HistoricalRentalsModel model) {
@@ -116,9 +98,6 @@ public class HistoricalRentalsViewBuilder {
     }
 
     private static class HistoricalRentalTooltipRenderer extends TaskRenderer.Default<HistoricalRentalAdapter> {
-        public HistoricalRentalTooltipRenderer() {
-        }
-
         @Override
         protected String getTextFromTask(HistoricalRentalAdapter event) {
             return "<html>" + event.historicalRental.getClientName() +

@@ -38,7 +38,7 @@ public class MainFrameBuilder {
                 .addTab("Fleet",            fleetViewBuilder.build())
                 .addTab("Clients",          clientListViewBuilder.build())
                 .addTab("Other",            createOther(frame))
-                .get();
+                .build();
     }
 
     private JComponent createOther(java.awt.Component parent) {

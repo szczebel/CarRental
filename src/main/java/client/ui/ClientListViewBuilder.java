@@ -12,8 +12,7 @@ import static client.ui.GuiHelper.*;
 @Component
 public class ClientListViewBuilder {
 
-    @Autowired
-    ClientService clientService;
+    @Autowired ClientService clientService;
 
     public JComponent build() {
 
@@ -28,7 +27,7 @@ public class ClientListViewBuilder {
                                 button("Add...", () -> addNewClientClicked(table, tableModel))
                         ))
                 .center(inScrollPane(table))
-                .get();
+                .build();
     }
 
     private void addNewClientClicked(JComponent panel, ClientListTableModel tableModel) {

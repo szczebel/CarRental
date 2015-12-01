@@ -12,8 +12,7 @@ import static client.ui.GuiHelper.*;
 @Component
 public class FleetViewBuilder {
 
-    @Autowired
-    FleetService fleetService;
+    @Autowired FleetService fleetService;
 
     public JComponent build() {
 
@@ -28,7 +27,7 @@ public class FleetViewBuilder {
                                 button("Add...", () -> addCarClicked(table, tableModel))
                         ))
                 .center(inScrollPane(table))
-                .get();
+                .build();
     }
 
     private void addCarClicked(JComponent panel, CarsTableModel tableModel) {

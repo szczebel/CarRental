@@ -3,9 +3,12 @@ package client.ui;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
+import org.springframework.core.convert.converter.Converter;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
@@ -49,6 +52,15 @@ public class GuiHelper {
         return new JScrollPane(scrollable);
     }
 
+    static TableCellRenderer convertingRenderer(Converter<Object, Object> converter) {
+        return new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                return super.getTableCellRendererComponent(table, converter.convert(value), isSelected, hasFocus, row, column);
+            }
+        };
+    }
+
     public static BorderLayoutBuilder borderLayout() {
         return new BorderLayoutBuilder();
     }
@@ -69,7 +81,7 @@ public class GuiHelper {
             return this;
         }
 
-        public JComponent get() {
+        public JComponent build() {
             return tabs;
         }
     }
@@ -102,7 +114,7 @@ public class GuiHelper {
             return this;
         }
 
-        public JComponent get() {
+        public JComponent build() {
             return panel;
         }
     }

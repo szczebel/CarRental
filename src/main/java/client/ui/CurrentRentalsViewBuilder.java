@@ -15,8 +15,7 @@ import static client.ui.GuiHelper.*;
 @Component
 public class CurrentRentalsViewBuilder {
 
-    @Autowired
-    RentalService rentalService;
+    @Autowired RentalService rentalService;
 
     public JComponent build() {
 
@@ -32,7 +31,7 @@ public class CurrentRentalsViewBuilder {
                                 button("Return", () -> returnClicked(table, tableModel))
                         ))
                 .center(inScrollPane(table))
-                .get();
+                .build();
     }
 
 

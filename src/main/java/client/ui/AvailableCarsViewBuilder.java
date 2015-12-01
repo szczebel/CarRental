@@ -16,12 +16,9 @@ import static client.ui.GuiHelper.*;
 @Component
 public class AvailableCarsViewBuilder {
 
-    @Autowired
-    AvailabilityService availabilityService;
-    @Autowired
-    RentalService rentalService;
-    @Autowired
-    ClientService clientService;
+    @Autowired AvailabilityService availabilityService;
+    @Autowired RentalService rentalService;
+    @Autowired ClientService clientService;
 
     public JComponent build() {
 
@@ -37,7 +34,7 @@ public class AvailableCarsViewBuilder {
                                 button("Rent...", () -> rentClicked(table, tableModel))
                         ))
                 .center(inScrollPane(table))
-                .get();
+                .build();
     }
 
     private void rentClicked(JTable table, CarsTableModel tableModel) {
