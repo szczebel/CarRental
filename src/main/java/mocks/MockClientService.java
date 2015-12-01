@@ -2,11 +2,13 @@ package mocks;
 
 import common.domain.Client;
 import common.service.ClientService;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+@Component
 public class MockClientService implements ClientService {
     List<Client> clients = new ArrayList<>();
 

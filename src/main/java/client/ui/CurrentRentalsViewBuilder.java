@@ -2,6 +2,8 @@ package client.ui;
 
 import common.domain.CurrentRental;
 import common.service.RentalService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -10,9 +12,11 @@ import java.awt.event.ActionEvent;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Component
 public class CurrentRentalsViewBuilder {
 
-    private RentalService rentalService;
+    @Autowired
+    RentalService rentalService;
 
     public JComponent build() {
 
@@ -23,7 +27,7 @@ public class CurrentRentalsViewBuilder {
         panel.add(buildToolbar(tableModel, table), BorderLayout.NORTH);
         table.setDefaultRenderer(ZonedDateTime.class, new DefaultTableCellRenderer() {
             @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 return super.getTableCellRendererComponent(table, ((ZonedDateTime) value).format(DateTimeFormatter.ofPattern("dd.MM.yyy '@' HH:mm")), isSelected, hasFocus, row, column);
             }
         });
@@ -65,11 +69,5 @@ public class CurrentRentalsViewBuilder {
                 rentalService::getCurrentRentals,
                 tableModel::setData
         );
-    }
-
-
-    @SuppressWarnings("unused")
-    public void setRentalService(RentalService rentalService) {
-        this.rentalService = rentalService;
     }
 }

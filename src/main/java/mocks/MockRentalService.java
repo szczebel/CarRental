@@ -5,18 +5,24 @@ import common.domain.Client;
 import common.domain.CurrentRental;
 import common.domain.HistoricalRental;
 import common.service.RentalService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.Clock;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+@Component
 public class MockRentalService implements RentalService {
     static final Clock SystemClock = Clock.system(ZoneId.systemDefault());
     Clock clock = SystemClock;
 
+    @Autowired
     MockClientService mockClientService;
+    @Autowired
     MockFleetService mockFleetService;
+    @Autowired
     MockHistoryService mockHistoryService;
 
     Map<Car, CurrentRental> currentRentals = new HashMap<>();
@@ -51,20 +57,5 @@ public class MockRentalService implements RentalService {
 
     boolean isAvailable(Car car) {
         return !currentRentals.containsKey(car);
-    }
-
-    @SuppressWarnings("unused")
-    public void setMockHistoryService(MockHistoryService mockHistoryService) {
-        this.mockHistoryService = mockHistoryService;
-    }
-
-    @SuppressWarnings("unused")
-    public void setMockClientService(MockClientService mockClientService) {
-        this.mockClientService = mockClientService;
-    }
-
-    @SuppressWarnings("unused")
-    public void setMockFleetService(MockFleetService mockFleetService) {
-        this.mockFleetService = mockFleetService;
     }
 }

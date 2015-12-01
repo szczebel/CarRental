@@ -5,16 +5,13 @@
 
        xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+
+
+
+
             http://www.springframework.org/schema/context
             http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="remoteTestService"
-          class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-        <property name="serviceUrl" value="http://localhost:8088/http/TestService"/>
-        <property name="serviceInterface" value="common.service.TestService"/>
-    </bean>
-
-    <context:component-scan base-package="client"/>
+    <context:component-scan base-package="mocks"/>
     <context:annotation-config/>
-
 </beans>

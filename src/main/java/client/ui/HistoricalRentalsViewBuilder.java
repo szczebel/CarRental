@@ -4,6 +4,7 @@ import common.service.HistoryService;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import schedule.chart.ResourceRenderer;
 import schedule.chart.ScheduleChart;
@@ -21,9 +22,11 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
+@org.springframework.stereotype.Component
 public class HistoricalRentalsViewBuilder {
 
-    private HistoryService historyService;
+    @Autowired
+    HistoryService historyService;
 
     public JComponent build() {
 
@@ -86,12 +89,6 @@ public class HistoricalRentalsViewBuilder {
 
 
         return panel;
-    }
-
-
-    @SuppressWarnings("unused")
-    public void setHistoryService(HistoryService historyService) {
-        this.historyService = historyService;
     }
 
     private static class CarInfoRenderer extends ResourceRenderer.Default<CarInfo> {

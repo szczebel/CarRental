@@ -1,21 +1,30 @@
 package client.ui;
 
 import common.service.TestService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
+@Component
 public class MainFrameBuilder {
 
-    private TestService testService;
+    @Autowired
+    TestService testService;
+    @Autowired
+    FleetViewBuilder fleetViewBuilder;
+    @Autowired
+    ClientListViewBuilder clientListViewBuilder;
+    @Autowired
+    AvailableCarsViewBuilder availableCarsViewBuilder;
+    @Autowired
+    CurrentRentalsViewBuilder currentRentalsViewBuilder;
+    @Autowired
+    HistoricalRentalsViewBuilder historicalRentalsViewBuilder;
 
-    private FleetViewBuilder fleetViewBuilder;
-    private ClientListViewBuilder clientListViewBuilder;
-    private AvailableCarsViewBuilder availableCarsViewBuilder;
-    private CurrentRentalsViewBuilder currentRentalsViewBuilder;
-    private HistoricalRentalsViewBuilder historicalRentalsViewBuilder;
-
-    @SuppressWarnings("unused")
+    @PostConstruct
     public void buildAndShow() {
         final JFrame frame = new JFrame("Car Rental");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -48,35 +57,5 @@ public class MainFrameBuilder {
             }
         }));
         return panel;
-    }
-
-    @SuppressWarnings("unused")
-    public void setFleetViewBuilder(FleetViewBuilder fleetViewBuilder) {
-        this.fleetViewBuilder = fleetViewBuilder;
-    }
-
-    @SuppressWarnings("unused")
-    public void setClientListViewBuilder(ClientListViewBuilder clientListViewBuilder) {
-        this.clientListViewBuilder = clientListViewBuilder;
-    }
-
-    @SuppressWarnings("unused")
-    public void setTestService(TestService testService) {
-        this.testService = testService;
-    }
-
-    @SuppressWarnings("unused")
-    public void setAvailableCarsViewBuilder(AvailableCarsViewBuilder availableCarsViewBuilder) {
-        this.availableCarsViewBuilder = availableCarsViewBuilder;
-    }
-
-    @SuppressWarnings("unused")
-    public void setCurrentRentalsViewBuilder(CurrentRentalsViewBuilder currentRentalsViewBuilder) {
-        this.currentRentalsViewBuilder = currentRentalsViewBuilder;
-    }
-
-    @SuppressWarnings("unused")
-    public void setHistoricalRentalsViewBuilder(HistoricalRentalsViewBuilder historicalRentalsViewBuilder) {
-        this.historicalRentalsViewBuilder = historicalRentalsViewBuilder;
     }
 }

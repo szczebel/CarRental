@@ -2,14 +2,18 @@ package client.ui;
 
 import common.domain.Client;
 import common.service.ClientService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
+@Component
 public class ClientListViewBuilder {
 
-    private ClientService clientService;
+    @Autowired
+    ClientService clientService;
 
     public JComponent build() {
 
@@ -58,10 +62,4 @@ public class ClientListViewBuilder {
                 tableModel::setData
         );
     }
-
-    @SuppressWarnings("unused")
-    public void setClientService(ClientService clientService) {
-        this.clientService = clientService;
-    }
-
 }

@@ -2,11 +2,13 @@ package mocks;
 
 import common.domain.Car;
 import common.service.FleetService;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+@Component
 public class MockFleetService implements FleetService {
     List<Car> fleet = new ArrayList<>();
 

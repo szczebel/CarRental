@@ -2,14 +2,18 @@ package client.ui;
 
 import common.domain.Car;
 import common.service.FleetService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
+@Component
 public class FleetViewBuilder {
 
-    private FleetService fleetService;
+    @Autowired
+    FleetService fleetService;
 
     public JComponent build() {
 
@@ -55,11 +59,5 @@ public class FleetViewBuilder {
                 tableModel::setData
         );
     }
-
-    @SuppressWarnings("unused")
-    public void setFleetService(FleetService fleetService) {
-        this.fleetService = fleetService;
-    }
-
 
 }

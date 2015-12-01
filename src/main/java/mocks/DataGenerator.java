@@ -3,24 +3,31 @@ package mocks;
 import common.domain.Car;
 import common.domain.Client;
 import common.domain.CurrentRental;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Random;
 
-public class DataGenerator implements InitializingBean {
+@Component
+public class DataGenerator {
 
+    @Autowired
     MockFleetService fleetService;
+    @Autowired
     MockClientService clientService;
+    @Autowired
     MockRentalService rentalService;
     private final Random random = new Random();
 
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    @SuppressWarnings("unused")
+    @PostConstruct
+    public void generate() throws Exception {
+        System.out.println("Generating data...");
         generateFleet();
         generateClients();
         generateBetterRentalData();
@@ -71,21 +78,5 @@ public class DataGenerator implements InitializingBean {
 
     private Client randomClient() {
         return clientService.clients.get(random.nextInt(clientService.clients.size()));
-    }
-
-
-    @SuppressWarnings("unused")
-    public void setFleetService(MockFleetService fleetService) {
-        this.fleetService = fleetService;
-    }
-
-    @SuppressWarnings("unused")
-    public void setClientService(MockClientService clientService) {
-        this.clientService = clientService;
-    }
-
-    @SuppressWarnings("unused")
-    public void setRentalService(MockRentalService rentalService) {
-        this.rentalService = rentalService;
     }
 }

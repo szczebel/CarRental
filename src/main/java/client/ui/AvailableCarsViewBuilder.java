@@ -5,17 +5,23 @@ import common.domain.Client;
 import common.service.AvailabilityService;
 import common.service.ClientService;
 import common.service.RentalService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
+@Component
 public class AvailableCarsViewBuilder {
 
-    private AvailabilityService availabilityService;
-    private RentalService rentalService;
-    private ClientService clientService;
+    @Autowired
+    AvailabilityService availabilityService;
+    @Autowired
+    RentalService rentalService;
+    @Autowired
+    ClientService clientService;
 
     public JComponent build() {
 
@@ -34,6 +40,7 @@ public class AvailableCarsViewBuilder {
     private JComponent buildToolbar(CarsTableModel tableModel, JTable table) {
         JPanel panel = new JPanel();
 
+        //todo refactor out Util.createButton(lambda)
         panel.add(new JButton(new AbstractAction("Refresh") {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -87,21 +94,5 @@ public class AvailableCarsViewBuilder {
                 availabilityService::findAvailableCars,
                 tableModel::setData
         );
-    }
-
-    @SuppressWarnings("unused")
-    public void setAvailabilityService(AvailabilityService availabilityService) {
-        this.availabilityService = availabilityService;
-    }
-
-
-    @SuppressWarnings("unused")
-    public void setRentalService(RentalService rentalService) {
-        this.rentalService = rentalService;
-    }
-
-    @SuppressWarnings("unused")
-    public void setClientService(ClientService clientService) {
-        this.clientService = clientService;
     }
 }
