@@ -31,7 +31,7 @@ public class MainFrameBuilder {
     }
 
     JComponent createContent(JFrame frame) {
-        return tabs(SwingConstants.LEFT)
+        return tabbedPane(SwingConstants.LEFT)
                 .addTab("Available cars",   availableCarsViewBuilder.build())
                 .addTab("Current rentals",  currentRentalsViewBuilder.build())
                 .addTab("Rental history",   historicalRentalsViewBuilder.build())

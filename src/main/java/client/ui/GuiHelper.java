@@ -65,7 +65,7 @@ public class GuiHelper {
         return new BorderLayoutBuilder();
     }
 
-    public static TabsBuilder tabs(int tabPlacement) {
+    public static TabsBuilder tabbedPane(int tabPlacement) {
         return new TabsBuilder(tabPlacement);
     }
 

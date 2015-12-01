@@ -31,7 +31,7 @@ public class HistoricalRentalsViewBuilder {
         return borderLayout()
                 .north(buildToolbar(model))
                 .center(
-                        tabs(SwingUtilities.BOTTOM)
+                        tabbedPane(SwingUtilities.BOTTOM)
                         .addTab("Table", inScrollPane(table))
                         .addTab("Chart", chart.getComponent())
                         .build()
