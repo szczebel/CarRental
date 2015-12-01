@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+
+import static client.ui.GuiHelper.*;
 
 @Component
 public class CurrentRentalsViewBuilder {
@@ -21,47 +21,41 @@ public class CurrentRentalsViewBuilder {
     public JComponent build() {
 
         CurrentRentalsTableModel tableModel = new CurrentRentalsTableModel();
-
-        JPanel panel = new JPanel(new BorderLayout());
+        refresh(tableModel);
         JTable table = new JTable(tableModel);
-        panel.add(buildToolbar(tableModel, table), BorderLayout.NORTH);
+        configureRenderer(table);
+
+        return borderLayout()
+                .north(
+                        toolbar(
+                                button("Refresh", () -> refresh(tableModel)),
+                                button("Return", () -> returnClicked(table, tableModel))
+                        ))
+                .center(inScrollPane(table))
+                .get();
+    }
+
+
+    private void configureRenderer(JTable table) {
         table.setDefaultRenderer(ZonedDateTime.class, new DefaultTableCellRenderer() {
             @Override
             public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 return super.getTableCellRendererComponent(table, ((ZonedDateTime) value).format(DateTimeFormatter.ofPattern("dd.MM.yyy '@' HH:mm")), isSelected, hasFocus, row, column);
             }
         });
-        panel.add(new JScrollPane(table));
-        refresh(tableModel);
-        return panel;
     }
 
-    private JComponent buildToolbar(CurrentRentalsTableModel tableModel, JTable table) {
-        JPanel panel = new JPanel();
-
-        panel.add(new JButton(new AbstractAction("Refresh") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                refresh(tableModel);
-            }
-        }));
-
-        panel.add(new JButton(new AbstractAction("Return") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedRow = table.getSelectedRow();
-                if (selectedRow >= 0) {
-                    CurrentRental r = tableModel.getAt(table.convertRowIndexToModel(selectedRow));
-                    BackgroundOperation.execute(
-                            () -> rentalService.returnCar(r.getRegistration()),
-                            () -> refresh(tableModel)
-                    );
-                } else {
-                    JOptionPane.showMessageDialog(panel, "Please select a car being returned");
-                }
-            }
-        }));
-        return panel;
+    private void returnClicked(JTable table, CurrentRentalsTableModel tableModel) {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow >= 0) {
+            CurrentRental r = tableModel.getAt(table.convertRowIndexToModel(selectedRow));
+            BackgroundOperation.execute(
+                    () -> rentalService.returnCar(r.getRegistration()),
+                    () -> refresh(tableModel)
+            );
+        } else {
+            JOptionPane.showMessageDialog(table, "Please select a car being returned");
+        }
     }
 
     private void refresh(CurrentRentalsTableModel tableModel) {

@@ -1,8 +1,6 @@
 package client.ui;
 
 import common.service.HistoryService;
-import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
-import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
@@ -15,12 +13,13 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+
+import static client.ui.GuiHelper.*;
 
 @org.springframework.stereotype.Component
 public class HistoricalRentalsViewBuilder {
@@ -30,26 +29,38 @@ public class HistoricalRentalsViewBuilder {
 
     public JComponent build() {
 
-        HistoricalRentalsModel tableModel = new HistoricalRentalsModel();
+        HistoricalRentalsModel model = new HistoricalRentalsModel();
+        ScheduleChart<CarInfo, HistoricalRentalAdapter> chart = createChart(model);
+        JTable table = createTable(model);
+
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(buildToolbar(model), BorderLayout.NORTH);
+        JTabbedPane tabs = new JTabbedPane(SwingConstants.BOTTOM);
+        panel.add(tabs);
+
+        tabs.addTab("Table", inScrollPane(table));
+        tabs.addTab("Chart", chart.getComponent());
+
+
+        return borderLayout()
+                .north(buildToolbar(model))
+                .center(tabs)
+                .get();
+    }
+
+    private JTable createTable(HistoricalRentalsModel model) {
+        JTable table = new JTable(model);
+        table.setDefaultRenderer(ZonedDateTime.class, convertingRenderer(value -> ((ZonedDateTime) value).format(DateTimeFormatter.ofPattern("dd.MM.yyy '@' HH:mm"))));
+        table.setDefaultRenderer(Duration.class, convertingRenderer(value -> ((Duration) value).toHours() + " hours"));
+        return table;
+    }
+
+    private ScheduleChart<CarInfo, HistoricalRentalAdapter> createChart(HistoricalRentalsModel tableModel) {
         ScheduleChart<CarInfo, HistoricalRentalAdapter> chart = new ScheduleChart<>(tableModel);
         chart.setTaskRenderer(new HistoricalRentalRenderer());
         chart.setResourceRenderer(new CarInfoRenderer());
         chart.setInteractions(Tooltips.with(new HistoricalRentalTooltipRenderer()));
-
-        JTable table = new JTable(tableModel);
-        table.setDefaultRenderer(ZonedDateTime.class, convertingRenderer(value -> ((ZonedDateTime) value).format(DateTimeFormatter.ofPattern("dd.MM.yyy '@' HH:mm"))));
-        table.setDefaultRenderer(Duration.class, convertingRenderer(value -> ((Duration) value).toHours() + " hours"));
-
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(buildToolbar(tableModel), BorderLayout.NORTH);
-        JTabbedPane tabs = new JTabbedPane(SwingConstants.BOTTOM);
-        panel.add(tabs);
-
-        tabs.addTab("Table", new JScrollPane(table));
-        tabs.addTab("Chart", chart.getComponent());
-
-
-        return panel;
+        return chart;
     }
 
     private TableCellRenderer convertingRenderer(Converter<Object, Object> converter) {
@@ -61,34 +72,28 @@ public class HistoricalRentalsViewBuilder {
         };
     }
 
-    private JComponent buildToolbar(HistoricalRentalsModel tableModel) {
-        JPanel panel = new JPanel();
-
-
-        UtilDateModel start = new UtilDateModel(Date.from(ZonedDateTime.now().minusDays(60).toInstant()));
+    private JComponent buildToolbar(HistoricalRentalsModel model) {
+        UtilDateModel start = new UtilDateModel(Date.from(ZonedDateTime.now().minusDays(30).toInstant()));
         UtilDateModel end = new UtilDateModel(Date.from(ZonedDateTime.now().toInstant()));
-        panel.add(new JLabel("Find historical rentals from:"));
-        panel.add(new JDatePickerImpl(new JDatePanelImpl(start)));
-        panel.add(new JLabel("to:"));
-        panel.add(new JDatePickerImpl(new JDatePanelImpl(end)));
 
-        panel.add(new JButton(new AbstractAction("Search") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        return toolbar(
+                label("Find historical rentals from:"),
+                datePicker(start),
+                label("to:"),
+                datePicker(end),
+                button("Search", () -> searchClicked(start, end, model))
+        );
+    }
 
-                HistoryService.Query query = new HistoryService.Query(
-                        ZonedDateTime.ofInstant(start.getValue().toInstant(), ZoneId.systemDefault()),
-                        ZonedDateTime.ofInstant(end.getValue().toInstant(), ZoneId.systemDefault())
-                );
-                BackgroundOperation.execute(
-                        () -> historyService.fetchHistory(query),
-                        tableModel::setData
-                );
-            }
-        }));
-
-
-        return panel;
+    private void searchClicked(UtilDateModel start, UtilDateModel end, HistoricalRentalsModel model) {
+        HistoryService.Query query = new HistoryService.Query(
+                ZonedDateTime.ofInstant(start.getValue().toInstant(), ZoneId.systemDefault()),
+                ZonedDateTime.ofInstant(end.getValue().toInstant(), ZoneId.systemDefault())
+        );
+        BackgroundOperation.execute(
+                () -> historyService.fetchHistory(query),
+                model::setData
+        );
     }
 
     private static class CarInfoRenderer extends ResourceRenderer.Default<CarInfo> {

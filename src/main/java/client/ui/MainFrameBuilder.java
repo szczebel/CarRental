@@ -6,7 +6,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
-import java.awt.event.ActionEvent;
+
+import static client.ui.GuiHelper.*;
 
 @Component
 public class MainFrameBuilder {
@@ -24,38 +25,38 @@ public class MainFrameBuilder {
     @Autowired
     HistoricalRentalsViewBuilder historicalRentalsViewBuilder;
 
+    @SuppressWarnings("unused")
     @PostConstruct
     public void buildAndShow() {
         final JFrame frame = new JFrame("Car Rental");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        JTabbedPane tabs = new JTabbedPane(SwingConstants.LEFT);
-        tabs.addTab("Available cars", availableCarsViewBuilder.build());
-        tabs.addTab("Current rentals", currentRentalsViewBuilder.build());
-        tabs.addTab("Rental history", historicalRentalsViewBuilder.build());
-        tabs.addTab("Fleet", fleetViewBuilder.build());
-        tabs.addTab("Clients", clientListViewBuilder.build());
-        tabs.addTab("Other", createOther());
-
-        frame.add(tabs);
-
-
+        frame.add(createContent(frame));
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
-    private JComponent createOther() {
-        JPanel panel = new JPanel();
-        panel.add(new JButton(new AbstractAction("Test connection") {
-            public void actionPerformed(ActionEvent e) {
-                BackgroundOperation.execute(
-                        testService::getServerInfo,
-                        result -> JOptionPane.showMessageDialog(panel, "Server returned IP: " + result),
-                        exception -> JOptionPane.showMessageDialog(panel, "Connection failed")
-                );
-            }
-        }));
-        return panel;
+    JComponent createContent(JFrame frame) {
+        return tabs(SwingConstants.LEFT)
+                .addTab("Available cars", availableCarsViewBuilder.build())
+                .addTab("Current rentals", currentRentalsViewBuilder.build())
+                .addTab("Rental history", historicalRentalsViewBuilder.build())
+                .addTab("Fleet", fleetViewBuilder.build())
+                .addTab("Clients", clientListViewBuilder.build())
+                .addTab("Other", createOther(frame))
+                .get();
+    }
+
+    private JComponent createOther(java.awt.Component parent) {
+        return toolbar(
+                button(
+                        "Test connection",
+                        () -> BackgroundOperation.execute(
+                                testService::getServerInfo,
+                                result -> JOptionPane.showMessageDialog(parent, "Server returned IP: " + result),
+                                exception -> JOptionPane.showMessageDialog(parent, "Connection failed")
+                        )
+                )
+        );
     }
 }
