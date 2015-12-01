@@ -12,18 +12,12 @@ import static client.ui.GuiHelper.*;
 @Component
 public class MainFrameBuilder {
 
-    @Autowired
-    TestService testService;
-    @Autowired
-    FleetViewBuilder fleetViewBuilder;
-    @Autowired
-    ClientListViewBuilder clientListViewBuilder;
-    @Autowired
-    AvailableCarsViewBuilder availableCarsViewBuilder;
-    @Autowired
-    CurrentRentalsViewBuilder currentRentalsViewBuilder;
-    @Autowired
-    HistoricalRentalsViewBuilder historicalRentalsViewBuilder;
+    @Autowired TestService testService;
+    @Autowired FleetViewBuilder fleetViewBuilder;
+    @Autowired ClientListViewBuilder clientListViewBuilder;
+    @Autowired AvailableCarsViewBuilder availableCarsViewBuilder;
+    @Autowired CurrentRentalsViewBuilder currentRentalsViewBuilder;
+    @Autowired HistoricalRentalsViewBuilder historicalRentalsViewBuilder;
 
     @SuppressWarnings("unused")
     @PostConstruct
@@ -38,12 +32,12 @@ public class MainFrameBuilder {
 
     JComponent createContent(JFrame frame) {
         return tabs(SwingConstants.LEFT)
-                .addTab("Available cars", availableCarsViewBuilder.build())
-                .addTab("Current rentals", currentRentalsViewBuilder.build())
-                .addTab("Rental history", historicalRentalsViewBuilder.build())
-                .addTab("Fleet", fleetViewBuilder.build())
-                .addTab("Clients", clientListViewBuilder.build())
-                .addTab("Other", createOther(frame))
+                .addTab("Available cars",   availableCarsViewBuilder.build())
+                .addTab("Current rentals",  currentRentalsViewBuilder.build())
+                .addTab("Rental history",   historicalRentalsViewBuilder.build())
+                .addTab("Fleet",            fleetViewBuilder.build())
+                .addTab("Clients",          clientListViewBuilder.build())
+                .addTab("Other",            createOther(frame))
                 .get();
     }
 
