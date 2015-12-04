@@ -22,12 +22,22 @@ public class MainFrameBuilder {
     @SuppressWarnings("unused")
     @PostConstruct
     public void buildAndShow() {
+        installLAF();
         final JFrame frame = new JFrame("Car Rental");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.add(createContent(frame));
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+
+    private void installLAF() {
+        try {
+
+            UIManager.setLookAndFeel(new com.jgoodies.looks.windows.WindowsLookAndFeel());
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
     }
 
     JComponent createContent(JFrame frame) {

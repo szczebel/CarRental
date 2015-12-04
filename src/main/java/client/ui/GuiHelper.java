@@ -33,7 +33,7 @@ public class GuiHelper {
     }
 
     public static JComponent toolbar(JComponent... components) {
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
         Arrays.asList(components).forEach(panel::add);
         return panel;
     }
