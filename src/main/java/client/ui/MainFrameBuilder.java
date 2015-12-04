@@ -31,15 +31,6 @@ public class MainFrameBuilder {
         frame.setVisible(true);
     }
 
-    private void installLAF() {
-        try {
-
-            UIManager.setLookAndFeel(new com.jgoodies.looks.windows.WindowsLookAndFeel());
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
-    }
-
     JComponent createContent(JFrame frame) {
         return tabbedPane(SwingConstants.LEFT)
                 .addTab("Available cars",   availableCarsViewBuilder.build())
@@ -49,6 +40,15 @@ public class MainFrameBuilder {
                 .addTab("Clients",          clientListViewBuilder.build())
                 .addTab("Other",            createOther(frame))
                 .build();
+    }
+
+    private void installLAF() {
+        try {
+
+            UIManager.setLookAndFeel(new com.jgoodies.looks.windows.WindowsLookAndFeel());
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
     }
 
     private JComponent createOther(java.awt.Component parent) {
