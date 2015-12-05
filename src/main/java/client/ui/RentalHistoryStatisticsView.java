@@ -9,6 +9,7 @@ import java.time.format.TextStyle;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static client.ui.GuiHelper.grid;
 import static client.ui.GuiHelper.inScrollPane;
 
 public class RentalHistoryStatisticsView implements Consumer<RentalHistory.Statistics> {
@@ -21,11 +22,11 @@ public class RentalHistoryStatisticsView implements Consumer<RentalHistory.Stati
 
     public RentalHistoryStatisticsView() {
 
-        component = GuiHelper.grid(3, 1,
+        component = grid(3, 1,
                 inScrollPane(new JTable(summaryStatsTableModel)),
                 inScrollPane(new JTable(averageHours)),
                 inScrollPane(new JTable(averageEarnings))
-                );
+        );
     }
 
     @Override
