@@ -20,6 +20,14 @@ public interface HistoryService {
             this.end = end;
         }
 
+        public ZonedDateTime getStart() {
+            return start;
+        }
+
+        public ZonedDateTime getEnd() {
+            return end;
+        }
+
         @SuppressWarnings("RedundantIfStatement")
         @Override
         public boolean test(HistoricalRental historicalRental) {

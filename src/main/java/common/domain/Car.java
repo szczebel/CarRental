@@ -25,12 +25,16 @@ public class Car implements Serializable{
         return rentalClass.getName();
     }
 
+    public int getHourlyRate() {
+        return rentalClass.getHourlyRate();
+    }
+
     @Override
     public String toString() {
         return registration;
     }
 
-    public boolean isOfClass(RentalClass aClass) {
-        return aClass.equals(this.rentalClass);
+    public boolean isOfClass(String aClass) {
+        return aClass.equals(this.rentalClass.getName());
     }
 }

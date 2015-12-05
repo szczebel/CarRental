@@ -22,7 +22,7 @@ public class MockAvailabilityService implements AvailabilityService {
     }
 
     private boolean ofClass(Car car, RentalClass requiredClass) {
-        return requiredClass == null || car.isOfClass(requiredClass);
+        return requiredClass == null || car.isOfClass(requiredClass.getName());
     }
 
 }

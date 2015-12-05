@@ -1,19 +1,22 @@
 package common.domain;
 
 import java.time.DayOfWeek;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RentalHistory {
 
+    final List<Car> fleet;
     final List<HistoricalRental> records;
     final Statistics statistics;
 
-    public RentalHistory(List<HistoricalRental> records, Statistics statistics) {
+    public RentalHistory(List<HistoricalRental> records, Statistics statistics, List<Car> fleet) {
         this.records = records;
         this.statistics = statistics;
+        this.fleet = fleet;
+    }
+
+    public List<Car> getFleet() {
+        return fleet;
     }
 
     public List<HistoricalRental> getRecords() {
@@ -25,57 +28,61 @@ public class RentalHistory {
     }
 
     public static class Statistics {
-        final DataPoint hoursSummary;
-        final DataPoint profitSummary;
+        final double overallEarnings;
+        final double overallUtilization;
+        final ValuePerClass earningsPerClass;
+        final ValuePerClass utilizationPerClass;
 
-        Map<DayOfWeek, DataPoint> dayOfWeekHoursAverages = new HashMap<>();
-        Map<DayOfWeek, DataPoint> dayOfWeekProfitAverages = new HashMap<>();
+        Map<DayOfWeek, ValuePerClass> utilizationPerDayOfWeek = new HashMap<>();
 
-        public Statistics(List<RentalClass> classes) {
-            hoursSummary = new DataPoint(classes);
-            profitSummary = new DataPoint(classes);
+        public Statistics(List<RentalClass> classes, double overallEarnings, double overallUtilization) {
+            this.overallEarnings = overallEarnings;
+            this.overallUtilization = overallUtilization;
+            earningsPerClass = new ValuePerClass(classes);
+            utilizationPerClass = new ValuePerClass(classes);
             Arrays.asList(DayOfWeek.values()).forEach(
-                    dow -> {
-                        dayOfWeekHoursAverages.put(dow, new DataPoint(classes));
-                        dayOfWeekProfitAverages.put(dow, new DataPoint(classes));
-                    }
+                    dow -> utilizationPerDayOfWeek.put(dow, new ValuePerClass(classes))
             );
         }
 
-        public DataPoint getHoursSummary() {
-            return hoursSummary;
+        public ValuePerClass getEarningsPerClass() {
+            return earningsPerClass;
         }
 
-        public DataPoint getProfitSummary() {
-            return profitSummary;
+        public ValuePerClass getUtilizationPerClass() {
+            return utilizationPerClass;
         }
 
-        public Map<DayOfWeek, DataPoint> getDayOfWeekHoursAverages() {
-            return dayOfWeekHoursAverages;
+        public double getOverallEarnings() {
+            return overallEarnings;
         }
 
-        public Map<DayOfWeek, DataPoint> getDayOfWeekProfitAverages() {
-            return dayOfWeekProfitAverages;
+        public double getOverallUtilization() {
+            return overallUtilization;
+        }
+
+        public Map<DayOfWeek, ValuePerClass> getUtilizationPerDayOfWeek() {
+            return utilizationPerDayOfWeek;
         }
     }
 
-    public static class DataPoint {
-        double overall;
+    public static class ValuePerClass {
         Map<String, Double> perClass = new HashMap<>();
 
-
-        public DataPoint(List<RentalClass> classes) {
-            classes.forEach(c -> {
-                perClass.put(c.getName(), 0d);
-            });
+        public ValuePerClass(List<RentalClass> classes) {
+            classes.forEach(c -> perClass.put(c.getName(), 0d));
         }
 
-        public double getOverall() {
-            return overall;
+        public void setValueFor(String rentalClassName, double value) {
+            perClass.put(rentalClassName, value);
         }
 
-        public Map<String, Double> getPerClass() {
-            return perClass;
+        public double getValueFor(String rentalClassName) {
+            return perClass.get(rentalClassName);
+        }
+
+        public Set<String> keySet() {
+            return perClass.keySet();
         }
     }
 }

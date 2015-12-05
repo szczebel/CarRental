@@ -1,6 +1,8 @@
 package client.ui;
 
+import common.domain.Car;
 import common.domain.HistoricalRental;
+import common.domain.RentalHistory;
 import schedule.basic.BasicScheduleModel;
 import schedule.model.Resource;
 import schedule.model.ScheduleModel;
@@ -12,20 +14,22 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel<CarInfo, HistoricalRentalAdapter> {
+class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel<CarInfo, HistoricalRentalAdapter>, Consumer<RentalHistory> {
 
     final static String[] COLUMN = {"Registration", "Model", "Client name", "Client email", "Start", "End", "Duration"};
-    private List<HistoricalRental> history = new ArrayList<>();
+    private List<HistoricalRental> records = new ArrayList<>();
     private BasicScheduleModel<CarInfo, HistoricalRentalAdapter> delegate = new BasicScheduleModel<>();
     private ScheduleModel.Listener listener;
 
-    void setData(List<HistoricalRental> history) {
-        this.history = history;
+    @Override
+    public void accept(RentalHistory rentalHistory) {
+        this.records = rentalHistory.getRecords();
         delegate.clearAllData();
-        delegate.addResources(history.stream().map(CarInfo::new).collect(Collectors.toSet()));
-        history.forEach(hr -> delegate.assign(new CarInfo(hr), new HistoricalRentalAdapter(hr)));
+        delegate.addResources(rentalHistory.getFleet().stream().map(CarInfo::new).collect(Collectors.toSet()));
+        records.forEach(hr -> delegate.assign(new CarInfo(hr), new HistoricalRentalAdapter(hr)));
         fireTableStructureChanged();
         listener.dataChanged();
     }
@@ -33,7 +37,7 @@ class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel
 
     @Override
     public int getRowCount() {
-        return history.size();
+        return records.size();
     }
 
     @Override
@@ -48,14 +52,14 @@ class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        HistoricalRental event = history.get(rowIndex);
+        HistoricalRental event = records.get(rowIndex);
         if (columnIndex == 0) return event.getRegistration();
         if (columnIndex == 1) return event.getModel();
         if (columnIndex == 2) return event.getClientName();
         if (columnIndex == 3) return event.getClientEmail();
         if (columnIndex == 4) return event.getStart();
         if (columnIndex == 5) return event.getEnd();
-        if (columnIndex == 6) return Duration.between(event.getStart(), event.getEnd());
+        if (columnIndex == 6) return event.getDuration();
         throw new IllegalArgumentException("Unknown column index : " + columnIndex);
     }
 
@@ -100,6 +104,11 @@ class CarInfo implements Resource {
     public CarInfo(HistoricalRental historicalRental) {
         this.registration = historicalRental.getRegistration();
         this.model = historicalRental.getModel();
+    }
+
+    public CarInfo(Car car) {
+        this.registration = car.getRegistration();
+        this.model = car.getModel();
     }
 
     @Override

@@ -1,9 +1,11 @@
 package client.ui;
 
+import common.domain.RentalClass;
 import common.domain.RentalHistory;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 import java.time.DayOfWeek;
 import java.time.format.TextStyle;
 import java.util.*;
@@ -16,24 +18,27 @@ public class RentalHistoryStatisticsView implements Consumer<RentalHistory.Stati
 
     JComponent component;
     SummaryStatsTableModel summaryStatsTableModel = new SummaryStatsTableModel();
-    DayOfWeekStatsTableModel averageHours = new DayOfWeekStatsTableModel("Average hours");
-    DayOfWeekStatsTableModel averageEarnings = new DayOfWeekStatsTableModel("Average earnings");
+    UtilizationPerDayOfWeekTableModel utilizationPerDayOfWeek = new UtilizationPerDayOfWeekTableModel();
 
 
     public RentalHistoryStatisticsView() {
 
-        component = grid(3, 1,
-                inScrollPane(new JTable(summaryStatsTableModel)),
-                inScrollPane(new JTable(averageHours)),
-                inScrollPane(new JTable(averageEarnings))
+        component = grid(2, 1,
+                inScrollPane(createTable(summaryStatsTableModel)),
+                inScrollPane(createTable(utilizationPerDayOfWeek))
         );
+    }
+
+    private JTable createTable(TableModel tableModel) {
+        JTable table = new JTable(tableModel);
+        table.setDefaultRenderer(Double.class, GuiHelper.convertingRenderer(value -> String.format("%.2f", (double)value)));
+        return table;
     }
 
     @Override
     public void accept(RentalHistory.Statistics statistics) {
         summaryStatsTableModel.setData(statistics);
-        averageHours.setData(statistics.getDayOfWeekHoursAverages());
-        averageEarnings.setData(statistics.getDayOfWeekProfitAverages());
+        utilizationPerDayOfWeek.setData(statistics.getUtilizationPerDayOfWeek());
     }
 
 
@@ -41,20 +46,16 @@ public class RentalHistoryStatisticsView implements Consumer<RentalHistory.Stati
         return component;
     }
 
-    static class DayOfWeekStatsTableModel extends AbstractTableModel {
+    static class UtilizationPerDayOfWeekTableModel extends AbstractTableModel {
 
-        private final String firstColumnHeader;
-        Map<DayOfWeek, RentalHistory.DataPoint> data = new HashMap<>();
+        Map<DayOfWeek, RentalHistory.ValuePerClass> data = new HashMap<>();
         java.util.List<String> rentalClasses = new ArrayList<>();
 
-        public DayOfWeekStatsTableModel(String firstColumnHeader) {
-            this.firstColumnHeader = firstColumnHeader;
-        }
 
-        public void setData(Map<DayOfWeek, RentalHistory.DataPoint> dayOfWeekAverages) {
+        public void setData(Map<DayOfWeek, RentalHistory.ValuePerClass> dayOfWeekAverages) {
             data = dayOfWeekAverages;
             Set<String> uniqueClasses = new HashSet<>();
-            data.values().forEach(dp -> uniqueClasses.addAll(dp.getPerClass().keySet()));
+            data.values().forEach(vpc -> uniqueClasses.addAll(vpc.keySet()));
             rentalClasses = new ArrayList<>(uniqueClasses);
             fireTableDataChanged();
         }
@@ -74,29 +75,33 @@ public class RentalHistoryStatisticsView implements Consumer<RentalHistory.Stati
             String className = rentalClasses.get(rowIndex);
             if (columnIndex == 0) return className;
             DayOfWeek dow = DayOfWeek.values()[columnIndex - 1];
-            return data.get(dow).getPerClass().get(className);
+            return data.get(dow).getValueFor(className);
         }
 
         @Override
         public String getColumnName(int column) {
-            if (column == 0) return firstColumnHeader;
-            return DayOfWeek.values()[column - 1].getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault());
+            if (column == 0) return "Rental class";
+            return DayOfWeek.values()[column - 1].getDisplayName(TextStyle.FULL_STANDALONE, Locale.getDefault());
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            if (columnIndex == 0) return String.class;
+            return Double.class;
         }
     }
 
     static class SummaryStatsTableModel extends AbstractTableModel {
 
-        static final String[] COLUMNS = {"Rental class", "Sum of hours", "Sum of earnings"};
-        RentalHistory.DataPoint hoursSummary = new RentalHistory.DataPoint(Collections.emptyList());
-        RentalHistory.DataPoint profitSummary = new RentalHistory.DataPoint(Collections.emptyList());
-        java.util.List<String> rentalClasses = new ArrayList<>();
+        static final String[] COLUMNS = {"Rental class", "Earnings", "Utilization"};
+        java.util.List<String> rentalClasses = Collections.emptyList();
+        RentalHistory.Statistics statistics = new RentalHistory.Statistics(Collections.<RentalClass>emptyList(), 0, 0);
 
         public void setData(RentalHistory.Statistics statistics) {
-            hoursSummary = statistics.getHoursSummary();
-            profitSummary = statistics.getProfitSummary();
+            this.statistics = statistics;
             Set<String> uniqueClasses = new HashSet<>();
-            uniqueClasses.addAll(hoursSummary.getPerClass().keySet());
-            uniqueClasses.addAll(profitSummary.getPerClass().keySet());
+            uniqueClasses.addAll(statistics.getEarningsPerClass().keySet());
+            uniqueClasses.addAll(statistics.getUtilizationPerClass().keySet());
             rentalClasses = new ArrayList<>(uniqueClasses);
             fireTableDataChanged();
         }
@@ -115,13 +120,13 @@ public class RentalHistoryStatisticsView implements Consumer<RentalHistory.Stati
         public Object getValueAt(int rowIndex, int columnIndex) {
             if (rowIndex == rentalClasses.size()) {
                 if (columnIndex == 0) return "Total:";
-                if (columnIndex == 1) return hoursSummary.getOverall();
-                if (columnIndex == 2) return profitSummary.getOverall();
+                if (columnIndex == 1) return statistics.getOverallEarnings();
+                if (columnIndex == 2) return statistics.getOverallUtilization();
             } else {
                 String className = rentalClasses.get(rowIndex);
                 if (columnIndex == 0) return className;
-                if (columnIndex == 1) return hoursSummary.getPerClass().get(className);
-                if (columnIndex == 2) return profitSummary.getPerClass().get(className);
+                if (columnIndex == 1) return statistics.getEarningsPerClass().getValueFor(className);
+                if (columnIndex == 2) return statistics.getUtilizationPerClass().getValueFor(className);
             }
             throw new IllegalArgumentException("?? " + rowIndex + " , " + columnIndex);
         }
@@ -129,6 +134,12 @@ public class RentalHistoryStatisticsView implements Consumer<RentalHistory.Stati
         @Override
         public String getColumnName(int column) {
             return COLUMNS[column];
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            if (columnIndex == 0) return String.class;
+            return Double.class;
         }
     }
 }

@@ -28,4 +28,12 @@ public class MockFleetService implements FleetService {
     private Predicate<Car> registration(Car newCar) {
         return car -> car.getRegistration().equals(newCar.getRegistration());
     }
+
+    public int fleetSize() {
+        return fleet.size();
+    }
+
+    public long countOf(String rentalClass) {
+        return fleet.stream().filter(c -> c.isOfClass(rentalClass)).count();
+    }
 }

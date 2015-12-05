@@ -1,5 +1,6 @@
 package common.domain;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 
 public class HistoricalRental {
@@ -39,11 +40,23 @@ public class HistoricalRental {
         return car.getModel();
     }
 
+    public String getRentalClassName() {
+        return car.getRentalClassName();
+    }
+
     public String getClientName() {
         return client.getName();
     }
 
     public String getClientEmail() {
         return client.getEmail();
+    }
+
+    public Duration getDuration() {
+        return Duration.between(getStart(), getEnd());
+    }
+
+    public double getHourlyRate() {
+        return car.getHourlyRate();
     }
 }
