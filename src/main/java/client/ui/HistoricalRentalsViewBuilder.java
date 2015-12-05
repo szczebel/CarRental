@@ -1,5 +1,6 @@
 package client.ui;
 
+import common.domain.RentalHistory;
 import common.service.HistoryService;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +28,16 @@ public class HistoricalRentalsViewBuilder {
         HistoricalRentalsModel model = new HistoricalRentalsModel();
         ScheduleView<CarInfo, HistoricalRentalAdapter> chart = createChart(model);
         JTable table = createTable(model);
+        JTextArea statisticsView = new JTextArea("no data");
+        statisticsView.setEditable(false);
 
         return borderLayout()
-                .north(buildToolbar(model))
+                .north(buildToolbar(model, statisticsView))
                 .center(
                         tabbedPane(SwingUtilities.BOTTOM)
                         .addTab("Table", inScrollPane(table))
                         .addTab("Chart", chart.getComponent())
+                        .addTab("Statistics", inScrollPane(statisticsView))
                         .build()
                 )
                 .build();
@@ -54,7 +58,7 @@ public class HistoricalRentalsViewBuilder {
         return chart;
     }
 
-    private JComponent buildToolbar(HistoricalRentalsModel model) {
+    private JComponent buildToolbar(HistoricalRentalsModel model, JTextArea statisticsView) {
         UtilDateModel start = new UtilDateModel(Date.from(ZonedDateTime.now().minusDays(30).toInstant()));
         UtilDateModel end = new UtilDateModel(Date.from(ZonedDateTime.now().toInstant()));
 
@@ -63,19 +67,23 @@ public class HistoricalRentalsViewBuilder {
                 datePicker(start),
                 label("to:"),
                 datePicker(end),
-                button("Search", () -> searchClicked(start, end, model))
+                button("Search", () -> searchClicked(start, end, model, statisticsView))
         );
     }
 
-    private void searchClicked(UtilDateModel start, UtilDateModel end, HistoricalRentalsModel model) {
+    private void searchClicked(UtilDateModel start, UtilDateModel end, HistoricalRentalsModel model, JTextArea statisticsView) {
         HistoryService.Query query = new HistoryService.Query(
                 ZonedDateTime.ofInstant(start.getValue().toInstant(), ZoneId.systemDefault()),
                 ZonedDateTime.ofInstant(end.getValue().toInstant(), ZoneId.systemDefault())
         );
         BackgroundOperation.execute(
                 () -> historyService.fetchHistory(query),
-                model::setData
+                result -> {model.setData(result.getRecords());statisticsView.setText(asString(result.getStatistics()));}
         );
+    }
+
+    private String asString(RentalHistory.Statistics statistics) {
+        return "got some data";
     }
 
     private static class CarInfoRenderer extends ResourceRenderer.Default<CarInfo> {

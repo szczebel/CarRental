@@ -2,14 +2,14 @@ package common.service;
 
 
 import common.domain.HistoricalRental;
+import common.domain.RentalHistory;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.function.Predicate;
 
 public interface HistoryService {
 
-    List<HistoricalRental> fetchHistory(Query query);
+    RentalHistory fetchHistory(Query query);
 
     class Query implements Predicate<HistoricalRental> {
         final ZonedDateTime start;

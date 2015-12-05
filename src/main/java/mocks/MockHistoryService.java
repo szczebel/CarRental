@@ -1,6 +1,7 @@
 package mocks;
 
 import common.domain.HistoricalRental;
+import common.domain.RentalHistory;
 import common.service.HistoryService;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +19,12 @@ public class MockHistoryService implements HistoryService {
     }
 
     @Override
-    public List<HistoricalRental> fetchHistory(Query query) {
-        return records.stream().filter(query).collect(Collectors.toList());
+    public RentalHistory fetchHistory(Query query) {
+        List<HistoricalRental> filtered = records.stream().filter(query).collect(Collectors.toList());
+        return new RentalHistory(filtered, calculateStatistics(filtered));
+    }
+
+    private RentalHistory.Statistics calculateStatistics(List<HistoricalRental> rentals) {
+        return new RentalHistory.Statistics();
     }
 }
