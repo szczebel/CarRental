@@ -14,6 +14,7 @@ public class MainFrameBuilder {
 
     @Autowired TestService testService;
     @Autowired FleetViewBuilder fleetViewBuilder;
+    @Autowired RentalClassViewBuilder rentalClassViewBuilder;
     @Autowired ClientListViewBuilder clientListViewBuilder;
     @Autowired AvailableCarsViewBuilder availableCarsViewBuilder;
     @Autowired CurrentRentalsViewBuilder currentRentalsViewBuilder;
@@ -37,6 +38,7 @@ public class MainFrameBuilder {
                 .addTab("Current rentals",  currentRentalsViewBuilder.build())
                 .addTab("Rental history",   historicalRentalsViewBuilder.build())
                 .addTab("Fleet",            fleetViewBuilder.build())
+                .addTab("Rental class",     rentalClassViewBuilder.build())
                 .addTab("Clients",          clientListViewBuilder.build())
                 .addTab("Other",            createOther(frame))
                 .build();

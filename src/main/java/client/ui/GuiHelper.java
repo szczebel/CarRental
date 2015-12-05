@@ -86,6 +86,7 @@ public class GuiHelper {
         }
     }
 
+    @SuppressWarnings("unused")
     public static class BorderLayoutBuilder {
         private final JPanel panel = new JPanel(new BorderLayout());
 

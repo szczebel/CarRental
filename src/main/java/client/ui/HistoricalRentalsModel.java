@@ -1,7 +1,7 @@
 package client.ui;
 
 import common.domain.HistoricalRental;
-import schedule.model.BasicScheduleModel;
+import schedule.basic.BasicScheduleModel;
 import schedule.model.Resource;
 import schedule.model.ScheduleModel;
 import schedule.model.Task;
@@ -23,7 +23,7 @@ class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel
 
     void setData(List<HistoricalRental> history) {
         this.history = history;
-        delegate.clear();
+        delegate.clearAllData();
         delegate.addResources(history.stream().map(CarInfo::new).collect(Collectors.toSet()));
         history.forEach(hr -> delegate.assign(new CarInfo(hr), new HistoricalRentalAdapter(hr)));
         fireTableStructureChanged();

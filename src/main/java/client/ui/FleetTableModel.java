@@ -6,9 +6,9 @@ import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-class CarsTableModel extends AbstractTableModel {
+class FleetTableModel extends AbstractTableModel {
 
-    final static String[] COLUMN = {"Registration", "Model"};
+    final static String[] COLUMN = {"Registration", "Model", "Class"};
     private List<Car> fleet = new ArrayList<>();
 
     void setData(List<Car> fleet) {
@@ -36,6 +36,7 @@ class CarsTableModel extends AbstractTableModel {
         Car car = fleet.get(rowIndex);
         if (columnIndex == 0) return car.getRegistration();
         if (columnIndex == 1) return car.getModel();
+        if (columnIndex == 2) return car.getRentalClassName();
         throw new IllegalArgumentException("Unknown column index : " + columnIndex);
     }
 

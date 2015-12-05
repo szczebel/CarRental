@@ -3,10 +3,10 @@ package client.ui;
 import common.service.HistoryService;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import schedule.chart.ResourceRenderer;
-import schedule.chart.ScheduleChart;
-import schedule.chart.TaskRenderer;
-import schedule.interaction.Tooltips;
+import schedule.interaction.InstantTooltips;
+import schedule.view.ResourceRenderer;
+import schedule.view.ScheduleView;
+import schedule.view.TaskRenderer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +25,7 @@ public class HistoricalRentalsViewBuilder {
 
     public JComponent build() {
         HistoricalRentalsModel model = new HistoricalRentalsModel();
-        ScheduleChart<CarInfo, HistoricalRentalAdapter> chart = createChart(model);
+        ScheduleView<CarInfo, HistoricalRentalAdapter> chart = createChart(model);
         JTable table = createTable(model);
 
         return borderLayout()
@@ -46,11 +46,11 @@ public class HistoricalRentalsViewBuilder {
         return table;
     }
 
-    private ScheduleChart<CarInfo, HistoricalRentalAdapter> createChart(HistoricalRentalsModel tableModel) {
-        ScheduleChart<CarInfo, HistoricalRentalAdapter> chart = new ScheduleChart<>(tableModel);
+    private ScheduleView<CarInfo, HistoricalRentalAdapter> createChart(HistoricalRentalsModel tableModel) {
+        ScheduleView<CarInfo, HistoricalRentalAdapter> chart = new ScheduleView<>(tableModel);
         chart.setTaskRenderer(new HistoricalRentalRenderer());
         chart.setResourceRenderer(new CarInfoRenderer());
-        chart.setInteractions(Tooltips.with(new HistoricalRentalTooltipRenderer()));
+        chart.setMouseInteractions(InstantTooltips.renderWith(new HistoricalRentalTooltipRenderer()));
         return chart;
     }
 

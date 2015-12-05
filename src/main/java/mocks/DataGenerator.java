@@ -3,6 +3,7 @@ package mocks;
 import common.domain.Car;
 import common.domain.Client;
 import common.domain.CurrentRental;
+import common.domain.RentalClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +12,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Random;
 
 @Component
@@ -18,6 +20,8 @@ public class DataGenerator {
 
     @Autowired
     MockFleetService fleetService;
+    @Autowired
+    MockRentalClassService rentalClassService;
     @Autowired
     MockClientService clientService;
     @Autowired
@@ -28,15 +32,32 @@ public class DataGenerator {
     @PostConstruct
     public void generate() throws Exception {
         System.out.println("Generating data...");
+        generateClasses();
         generateFleet();
         generateClients();
         generateBetterRentalData();
     }
 
+    private void generateClasses() {
+        rentalClassService.create(new RentalClass("Economy", 5));
+        rentalClassService.create(new RentalClass("Intermediate", 6));
+        rentalClassService.create(new RentalClass("Fullsize", 7));
+        rentalClassService.create(new RentalClass("SUV", 8));
+        rentalClassService.create(new RentalClass("Elite", 10));
+    }
+
     private void generateFleet() {
         String[] models = {"Ford Mondeo", "Fiat Multipla", "Lexus", "Mercedes S", "Peugeot 307", "Renault Safrane", "Mazda 6", "Volvo XC60"};
+        List<RentalClass> rentalClasses = rentalClassService.fetchAll();
         for (int i = 100; i <= 150; i++) {
-            fleetService.create(new Car(models[random.nextInt(models.length)], 1000 + random.nextInt(9000) + "KHZ" + i));
+            fleetService.create(
+                    new Car(
+                            models[random.nextInt(models.length)],
+                            1000 + random.nextInt(9000) + "KHZ" + i,
+                            rentalClasses.get(random.nextInt(rentalClasses.size())
+                            )
+                    )
+            );
         }
     }
 
