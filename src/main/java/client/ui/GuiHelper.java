@@ -69,6 +69,12 @@ public class GuiHelper {
         return new TabsBuilder(tabPlacement);
     }
 
+    public static JComponent grid(int rows, int columns, JComponent... components) {
+        JPanel panel = new JPanel(new GridLayout(rows, columns));
+        Arrays.asList(components).forEach(panel::add);
+        return panel;
+    }
+
     public static class TabsBuilder {
         private final JTabbedPane tabs;
 

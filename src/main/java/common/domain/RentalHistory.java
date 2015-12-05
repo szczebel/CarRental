@@ -1,7 +1,7 @@
 package common.domain;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,16 +25,57 @@ public class RentalHistory {
     }
 
     public static class Statistics {
-        DataPoint summary;
-        Map<LocalDate, DataPoint> series;
-        Map<DayOfWeek, DataPoint> dailyAverages;
+        final DataPoint hoursSummary;
+        final DataPoint profitSummary;
+
+        Map<DayOfWeek, DataPoint> dayOfWeekHoursAverages = new HashMap<>();
+        Map<DayOfWeek, DataPoint> dayOfWeekProfitAverages = new HashMap<>();
+
+        public Statistics(List<RentalClass> classes) {
+            hoursSummary = new DataPoint(classes);
+            profitSummary = new DataPoint(classes);
+            Arrays.asList(DayOfWeek.values()).forEach(
+                    dow -> {
+                        dayOfWeekHoursAverages.put(dow, new DataPoint(classes));
+                        dayOfWeekProfitAverages.put(dow, new DataPoint(classes));
+                    }
+            );
+        }
+
+        public DataPoint getHoursSummary() {
+            return hoursSummary;
+        }
+
+        public DataPoint getProfitSummary() {
+            return profitSummary;
+        }
+
+        public Map<DayOfWeek, DataPoint> getDayOfWeekHoursAverages() {
+            return dayOfWeekHoursAverages;
+        }
+
+        public Map<DayOfWeek, DataPoint> getDayOfWeekProfitAverages() {
+            return dayOfWeekProfitAverages;
+        }
     }
 
     public static class DataPoint {
-        double rentHoursTotal;
-        Map<String, Double> rentHoursPerClass = new HashMap<>();
+        double overall;
+        Map<String, Double> perClass = new HashMap<>();
 
-        double rentProfitTotal;
-        Map<String, Double> rentProfitPerClass = new HashMap<>();
+
+        public DataPoint(List<RentalClass> classes) {
+            classes.forEach(c -> {
+                perClass.put(c.getName(), 0d);
+            });
+        }
+
+        public double getOverall() {
+            return overall;
+        }
+
+        public Map<String, Double> getPerClass() {
+            return perClass;
+        }
     }
 }

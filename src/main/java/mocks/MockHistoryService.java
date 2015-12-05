@@ -3,6 +3,7 @@ package mocks;
 import common.domain.HistoricalRental;
 import common.domain.RentalHistory;
 import common.service.HistoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -11,6 +12,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class MockHistoryService implements HistoryService {
+
+    @Autowired MockRentalClassService rentalClassService;
 
     private List<HistoricalRental> records = new ArrayList<>();
 
@@ -25,6 +28,10 @@ public class MockHistoryService implements HistoryService {
     }
 
     private RentalHistory.Statistics calculateStatistics(List<HistoricalRental> rentals) {
-        return new RentalHistory.Statistics();
+        RentalHistory.Statistics statistics = new RentalHistory.Statistics(rentalClassService.fetchAll());
+        //rentals.forEach();
+
+        return statistics;
     }
+
 }

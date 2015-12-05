@@ -16,29 +16,30 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.function.Consumer;
 
 import static client.ui.GuiHelper.*;
 
 @org.springframework.stereotype.Component
 public class HistoricalRentalsViewBuilder {
 
-    @Autowired HistoryService historyService;
+    @Autowired
+    HistoryService historyService;
 
     public JComponent build() {
         HistoricalRentalsModel model = new HistoricalRentalsModel();
         ScheduleView<CarInfo, HistoricalRentalAdapter> chart = createChart(model);
         JTable table = createTable(model);
-        JTextArea statisticsView = new JTextArea("no data");
-        statisticsView.setEditable(false);
+        RentalHistoryStatisticsView statisticsView = new RentalHistoryStatisticsView();
 
         return borderLayout()
                 .north(buildToolbar(model, statisticsView))
                 .center(
                         tabbedPane(SwingUtilities.BOTTOM)
-                        .addTab("Table", inScrollPane(table))
-                        .addTab("Chart", chart.getComponent())
-                        .addTab("Statistics", inScrollPane(statisticsView))
-                        .build()
+                                .addTab("Table", inScrollPane(table))
+                                .addTab("Chart", chart.getComponent())
+                                .addTab("Statistics", statisticsView.getComponent())
+                                .build()
                 )
                 .build();
     }
@@ -58,7 +59,7 @@ public class HistoricalRentalsViewBuilder {
         return chart;
     }
 
-    private JComponent buildToolbar(HistoricalRentalsModel model, JTextArea statisticsView) {
+    private JComponent buildToolbar(HistoricalRentalsModel model, Consumer<RentalHistory.Statistics> statisticsConsumer) {
         UtilDateModel start = new UtilDateModel(Date.from(ZonedDateTime.now().minusDays(30).toInstant()));
         UtilDateModel end = new UtilDateModel(Date.from(ZonedDateTime.now().toInstant()));
 
@@ -67,23 +68,22 @@ public class HistoricalRentalsViewBuilder {
                 datePicker(start),
                 label("to:"),
                 datePicker(end),
-                button("Search", () -> searchClicked(start, end, model, statisticsView))
+                button("Search", () -> searchClicked(start, end, model, statisticsConsumer))
         );
     }
 
-    private void searchClicked(UtilDateModel start, UtilDateModel end, HistoricalRentalsModel model, JTextArea statisticsView) {
+    private void searchClicked(UtilDateModel start, UtilDateModel end, HistoricalRentalsModel model, Consumer<RentalHistory.Statistics> statisticsConsumer) {
         HistoryService.Query query = new HistoryService.Query(
                 ZonedDateTime.ofInstant(start.getValue().toInstant(), ZoneId.systemDefault()),
                 ZonedDateTime.ofInstant(end.getValue().toInstant(), ZoneId.systemDefault())
         );
         BackgroundOperation.execute(
                 () -> historyService.fetchHistory(query),
-                result -> {model.setData(result.getRecords());statisticsView.setText(asString(result.getStatistics()));}
+                result -> {
+                    model.setData(result.getRecords());
+                    statisticsConsumer.accept(result.getStatistics());
+                }
         );
-    }
-
-    private String asString(RentalHistory.Statistics statistics) {
-        return "got some data";
     }
 
     private static class CarInfoRenderer extends ResourceRenderer.Default<CarInfo> {
