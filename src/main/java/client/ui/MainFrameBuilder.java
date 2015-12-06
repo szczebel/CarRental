@@ -1,5 +1,6 @@
 package client.ui;
 
+import client.ui.history.HistoricalRentalsViewBuilder;
 import client.ui.util.BackgroundOperation;
 import common.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,8 @@ public class MainFrameBuilder {
     @Autowired ClientListViewBuilder clientListViewBuilder;
     @Autowired AvailableCarsViewBuilder availableCarsViewBuilder;
     @Autowired CurrentRentalsViewBuilder currentRentalsViewBuilder;
-    @Autowired HistoricalRentalsViewBuilder historicalRentalsViewBuilder;
+    @Autowired
+    HistoricalRentalsViewBuilder historicalRentalsViewBuilder;
 
     @SuppressWarnings("unused")
     @PostConstruct

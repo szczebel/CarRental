@@ -17,8 +17,8 @@ public class MockAvailabilityService implements AvailabilityService {
     MockRentalService mockRentalService;
 
     @Override
-    public List<Car> findAvailableCars(RentalClass selectedItem) {
-        return mockFleetService.fetchAll().stream().filter(car -> ofClass(car, selectedItem)).filter(mockRentalService::isAvailable).collect(Collectors.toList());
+    public List<Car> findAvailableCars(Query quaey) {
+        return mockFleetService.fetchAll().stream().filter(car -> ofClass(car, quaey.getRentalClass())).filter(mockRentalService::isAvailable).collect(Collectors.toList());
     }
 
     private boolean ofClass(Car car, RentalClass requiredClass) {

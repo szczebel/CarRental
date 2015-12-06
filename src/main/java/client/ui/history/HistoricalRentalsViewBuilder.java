@@ -1,4 +1,4 @@
-package client.ui;
+package client.ui.history;
 
 import client.ui.interval.IntervalEditor;
 import client.ui.util.BackgroundOperation;
@@ -13,7 +13,6 @@ import schedule.view.TaskRenderer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,7 +33,7 @@ public class HistoricalRentalsViewBuilder {
         RentalHistoryStatisticsView statisticsView = new RentalHistoryStatisticsView();
 
         return borderLayout()
-                .north(buildToolbar(model, statisticsView))
+                .north(buildToolbar(model, statisticsView.asConsumer()))
                 .center(
                         tabbedPane(SwingUtilities.BOTTOM)
                                 .addTab("Table", inScrollPane(createTable(model)))
@@ -64,14 +63,13 @@ public class HistoricalRentalsViewBuilder {
         IntervalEditor intervalEditor = new IntervalEditor(new Interval(ZonedDateTime.now().minusDays(30), ZonedDateTime.now()));
 
         return toolbar(
-                button("Change criteria", e -> showCriteriaPopup(e, intervalEditor)),
-                button("Refresh", () -> searchClicked(intervalEditor, model, statisticsConsumer))
+                button("Change criteria", e -> {
+                            JOptionPane.showMessageDialog((Component) e.getSource(), intervalEditor.getComponent(), "Change search criteria", JOptionPane.PLAIN_MESSAGE);
+                            searchClicked(intervalEditor.asProvider(), model, statisticsConsumer);
+                        }
+                ),
+                button("Refresh", () -> searchClicked(intervalEditor.asProvider(), model, statisticsConsumer))
         );
-    }
-
-    private void showCriteriaPopup(ActionEvent e, IntervalEditor intervalEditor) {
-        Component owner = (Component) e.getSource();
-        JOptionPane.showMessageDialog(owner, intervalEditor.getComponent(), "Change search criteria", JOptionPane.PLAIN_MESSAGE);
     }
 
     private void searchClicked(Supplier<Interval> intervalSupplier, Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer) {

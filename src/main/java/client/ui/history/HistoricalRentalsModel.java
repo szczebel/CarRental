@@ -1,4 +1,4 @@
-package client.ui;
+package client.ui.history;
 
 import common.domain.Car;
 import common.domain.HistoricalRental;

@@ -1,4 +1,4 @@
-package client.ui;
+package client.ui.history;
 
 import client.ui.util.GuiHelper;
 import common.domain.RentalClass;
@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 import static client.ui.util.GuiHelper.grid;
 import static client.ui.util.GuiHelper.inScrollPane;
 
-public class RentalHistoryStatisticsView implements Consumer<RentalHistory.Statistics> {
+public class RentalHistoryStatisticsView {
 
     JComponent component;
     SummaryStatsTableModel summaryStatsTableModel = new SummaryStatsTableModel();
@@ -36,8 +36,12 @@ public class RentalHistoryStatisticsView implements Consumer<RentalHistory.Stati
         return table;
     }
 
-    @Override
-    public void accept(RentalHistory.Statistics statistics) {
+
+    Consumer<RentalHistory.Statistics> asConsumer() {
+        return this::setData;
+    }
+
+    void setData(RentalHistory.Statistics statistics) {
         summaryStatsTableModel.setData(statistics);
         utilizationPerDayOfWeek.setData(statistics.getUtilizationPerDayOfWeek());
     }

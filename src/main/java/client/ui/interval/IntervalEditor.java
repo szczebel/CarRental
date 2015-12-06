@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 import static client.ui.util.GuiHelper.*;
 import static common.util.TimeUtils.toMidnight;
 
-public class IntervalEditor implements Supplier<Interval> {
+public class IntervalEditor {
 
     UtilDateModel from;
     UtilDateModel to;
@@ -46,8 +46,7 @@ public class IntervalEditor implements Supplier<Interval> {
         );
     }
 
-    @Override
-    public Interval get() {
-        return getInterval();
+    public Supplier<Interval> asProvider() {
+        return this::getInterval;
     }
 }
