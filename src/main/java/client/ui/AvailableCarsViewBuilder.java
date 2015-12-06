@@ -1,5 +1,6 @@
 package client.ui;
 
+import client.ui.util.BackgroundOperation;
 import common.domain.Car;
 import common.domain.Client;
 import common.domain.RentalClass;

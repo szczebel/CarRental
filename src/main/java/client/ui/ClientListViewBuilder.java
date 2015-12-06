@@ -1,5 +1,6 @@
 package client.ui;
 
+import client.ui.util.BackgroundOperation;
 import common.domain.Client;
 import common.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;

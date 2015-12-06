@@ -1,6 +1,7 @@
 package client.ui;
 
 import client.ui.interval.IntervalEditor;
+import client.ui.util.BackgroundOperation;
 import common.domain.RentalHistory;
 import common.service.HistoryService;
 import common.util.Interval;

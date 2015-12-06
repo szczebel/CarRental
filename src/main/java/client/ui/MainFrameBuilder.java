@@ -1,5 +1,6 @@
 package client.ui;
 
+import client.ui.util.BackgroundOperation;
 import common.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

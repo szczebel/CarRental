@@ -1,5 +1,6 @@
 package client.ui;
 
+import client.ui.util.BackgroundOperation;
 import common.domain.CurrentRental;
 import common.service.RentalService;
 import org.springframework.beans.factory.annotation.Autowired;

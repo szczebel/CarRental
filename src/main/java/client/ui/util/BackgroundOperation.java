@@ -1,4 +1,4 @@
-package client.ui;
+package client.ui.util;
 
 import javax.swing.*;
 import java.util.concurrent.Callable;
