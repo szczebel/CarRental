@@ -1,19 +1,19 @@
 package common.domain;
 
+import common.util.Interval;
+
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
 public class HistoricalRental {
     private final Car car;
     private final Client client;
-    private final ZonedDateTime start;
-    private final ZonedDateTime end;
+    private final Interval interval;
 
     public HistoricalRental(CurrentRental currentRental, ZonedDateTime end) {
         this.car = currentRental.getCar();
         this.client = currentRental.getClient();
-        this.start = currentRental.getStart();
-        this.end = end;
+        this.interval = new Interval(currentRental.getStart(), end);
     }
 
     Car getCar() {
@@ -24,12 +24,16 @@ public class HistoricalRental {
         return client;
     }
 
+    public Interval getInterval() {
+        return interval;
+    }
+
     public ZonedDateTime getStart() {
-        return start;
+        return interval.from();
     }
 
     public ZonedDateTime getEnd() {
-        return end;
+        return interval.to();
     }
 
     public String getRegistration() {

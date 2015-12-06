@@ -13,33 +13,23 @@ public interface HistoryService {
     RentalHistory fetchHistory(Query query);
 
     class Query implements Predicate<HistoricalRental> {
-        final ZonedDateTime start;
-        final ZonedDateTime end;
-
-        public Query(ZonedDateTime start, ZonedDateTime end) {
-            this.start = start;
-            this.end = end;
-        }
+        final Interval interval;
 
         public Query(Interval interval) {
-            this.start = interval.from();
-            this.end = interval.to();
+            this.interval = interval;
         }
 
         public ZonedDateTime getStart() {
-            return start;
+            return interval.from();
         }
 
         public ZonedDateTime getEnd() {
-            return end;
+            return interval.to();
         }
 
-        @SuppressWarnings("RedundantIfStatement")
         @Override
         public boolean test(HistoricalRental historicalRental) {
-            if (historicalRental.getEnd().isBefore(start)) return false;
-            if (historicalRental.getStart().isAfter(end)) return false;
-            return true;
+            return interval.overlaps(historicalRental.getInterval());
         }
     }
 }
