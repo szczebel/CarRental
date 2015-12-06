@@ -42,8 +42,8 @@ public class AvailableCarsViewBuilder {
         return borderLayout()
                 .north(
                         toolbar(
-                                button("Change criteria", e -> {
-                                            JOptionPane.showMessageDialog((java.awt.Component) e.getSource(), availabilityQueryEditor.getComponent(), "Change search criteria", JOptionPane.PLAIN_MESSAGE);
+                                button("Search...", e -> {
+                                            JOptionPane.showMessageDialog((java.awt.Component) e.getSource(), availabilityQueryEditor.getComponent(), "Search for available cars...", JOptionPane.PLAIN_MESSAGE);
                                             refresh(tableModel, availabilityQueryEditor.asSupplier());
                                         }
                                 ),
