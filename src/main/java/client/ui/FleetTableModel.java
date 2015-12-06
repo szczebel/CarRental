@@ -13,7 +13,7 @@ class FleetTableModel extends AbstractTableModel {
 
     void setData(List<Car> fleet) {
         this.fleet = fleet;
-        fireTableStructureChanged();
+        fireTableDataChanged();
     }
 
     @Override

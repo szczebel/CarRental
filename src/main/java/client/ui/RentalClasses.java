@@ -20,7 +20,7 @@ class RentalClasses extends AbstractTableModel {
         comboBoxModel.removeAllElements();
         comboBoxModel.addElement(null);
         data.forEach(comboBoxModel::addElement);
-        fireTableStructureChanged();
+        fireTableDataChanged();
     }
 
     @Override

@@ -13,7 +13,7 @@ class ClientListTableModel extends AbstractTableModel {
 
     void setData(List<Client> clients) {
         this.clients = clients;
-        fireTableStructureChanged();
+        fireTableDataChanged();
     }
 
     @Override

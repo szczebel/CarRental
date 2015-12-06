@@ -2,12 +2,13 @@ package client.ui.history;
 
 import client.ui.interval.IntervalEditor;
 import client.ui.util.BackgroundOperation;
+import client.ui.util.CarResource;
+import client.ui.util.CarResourceRenderer;
 import common.domain.RentalHistory;
 import common.service.HistoryService;
 import common.util.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import schedule.interaction.InstantTooltips;
-import schedule.view.ResourceRenderer;
 import schedule.view.ScheduleView;
 import schedule.view.TaskRenderer;
 
@@ -29,11 +30,11 @@ public class HistoricalRentalsViewBuilder {
 
     public JComponent build() {
         HistoricalRentalsModel model = new HistoricalRentalsModel();
-        ScheduleView<CarInfo, HistoricalRentalAdapter> chart = createChart(model);
+        ScheduleView<CarResource, HistoricalRentalsModel.HistoricalRentalAsTask> chart = createChart(model);
         RentalHistoryStatisticsView statisticsView = new RentalHistoryStatisticsView();
 
         return borderLayout()
-                .north(buildToolbar(model, statisticsView.asConsumer()))
+                .north(buildToolbar(model.asConsumer(), statisticsView.asConsumer()))
                 .center(
                         tabbedPane(SwingUtilities.BOTTOM)
                                 .addTab("Table", inScrollPane(createTable(model)))
@@ -51,10 +52,10 @@ public class HistoricalRentalsViewBuilder {
         return table;
     }
 
-    private ScheduleView<CarInfo, HistoricalRentalAdapter> createChart(HistoricalRentalsModel tableModel) {
-        ScheduleView<CarInfo, HistoricalRentalAdapter> chart = new ScheduleView<>(tableModel);
+    private ScheduleView<CarResource, HistoricalRentalsModel.HistoricalRentalAsTask> createChart(HistoricalRentalsModel tableModel) {
+        ScheduleView<CarResource, HistoricalRentalsModel.HistoricalRentalAsTask> chart = new ScheduleView<>(tableModel);
         chart.setTaskRenderer(new HistoricalRentalRenderer());
-        chart.setResourceRenderer(new CarInfoRenderer());
+        chart.setResourceRenderer(new CarResourceRenderer());
         chart.setMouseInteractions(InstantTooltips.renderWith(new HistoricalRentalTooltipRenderer()));
         return chart;
     }
@@ -73,11 +74,8 @@ public class HistoricalRentalsViewBuilder {
     }
 
     private void searchClicked(Supplier<Interval> intervalSupplier, Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer) {
-        HistoryService.Query query = new HistoryService.Query(
-                intervalSupplier.get()
-        );
         BackgroundOperation.execute(
-                () -> historyService.fetchHistory(query),
+                () -> historyService.fetchHistory(new HistoryService.Query(intervalSupplier.get())),
                 result -> {
                     model.accept(result);
                     statisticsConsumer.accept(result.getStatistics());
@@ -85,28 +83,21 @@ public class HistoricalRentalsViewBuilder {
         );
     }
 
-    private static class CarInfoRenderer extends ResourceRenderer.Default<CarInfo> {
-        @Override
-        protected String getTextFromResource(CarInfo resource) {
-            return resource.registration + " , " + resource.model;
-        }
-    }
-
-    private static class HistoricalRentalRenderer extends TaskRenderer.Default<HistoricalRentalAdapter> {
+    private static class HistoricalRentalRenderer extends TaskRenderer.Default<HistoricalRentalsModel.HistoricalRentalAsTask> {
         public HistoricalRentalRenderer() {
             setBackground(Color.pink);
             setOpaque(true);
         }
 
         @Override
-        protected String getTextFromTask(HistoricalRentalAdapter event) {
+        protected String getTextFromTask(HistoricalRentalsModel.HistoricalRentalAsTask event) {
             return event.historicalRental.getClientName();
         }
     }
 
-    private static class HistoricalRentalTooltipRenderer extends TaskRenderer.Default<HistoricalRentalAdapter> {
+    private static class HistoricalRentalTooltipRenderer extends TaskRenderer.Default<HistoricalRentalsModel.HistoricalRentalAsTask> {
         @Override
-        protected String getTextFromTask(HistoricalRentalAdapter event) {
+        protected String getTextFromTask(HistoricalRentalsModel.HistoricalRentalAsTask event) {
             return "<html>" + event.historicalRental.getClientName() +
                     "<p>" + event.historicalRental.getClientEmail() +
                     "<p>" + event.historicalRental.getModel();

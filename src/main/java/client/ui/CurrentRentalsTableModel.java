@@ -14,7 +14,7 @@ class CurrentRentalsTableModel extends AbstractTableModel {
 
     void setData(List<CurrentRental> fleet) {
         this.currentRentals = fleet;
-        fireTableStructureChanged();
+        fireTableDataChanged();
     }
 
     @Override

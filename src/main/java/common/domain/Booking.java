@@ -2,6 +2,8 @@ package common.domain;
 
 import common.util.Interval;
 
+import java.time.ZonedDateTime;
+
 public class Booking {
     private final Car car;
     private final Client client;
@@ -39,5 +41,13 @@ public class Booking {
 
     public String getClientEmail() {
         return client.getEmail();
+    }
+
+    public ZonedDateTime getStart() {
+        return getInterval().from();
+    }
+
+    public ZonedDateTime getEnd() {
+        return getInterval().to();
     }
 }

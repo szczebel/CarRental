@@ -1,5 +1,6 @@
 package client.ui;
 
+import client.ui.booking.BookingsViewBuilder;
 import client.ui.history.HistoricalRentalsViewBuilder;
 import client.ui.util.BackgroundOperation;
 import common.service.TestService;
@@ -21,6 +22,7 @@ public class MainFrameBuilder {
     @Autowired MakeARentViewBuilder makeARentViewBuilder;
     @Autowired MakeABookingViewBuilder makeABookingViewBuilder;
     @Autowired CurrentRentalsViewBuilder currentRentalsViewBuilder;
+    @Autowired BookingsViewBuilder bookingsViewBuilder;
     @Autowired HistoricalRentalsViewBuilder historicalRentalsViewBuilder;
 
     @SuppressWarnings("unused")
@@ -37,14 +39,15 @@ public class MainFrameBuilder {
 
     JComponent createContent(JFrame frame) {
         return tabbedPane(SwingConstants.LEFT)
-                .addTab("Available to rent", makeARentViewBuilder.build())
-                .addTab("Available to book", makeABookingViewBuilder.build())
-                .addTab("Current rentals",  currentRentalsViewBuilder.build())
-                .addTab("Rental history",   historicalRentalsViewBuilder.build())
-                .addTab("Fleet",            fleetViewBuilder.build())
-                .addTab("Rental class",     rentalClassViewBuilder.build())
-                .addTab("Clients",          clientListViewBuilder.build())
-                .addTab("Other",            createOther(frame))
+                .addTab("Available to rent",    makeARentViewBuilder.build())
+                .addTab("Current rentals",      currentRentalsViewBuilder.build())
+                .addTab("Available to book",    makeABookingViewBuilder.build())
+                .addTab("Bookings",             bookingsViewBuilder.build())
+                .addTab("Rental history",       historicalRentalsViewBuilder.build())
+                .addTab("Fleet",                fleetViewBuilder.build())
+                .addTab("Rental class",         rentalClassViewBuilder.build())
+                .addTab("Clients",              clientListViewBuilder.build())
+                .addTab("Other",                createOther(frame))
                 .build();
     }
 
