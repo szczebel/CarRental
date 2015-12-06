@@ -1,5 +1,6 @@
 package client.ui;
 
+import client.ui.util.GuiHelper;
 import common.domain.RentalClass;
 import common.domain.RentalHistory;
 
@@ -11,8 +12,8 @@ import java.time.format.TextStyle;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static client.ui.GuiHelper.grid;
-import static client.ui.GuiHelper.inScrollPane;
+import static client.ui.util.GuiHelper.grid;
+import static client.ui.util.GuiHelper.inScrollPane;
 
 public class RentalHistoryStatisticsView implements Consumer<RentalHistory.Statistics> {
 
@@ -31,7 +32,7 @@ public class RentalHistoryStatisticsView implements Consumer<RentalHistory.Stati
 
     private JTable createTable(TableModel tableModel) {
         JTable table = new JTable(tableModel);
-        table.setDefaultRenderer(Double.class, GuiHelper.convertingRenderer(value -> String.format("%.2f", (double)value)));
+        table.setDefaultRenderer(Double.class, GuiHelper.convertingRenderer(value -> String.format("%.2f", (double) value)));
         return table;
     }
 

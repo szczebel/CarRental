@@ -1,4 +1,4 @@
-package client.ui;
+package client.ui.util;
 
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
@@ -12,14 +12,19 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
+import java.util.function.Consumer;
 
 public class GuiHelper {
 
     public static JButton button(String label, Runnable action) {
+        return button(label, e -> action.run());
+    }
+
+    public static JButton button(String label, Consumer<ActionEvent> action) {
         return new JButton(new AbstractAction(label) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                action.run();
+                action.accept(e);
             }
         });
     }
@@ -33,7 +38,11 @@ public class GuiHelper {
     }
 
     public static JComponent toolbar(JComponent... components) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+        return toolbar(FlowLayout.LEADING, components);
+    }
+
+    public static JComponent toolbar(int align, JComponent... components) {
+        JPanel panel = new JPanel(new FlowLayout(align));
         Arrays.asList(components).forEach(panel::add);
         return panel;
     }
@@ -52,7 +61,7 @@ public class GuiHelper {
         return new JScrollPane(scrollable);
     }
 
-    static TableCellRenderer convertingRenderer(Converter<Object, Object> converter) {
+    public static TableCellRenderer convertingRenderer(Converter<Object, Object> converter) {
         return new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {

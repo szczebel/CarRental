@@ -1,8 +1,9 @@
 package client.ui;
 
+import client.ui.interval.IntervalEditor;
 import common.domain.RentalHistory;
 import common.service.HistoryService;
-import net.sourceforge.jdatepicker.impl.UtilDateModel;
+import common.util.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import schedule.interaction.InstantTooltips;
 import schedule.view.ResourceRenderer;
@@ -11,20 +12,20 @@ import schedule.view.TaskRenderer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.time.Duration;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
-import static client.ui.GuiHelper.*;
-import static common.util.TimeUtils.toMidnight;
+import static client.ui.util.GuiHelper.*;
 
 @org.springframework.stereotype.Component
 public class HistoricalRentalsViewBuilder {
 
-    @Autowired HistoryService historyService;
+    @Autowired
+    HistoryService historyService;
 
     public JComponent build() {
         HistoricalRentalsModel model = new HistoricalRentalsModel();
@@ -59,23 +60,23 @@ public class HistoricalRentalsViewBuilder {
     }
 
     private JComponent buildToolbar(Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer) {
-        UtilDateModel start = new UtilDateModel(Date.from(ZonedDateTime.now().minusDays(30).toInstant()));
-        UtilDateModel end = new UtilDateModel(Date.from(ZonedDateTime.now().toInstant()));
+        IntervalEditor intervalEditor = new IntervalEditor(new Interval(ZonedDateTime.now().minusDays(30), ZonedDateTime.now()));
 
         return toolbar(
-                label("Find historical rentals from:"),
-                datePicker(start),
-                label("to:"),
-                datePicker(end),
-                button("Search", () -> searchClicked(start, end, model, statisticsConsumer))
+                button("Change criteria", e -> showCriteriaPopup(e, intervalEditor)),
+                button("Refresh", () -> searchClicked(intervalEditor, model, statisticsConsumer))
         );
     }
 
-    private void searchClicked(UtilDateModel start, UtilDateModel end, Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer) {
+    private void showCriteriaPopup(ActionEvent e, IntervalEditor intervalEditor) {
+        Component owner = (Component) e.getSource();
+        JOptionPane.showMessageDialog(owner, intervalEditor.getComponent(), "Change search criteria", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    private void searchClicked(Supplier<Interval> intervalSupplier, Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer) {
         HistoryService.Query query = new HistoryService.Query(
-                toMidnight(ZonedDateTime.ofInstant(start.getValue().toInstant(), ZoneId.systemDefault())),
-                toMidnight(ZonedDateTime.ofInstant(end.getValue().toInstant(), ZoneId.systemDefault()))
-                );
+                intervalSupplier.get()
+        );
         BackgroundOperation.execute(
                 () -> historyService.fetchHistory(query),
                 result -> {

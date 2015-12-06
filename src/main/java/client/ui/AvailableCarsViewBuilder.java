@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.swing.*;
 import java.util.List;
 
-import static client.ui.GuiHelper.*;
+import static client.ui.util.GuiHelper.*;
 
 @Component
 public class AvailableCarsViewBuilder {
@@ -30,13 +30,12 @@ public class AvailableCarsViewBuilder {
         JTable table = new JTable(tableModel);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        classChooser.addItemListener(e -> refresh(tableModel, (RentalClass) classChooser.getSelectedItem()));
-
         return borderLayout()
                 .north(
                         toolbar(
                                 label("Rental class:"),
                                 classChooser,
+                                button("Refresh", () -> refresh(tableModel, (RentalClass) classChooser.getSelectedItem())),
                                 button("Rent...", () -> rentClicked(table, tableModel, classChooser))
                         ))
                 .center(inScrollPane(table))

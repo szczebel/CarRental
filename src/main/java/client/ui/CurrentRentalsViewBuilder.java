@@ -10,7 +10,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static client.ui.GuiHelper.*;
+import static client.ui.util.GuiHelper.*;
 
 @Component
 public class CurrentRentalsViewBuilder {

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 
-import static client.ui.GuiHelper.*;
+import static client.ui.util.GuiHelper.*;
 
 @Component
 public class FleetViewBuilder {

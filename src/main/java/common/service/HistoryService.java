@@ -3,6 +3,7 @@ package common.service;
 
 import common.domain.HistoricalRental;
 import common.domain.RentalHistory;
+import common.util.Interval;
 
 import java.time.ZonedDateTime;
 import java.util.function.Predicate;
@@ -18,6 +19,11 @@ public interface HistoryService {
         public Query(ZonedDateTime start, ZonedDateTime end) {
             this.start = start;
             this.end = end;
+        }
+
+        public Query(Interval interval) {
+            this.start = interval.from();
+            this.end = interval.to();
         }
 
         public ZonedDateTime getStart() {
