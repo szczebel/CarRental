@@ -6,7 +6,7 @@ import common.util.Interval;
 
 import java.util.List;
 
-public interface AvailabilityService {
+public interface BookabilityService {
     List<Car> findAvailableCars(Query quaey);
 
     class Query {
@@ -20,6 +20,10 @@ public interface AvailabilityService {
 
         public RentalClass getRentalClass() {
             return rentalClass;
+        }
+
+        public Interval getInterval() {
+            return interval;
         }
     }
 }

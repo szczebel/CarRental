@@ -18,4 +18,10 @@ public class Interval {
     public ZonedDateTime to() {
         return to;
     }
+
+    public boolean overlaps(Interval that) {
+        if (that.to.isBefore(this.from)) return false;
+        if (that.from().isAfter(this.to)) return false;
+        return true;
+    }
 }

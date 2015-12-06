@@ -18,10 +18,10 @@ public class MainFrameBuilder {
     @Autowired FleetViewBuilder fleetViewBuilder;
     @Autowired RentalClassViewBuilder rentalClassViewBuilder;
     @Autowired ClientListViewBuilder clientListViewBuilder;
-    @Autowired AvailableCarsViewBuilder availableCarsViewBuilder;
+    @Autowired MakeARentViewBuilder makeARentViewBuilder;
+    @Autowired MakeABookingViewBuilder makeABookingViewBuilder;
     @Autowired CurrentRentalsViewBuilder currentRentalsViewBuilder;
-    @Autowired
-    HistoricalRentalsViewBuilder historicalRentalsViewBuilder;
+    @Autowired HistoricalRentalsViewBuilder historicalRentalsViewBuilder;
 
     @SuppressWarnings("unused")
     @PostConstruct
@@ -37,7 +37,8 @@ public class MainFrameBuilder {
 
     JComponent createContent(JFrame frame) {
         return tabbedPane(SwingConstants.LEFT)
-                .addTab("Available cars",   availableCarsViewBuilder.build())
+                .addTab("Available to rent", makeARentViewBuilder.build())
+                .addTab("Available to book", makeABookingViewBuilder.build())
                 .addTab("Current rentals",  currentRentalsViewBuilder.build())
                 .addTab("Rental history",   historicalRentalsViewBuilder.build())
                 .addTab("Fleet",            fleetViewBuilder.build())
