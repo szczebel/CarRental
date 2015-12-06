@@ -27,6 +27,7 @@ public class MakeABookingViewBuilder {
     @Autowired    ClientService clientService;
     @Autowired    RentalClasses rentalClasses;
 
+    //todo add schedule chart to visualize bookability?
     public JComponent build() {
         FleetTableModel tableModel = new FleetTableModel();
         AvailabilityQueryEditor availabilityQueryEditor = new AvailabilityQueryEditor(rentalClasses);
