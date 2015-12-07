@@ -1,6 +1,7 @@
 package client.ui.booking;
 
 import client.ui.util.CarResource;
+import client.ui.util.FleetCache;
 import common.domain.Booking;
 import schedule.basic.BasicScheduleModel;
 import schedule.model.ScheduleModel;
@@ -12,19 +13,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 class BookingsModel extends AbstractTableModel implements ScheduleModel<CarResource, BookingsModel.BookingAsTask> {
 
+    final FleetCache fleetCache;
     final static String[] COLUMN = {"Registration", "Model", "Client name", "Client email", "Start", "End"};
     private List<Booking> records = new ArrayList<>();
     private BasicScheduleModel<CarResource, BookingAsTask> delegate = new BasicScheduleModel<>();
     private Listener listener;
 
+    BookingsModel(FleetCache fleetCache) {
+        this.fleetCache = fleetCache;
+        delegate.addResources(fleetCache.getFleet().stream().map(CarResource::new).collect(Collectors.toSet()));
+    }
+
     void setData(Collection<Booking> bookings) {
         this.records.clear();
         this.records.addAll(bookings);//todo sort
         delegate.clearAllData();
-        //delegate.addResources(bookings.getFleet().stream().map(CarResource::new).collect(Collectors.toSet())); //todo show whole fleet, and merge with current rentals
+        delegate.addResources(fleetCache.getFleet().stream().map(CarResource::new).collect(Collectors.toSet()));
 
         records.forEach(hr -> delegate.assign(new CarResource(hr), new BookingAsTask(hr)));
         fireTableDataChanged();

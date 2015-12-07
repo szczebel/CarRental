@@ -1,6 +1,7 @@
 package client.ui.history;
 
 import client.ui.util.CarResource;
+import client.ui.util.FleetCache;
 import common.domain.HistoricalRental;
 import common.domain.RentalHistory;
 import schedule.basic.BasicScheduleModel;
@@ -19,9 +20,15 @@ import java.util.stream.Collectors;
 class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel<CarResource, HistoricalRentalsModel.HistoricalRentalAsTask> {
 
     final static String[] COLUMN = {"Registration", "Model", "Client name", "Client email", "Start", "End", "Duration"};
+    final FleetCache fleetCache;
     private List<HistoricalRental> records = new ArrayList<>();
     private BasicScheduleModel<CarResource, HistoricalRentalAsTask> delegate = new BasicScheduleModel<>();
     private ScheduleModel.Listener listener;
+
+    HistoricalRentalsModel(FleetCache fleetCache) {
+        this.fleetCache = fleetCache;
+        delegate.addResources(fleetCache.getFleet().stream().map(CarResource::new).collect(Collectors.toSet()));
+    }
 
     public Consumer<RentalHistory> asConsumer() {
         return this::setData;
@@ -30,7 +37,7 @@ class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel
     void setData(RentalHistory rentalHistory) {
         this.records = rentalHistory.getRecords();
         delegate.clearAllData();
-        delegate.addResources(rentalHistory.getFleet().stream().map(CarResource::new).collect(Collectors.toSet()));
+        delegate.addResources(fleetCache.getFleet().stream().map(CarResource::new).collect(Collectors.toSet()));
         records.forEach(hr -> delegate.assign(new CarResource(hr), new HistoricalRentalAsTask(hr)));
         fireTableDataChanged();
         listener.dataChanged();

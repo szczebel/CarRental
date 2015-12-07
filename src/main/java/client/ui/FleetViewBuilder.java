@@ -1,6 +1,7 @@
 package client.ui;
 
 import client.ui.util.BackgroundOperation;
+import client.ui.util.FleetCache;
 import common.domain.Car;
 import common.domain.RentalClass;
 import common.service.FleetService;
@@ -15,18 +16,19 @@ import static client.ui.util.GuiHelper.*;
 public class FleetViewBuilder {
 
     @Autowired FleetService fleetService;
+    @Autowired FleetCache fleetCache;
     @Autowired RentalClasses rentalClasses;
 
     public JComponent build() {
 
         FleetTableModel tableModel = new FleetTableModel();
-        refresh(tableModel);
+        tableModel.setData(fleetCache.getFleet());
         JTable table = new JTable(tableModel);
 
         return borderLayout()
                 .north(
                         toolbar(
-                                button("Refresh", () -> refresh(tableModel)),
+                                button("Refresh", () -> fleetCache.reload(tableModel::setData)),
                                 button("Add...", () -> addCarClicked(table, tableModel))
                         ))
                 .center(inScrollPane(table))
@@ -47,14 +49,7 @@ public class FleetViewBuilder {
         JOptionPane.showMessageDialog(panel, createDialogContent);
         BackgroundOperation.execute(
                 () -> fleetService.create(new Car(model.getText(), registration.getText(), (RentalClass) classChooser.getSelectedItem())),
-                () -> refresh(tableModel)
-        );
-    }
-
-    private void refresh(FleetTableModel tableModel) {
-        BackgroundOperation.execute(
-                fleetService::fetchAll,
-                tableModel::setData
+                () -> fleetCache.reload(tableModel::setData)
         );
     }
 

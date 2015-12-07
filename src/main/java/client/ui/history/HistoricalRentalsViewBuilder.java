@@ -4,6 +4,7 @@ import client.ui.interval.IntervalEditor;
 import client.ui.util.BackgroundOperation;
 import client.ui.util.CarResource;
 import client.ui.util.CarResourceRenderer;
+import client.ui.util.FleetCache;
 import common.domain.RentalHistory;
 import common.service.HistoryService;
 import common.util.Interval;
@@ -25,16 +26,19 @@ import static client.ui.util.GuiHelper.*;
 @org.springframework.stereotype.Component
 public class HistoricalRentalsViewBuilder {
 
-    @Autowired
-    HistoryService historyService;
+    @Autowired    HistoryService historyService;
+    @Autowired    FleetCache fleetCache;
 
     public JComponent build() {
-        HistoricalRentalsModel model = new HistoricalRentalsModel();
+        HistoricalRentalsModel model = new HistoricalRentalsModel(fleetCache);
         ScheduleView<CarResource, HistoricalRentalsModel.HistoricalRentalAsTask> chart = createChart(model);
         RentalHistoryStatisticsView statisticsView = new RentalHistoryStatisticsView();
+        IntervalEditor intervalEditor = new IntervalEditor(new Interval(ZonedDateTime.now().minusDays(30), ZonedDateTime.now()));
+
+        refresh(intervalEditor.asProvider(), model.asConsumer(), statisticsView.asConsumer());
 
         return borderLayout()
-                .north(buildToolbar(model.asConsumer(), statisticsView.asConsumer()))
+                .north(buildToolbar(model.asConsumer(), statisticsView.asConsumer(), intervalEditor))
                 .center(
                         tabbedPane(SwingUtilities.BOTTOM)
                                 .addTab("Table", inScrollPane(createTable(model)))
@@ -60,20 +64,19 @@ public class HistoricalRentalsViewBuilder {
         return chart;
     }
 
-    private JComponent buildToolbar(Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer) {
-        IntervalEditor intervalEditor = new IntervalEditor(new Interval(ZonedDateTime.now().minusDays(30), ZonedDateTime.now()));
+    private JComponent buildToolbar(Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer, IntervalEditor intervalEditor) {
 
         return toolbar(
                 button("Change criteria", e -> {
                             JOptionPane.showMessageDialog((Component) e.getSource(), intervalEditor.getComponent(), "Change search criteria", JOptionPane.PLAIN_MESSAGE);
-                            searchClicked(intervalEditor.asProvider(), model, statisticsConsumer);
+                            refresh(intervalEditor.asProvider(), model, statisticsConsumer);
                         }
                 ),
-                button("Refresh", () -> searchClicked(intervalEditor.asProvider(), model, statisticsConsumer))
+                button("Refresh", () -> refresh(intervalEditor.asProvider(), model, statisticsConsumer))
         );
     }
 
-    private void searchClicked(Supplier<Interval> intervalSupplier, Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer) {
+    private void refresh(Supplier<Interval> intervalSupplier, Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer) {
         BackgroundOperation.execute(
                 () -> historyService.fetchHistory(new HistoryService.Query(intervalSupplier.get())),
                 result -> {

@@ -3,6 +3,7 @@ package client.ui;
 import client.ui.booking.BookingsViewBuilder;
 import client.ui.history.HistoricalRentalsViewBuilder;
 import client.ui.util.BackgroundOperation;
+import client.ui.util.FleetCache;
 import common.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import static client.ui.util.GuiHelper.*;
 @Component
 public class MainFrameBuilder {
 
+    @Autowired FleetCache fleetCache;
     @Autowired TestService testService;
     @Autowired FleetViewBuilder fleetViewBuilder;
     @Autowired RentalClassViewBuilder rentalClassViewBuilder;
@@ -27,7 +29,12 @@ public class MainFrameBuilder {
 
     @SuppressWarnings("unused")
     @PostConstruct
-    public void buildAndShow() {
+    void startup() {
+        //todo show splash, initialize cache(s) in the backgorund, and build UI
+        fleetCache.reload(r -> buildAndShow());
+    }
+
+    void buildAndShow() {
         installLAF();
         final JFrame frame = new JFrame("Car Rental");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -39,7 +46,7 @@ public class MainFrameBuilder {
 
     JComponent createContent(JFrame frame) {
         return tabbedPane(SwingConstants.LEFT)
-                .addTab("Available to rent",    makeARentViewBuilder.build())
+                .addTab("Available to rent", makeARentViewBuilder.build())
                 .addTab("Current rentals",      currentRentalsViewBuilder.build())
                 .addTab("Available to book",    makeABookingViewBuilder.build())
                 .addTab("Bookings",             bookingsViewBuilder.build())

@@ -34,7 +34,7 @@ public class MockHistoryService implements HistoryService {
     @Override
     public RentalHistory fetchHistory(Query query) {
         List<HistoricalRental> filtered = records.stream().filter(query).collect(Collectors.toList());
-        return new RentalHistory(filtered, calculateStatistics(filtered, query), fleetService.fetchAll());
+        return new RentalHistory(filtered, calculateStatistics(filtered, query));
     }
 
     private RentalHistory.Statistics calculateStatistics(List<HistoricalRental> rentals, Query query) {

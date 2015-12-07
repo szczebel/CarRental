@@ -5,18 +5,12 @@ import java.util.*;
 
 public class RentalHistory {
 
-    final List<Car> fleet;
     final List<HistoricalRental> records;
     final Statistics statistics;
 
-    public RentalHistory(List<HistoricalRental> records, Statistics statistics, List<Car> fleet) {
+    public RentalHistory(List<HistoricalRental> records, Statistics statistics) {
         this.records = records;
         this.statistics = statistics;
-        this.fleet = fleet;
-    }
-
-    public List<Car> getFleet() {
-        return fleet;
     }
 
     public List<HistoricalRental> getRecords() {

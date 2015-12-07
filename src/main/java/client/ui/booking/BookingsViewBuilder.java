@@ -3,6 +3,7 @@ package client.ui.booking;
 import client.ui.util.BackgroundOperation;
 import client.ui.util.CarResource;
 import client.ui.util.CarResourceRenderer;
+import client.ui.util.FleetCache;
 import common.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import schedule.interaction.InstantTooltips;
@@ -19,12 +20,13 @@ import static client.ui.util.GuiHelper.*;
 @org.springframework.stereotype.Component
 public class BookingsViewBuilder {
 
-    @Autowired
-    BookingService bookingService;
+    @Autowired    BookingService bookingService;
+    @Autowired    FleetCache fleetCache;
 
     public JComponent build() {
-        BookingsModel model = new BookingsModel();
+        BookingsModel model = new BookingsModel(fleetCache);
         ScheduleView<CarResource, BookingsModel.BookingAsTask> chart = createChart(model);
+        BackgroundOperation.execute(bookingService::getBookings, model.asConsumer());
 
         return borderLayout()
                 .north(
