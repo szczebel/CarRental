@@ -2,8 +2,8 @@ package common.service;
 
 import common.domain.Car;
 import common.domain.RentalClass;
-import common.util.Interval;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public interface RentabilityService {
@@ -11,11 +11,15 @@ public interface RentabilityService {
 
     class Query {
         final RentalClass rentalClass;
-        final Interval interval;
+        private final ZonedDateTime availableUntil;
 
-        public Query(RentalClass rentalClass, Interval interval) {
+        public Query(RentalClass rentalClass, ZonedDateTime availableUntil) {
             this.rentalClass = rentalClass;
-            this.interval = interval;
+            this.availableUntil = availableUntil;
+        }
+
+        public ZonedDateTime getAvailableUntil() {
+            return availableUntil;
         }
 
         public RentalClass getRentalClass() {

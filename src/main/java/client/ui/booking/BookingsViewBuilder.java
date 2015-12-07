@@ -59,7 +59,7 @@ public class BookingsViewBuilder {
 
     private static class BookingRenderer extends TaskRenderer.Default<BookingsModel.BookingAsTask> {
         public BookingRenderer() {
-            setBackground(Color.pink);
+            setBackground(Color.green);
             setOpaque(true);
         }
 

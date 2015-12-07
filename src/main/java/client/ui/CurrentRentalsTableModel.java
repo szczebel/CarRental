@@ -9,7 +9,7 @@ import java.util.List;
 
 class CurrentRentalsTableModel extends AbstractTableModel {
 
-    final static String[] COLUMN = {"Registration", "Model", "Client name", "Client email", "Rental start"};
+    final static String[] COLUMN = {"Registration", "Model", "Client name", "Client email", "Start", "Planned end"};
     private List<CurrentRental> currentRentals = new ArrayList<>();
 
     void setData(List<CurrentRental> fleet) {
@@ -40,12 +40,14 @@ class CurrentRentalsTableModel extends AbstractTableModel {
         if (columnIndex == 2) return currentRental.getClientName();
         if (columnIndex == 3) return currentRental.getClientEmail();
         if (columnIndex == 4) return currentRental.getStart();
+        if (columnIndex == 5) return currentRental.getPlannedEnd();
         throw new IllegalArgumentException("Unknown column index : " + columnIndex);
     }
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         if (columnIndex == 4) return ZonedDateTime.class;
+        if (columnIndex == 5) return ZonedDateTime.class;
         return super.getColumnClass(columnIndex);
     }
 

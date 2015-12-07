@@ -28,13 +28,13 @@ public class MockRentalService implements RentalService {
     Map<Car, CurrentRental> currentRentals = new HashMap<>();
 
     @Override
-    public CurrentRental rent(Car car, Client client) {
+    public CurrentRental rent(Car car, Client client, ZonedDateTime plannedEnd) {
         if (!mockClientService.clients.contains(client))
             throw new IllegalArgumentException("Nonexisting client " + client);
         if (!mockFleetService.fleet.contains(car)) throw new IllegalArgumentException("Nonexisting car " + car);
         if (!isAvailable(car))
             throw new IllegalArgumentException(car + " already rented to " + currentRentals.get(car));
-        CurrentRental currentRental = new CurrentRental(car, client, ZonedDateTime.now(clock));
+        CurrentRental currentRental = new CurrentRental(car, client, ZonedDateTime.now(clock), plannedEnd);
         currentRentals.put(car, currentRental);
         return currentRental;
     }

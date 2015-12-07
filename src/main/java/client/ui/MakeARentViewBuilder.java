@@ -50,14 +50,14 @@ public class MakeARentViewBuilder {
                 .build();
     }
 
-    private void rentClicked(JTable table, FleetTableModel tableModel, Supplier<RentabilityService.Query> classChooser) {
+    private void rentClicked(JTable table, FleetTableModel tableModel, Supplier<RentabilityService.Query> queryProvider) {
         int selectedRow = table.getSelectedRow();
         if (selectedRow < 0) {
             JOptionPane.showMessageDialog(table, "Select a car to rent in the table");
         } else {
             BackgroundOperation.execute(
                     clientService::fetchAll,
-                    clients -> showRentDialog(table, clients, tableModel.getCarAt(table.convertRowIndexToModel(selectedRow)), tableModel, classChooser)
+                    clients -> showRentDialog(table, clients, tableModel.getCarAt(table.convertRowIndexToModel(selectedRow)), tableModel, queryProvider)
             );
         }
     }
@@ -78,7 +78,7 @@ public class MakeARentViewBuilder {
             if (selectedRow >= 0) {
                 Client client = clientsModel.getClientAt(clientsTable.convertRowIndexToModel(selectedRow));
                 BackgroundOperation.execute(
-                        () -> rentalService.rent(carToRent, client),
+                        () -> rentalService.rent(carToRent, client, queryProvider.get().getAvailableUntil()),
                         () -> refresh(tableModel, queryProvider)
                 );
             }
@@ -110,7 +110,7 @@ public class MakeARentViewBuilder {
 
         RentabilityService.Query getQuery() {
             RentalClass selectedItem = (RentalClass) classChooser.getSelectedItem();
-            return new RentabilityService.Query(selectedItem, intervalEditor.getInterval());
+            return new RentabilityService.Query(selectedItem, intervalEditor.getInterval().to());
         }
 
         JComponent getComponent() {

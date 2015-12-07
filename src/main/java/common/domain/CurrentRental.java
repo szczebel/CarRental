@@ -1,16 +1,18 @@
 package common.domain;
 
+import common.util.Interval;
+
 import java.time.ZonedDateTime;
 
 public class CurrentRental {
     private final Car car;
     private final Client client;
-    private final ZonedDateTime start;
+    private final Interval interval;
 
-    public CurrentRental(Car car, Client client, ZonedDateTime start) {
+    public CurrentRental(Car car, Client client, ZonedDateTime start, ZonedDateTime plannedEnd) {
         this.car = car;
         this.client = client;
-        this.start = start;
+        interval = new Interval(start, plannedEnd);
     }
 
     Car getCar() {
@@ -22,7 +24,7 @@ public class CurrentRental {
     }
 
     public ZonedDateTime getStart() {
-        return start;
+        return interval.from();
     }
 
     public String getRegistration() {
@@ -39,5 +41,9 @@ public class CurrentRental {
 
     public String getClientEmail() {
         return client.getEmail();
+    }
+
+    public ZonedDateTime getPlannedEnd() {
+        return interval.to();
     }
 }

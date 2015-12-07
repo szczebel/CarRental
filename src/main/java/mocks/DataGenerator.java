@@ -4,6 +4,7 @@ import common.domain.Car;
 import common.domain.Client;
 import common.domain.CurrentRental;
 import common.domain.RentalClass;
+import common.util.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,8 +13,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Component
 public class DataGenerator {
@@ -26,6 +26,10 @@ public class DataGenerator {
     MockClientService clientService;
     @Autowired
     MockRentalService rentalService;
+    @Autowired
+    MockBookingService bookingService;
+
+
     private final Random random = new Random();
 
     @SuppressWarnings("unused")
@@ -49,13 +53,15 @@ public class DataGenerator {
     private void generateFleet() {
         String[] models = {"Ford Mondeo", "Fiat Multipla", "Lexus", "Mercedes S", "Peugeot 307", "Renault Safrane", "Mazda 6", "Volvo XC60"};
         List<RentalClass> rentalClasses = rentalClassService.fetchAll();
+        Map<String, RentalClass> classPerModel = new HashMap<>();
+        Arrays.asList(models).forEach(s -> classPerModel.put(s, rentalClasses.get(random.nextInt(rentalClasses.size()))));
         for (int i = 100; i <= 150; i++) {
+            String model = models[random.nextInt(models.length)];
             fleetService.create(
                     new Car(
-                            models[random.nextInt(models.length)],
+                            model,
                             1000 + random.nextInt(9000) + "KHZ" + i,
-                            rentalClasses.get(random.nextInt(rentalClasses.size())
-                            )
+                            classPerModel.get(model)
                     )
             );
         }
@@ -73,21 +79,31 @@ public class DataGenerator {
 
     private void generateBetterRentalData() {
         ZonedDateTime now = ZonedDateTime.now();
-        ZonedDateTime weekAgo = now.minusDays(60);
-        fleetService.fetchAll().forEach(car -> buildLineOfWork(car, weekAgo, now));
+        ZonedDateTime from = now.minusDays(60);
+        ZonedDateTime to = now.plusDays(60);
+        fleetService.fetchAll().forEach(car -> buildLineOfWork(car, from, to));
     }
 
     private void buildLineOfWork(Car car, ZonedDateTime start, ZonedDateTime end) {
+        ZonedDateTime now = ZonedDateTime.now();
+
         ZonedDateTime currentTime = start;
         CurrentRental currentRental = null;
-        while (currentTime.isBefore(end)) {
+        while (currentTime.isBefore(now)) {
             if (currentRental != null) rentalService.returnCar(car.getRegistration());
             currentTime = fastForwardJustABit(currentTime);
-            if (currentTime.isBefore(end)) currentRental = rentalService.rent(car, randomClient());
+            ZonedDateTime plannedEnd = currentTime.plusHours(12 + random.nextInt(144)).plusMinutes(random.nextInt(60));
+            if (currentTime.isBefore(now)) currentRental = rentalService.rent(car, randomClient(), plannedEnd);
+            currentTime = fastForwardTo(plannedEnd);
+        }
+        while (currentTime.isBefore(end)) {
             currentTime = fastForward(currentTime);
+            ZonedDateTime bookingStart = currentTime;
+            currentTime = fastForward(currentTime);
+            ZonedDateTime bookingEnd = currentTime;
+            bookingService.book(car, randomClient(), new Interval(bookingStart, bookingEnd));
         }
         rentalService.clock = MockRentalService.SystemClock;
-
     }
 
     private ZonedDateTime fastForwardJustABit(ZonedDateTime currentTime) {
@@ -100,6 +116,11 @@ public class DataGenerator {
         currentTime = currentTime.plusHours(12 + random.nextInt(144)).plusMinutes(random.nextInt(60));
         rentalService.clock = Clock.fixed(Instant.from(currentTime), ZoneId.systemDefault());
         return currentTime;
+    }
+
+    private ZonedDateTime fastForwardTo(ZonedDateTime newTime) {
+        rentalService.clock = Clock.fixed(Instant.from(newTime), ZoneId.systemDefault());
+        return newTime;
     }
 
 
