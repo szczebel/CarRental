@@ -6,7 +6,6 @@ import common.domain.HistoricalRental;
 import common.domain.RentalHistory;
 import schedule.basic.BasicScheduleModel;
 import schedule.model.ScheduleModel;
-import schedule.model.Task;
 
 import javax.swing.table.AbstractTableModel;
 import java.time.Duration;
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel<CarResource, HistoricalRentalsModel.HistoricalRentalAsTask> {
+class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel<CarResource, HistoricalRentalAsTask> {
 
     final static String[] COLUMN = {"Registration", "Model", "Client name", "Client email", "Start", "End", "Duration"};
     final FleetCache fleetCache;
@@ -104,23 +103,5 @@ class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel
         return delegate.getStart();
     }
 
-
-    static class HistoricalRentalAsTask implements Task {
-        final HistoricalRental historicalRental;
-
-        HistoricalRentalAsTask(HistoricalRental historicalRental) {
-            this.historicalRental = historicalRental;
-        }
-
-        @Override
-        public ZonedDateTime getStart() {
-            return historicalRental.getStart();
-        }
-
-        @Override
-        public ZonedDateTime getEnd() {
-            return historicalRental.getEnd();
-        }
-    }
 
 }

@@ -1,6 +1,7 @@
 package client.ui;
 
 import client.ui.booking.BookingsViewBuilder;
+import client.ui.fullscheduleview.FullScheduleViewBuilder;
 import client.ui.history.HistoricalRentalsViewBuilder;
 import client.ui.util.BackgroundOperation;
 import client.ui.util.FleetCache;
@@ -26,6 +27,8 @@ public class MainFrameBuilder {
     @Autowired CurrentRentalsViewBuilder currentRentalsViewBuilder;
     @Autowired BookingsViewBuilder bookingsViewBuilder;
     @Autowired HistoricalRentalsViewBuilder historicalRentalsViewBuilder;
+    @Autowired FullScheduleViewBuilder fullScheduleViewBuilder;
+
 
     @SuppressWarnings("unused")
     @PostConstruct
@@ -54,6 +57,7 @@ public class MainFrameBuilder {
                 .addTab("Fleet",                fleetViewBuilder.build())
                 .addTab("Rental class",         rentalClassViewBuilder.build())
                 .addTab("Clients",              clientListViewBuilder.build())
+                .addTab("Schedule",             fullScheduleViewBuilder.build())
                 .addTab("Other",                createOther(frame))
                 .build();
     }

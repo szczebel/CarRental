@@ -1,5 +1,7 @@
 package client.ui.history;
 
+import client.ui.fullscheduleview.AbstractAssignmentRenderer;
+import client.ui.fullscheduleview.TooltipRenderer;
 import client.ui.interval.IntervalEditor;
 import client.ui.util.BackgroundOperation;
 import client.ui.util.CarResource;
@@ -11,7 +13,6 @@ import common.util.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import schedule.interaction.InstantTooltips;
 import schedule.view.ScheduleView;
-import schedule.view.TaskRenderer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,7 +32,7 @@ public class HistoricalRentalsViewBuilder {
 
     public JComponent build() {
         HistoricalRentalsModel model = new HistoricalRentalsModel(fleetCache);
-        ScheduleView<CarResource, HistoricalRentalsModel.HistoricalRentalAsTask> chart = createChart(model);
+        ScheduleView<CarResource, HistoricalRentalAsTask> chart = createChart(model);
         RentalHistoryStatisticsView statisticsView = new RentalHistoryStatisticsView();
         IntervalEditor intervalEditor = new IntervalEditor(new Interval(ZonedDateTime.now().minusDays(30), ZonedDateTime.now()));
 
@@ -56,11 +57,11 @@ public class HistoricalRentalsViewBuilder {
         return table;
     }
 
-    private ScheduleView<CarResource, HistoricalRentalsModel.HistoricalRentalAsTask> createChart(HistoricalRentalsModel tableModel) {
-        ScheduleView<CarResource, HistoricalRentalsModel.HistoricalRentalAsTask> chart = new ScheduleView<>(tableModel);
-        chart.setTaskRenderer(new HistoricalRentalRenderer());
+    private ScheduleView<CarResource, HistoricalRentalAsTask> createChart(HistoricalRentalsModel tableModel) {
+        ScheduleView<CarResource, HistoricalRentalAsTask> chart = new ScheduleView<>(tableModel);
+        chart.setTaskRenderer(new AbstractAssignmentRenderer<>());
         chart.setResourceRenderer(new CarResourceRenderer());
-        chart.setMouseInteractions(InstantTooltips.renderWith(new HistoricalRentalTooltipRenderer()));
+        chart.setMouseInteractions(InstantTooltips.renderWith(new TooltipRenderer<>()));
         return chart;
     }
 
@@ -86,24 +87,4 @@ public class HistoricalRentalsViewBuilder {
         );
     }
 
-    private static class HistoricalRentalRenderer extends TaskRenderer.Default<HistoricalRentalsModel.HistoricalRentalAsTask> {
-        public HistoricalRentalRenderer() {
-            setBackground(Color.pink);
-            setOpaque(true);
-        }
-
-        @Override
-        protected String getTextFromTask(HistoricalRentalsModel.HistoricalRentalAsTask event) {
-            return event.historicalRental.getClientName();
-        }
-    }
-
-    private static class HistoricalRentalTooltipRenderer extends TaskRenderer.Default<HistoricalRentalsModel.HistoricalRentalAsTask> {
-        @Override
-        protected String getTextFromTask(HistoricalRentalsModel.HistoricalRentalAsTask event) {
-            return "<html>" + event.historicalRental.getClientName() +
-                    "<p>" + event.historicalRental.getClientEmail() +
-                    "<p>" + event.historicalRental.getModel();
-        }
-    }
 }

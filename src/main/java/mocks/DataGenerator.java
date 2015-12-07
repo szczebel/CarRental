@@ -91,7 +91,7 @@ public class DataGenerator {
         CurrentRental currentRental = null;
         while (currentTime.isBefore(now)) {
             if (currentRental != null) rentalService.returnCar(car.getRegistration());
-            currentTime = fastForwardJustABit(currentTime);
+            currentTime = fastForward(currentTime);
             ZonedDateTime plannedEnd = currentTime.plusHours(12 + random.nextInt(144)).plusMinutes(random.nextInt(60));
             if (currentTime.isBefore(now)) currentRental = rentalService.rent(car, randomClient(), plannedEnd);
             currentTime = fastForwardTo(plannedEnd);
@@ -106,11 +106,6 @@ public class DataGenerator {
         rentalService.clock = MockRentalService.SystemClock;
     }
 
-    private ZonedDateTime fastForwardJustABit(ZonedDateTime currentTime) {
-        currentTime = currentTime.plusHours(6 + random.nextInt(48)).plusMinutes(random.nextInt(60));
-        rentalService.clock = Clock.fixed(Instant.from(currentTime), ZoneId.systemDefault());
-        return currentTime;
-    }
 
     private ZonedDateTime fastForward(ZonedDateTime currentTime) {
         currentTime = currentTime.plusHours(12 + random.nextInt(144)).plusMinutes(random.nextInt(60));

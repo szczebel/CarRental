@@ -5,7 +5,6 @@ import client.ui.util.FleetCache;
 import common.domain.Booking;
 import schedule.basic.BasicScheduleModel;
 import schedule.model.ScheduleModel;
-import schedule.model.Task;
 
 import javax.swing.table.AbstractTableModel;
 import java.time.ZonedDateTime;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-class BookingsModel extends AbstractTableModel implements ScheduleModel<CarResource, BookingsModel.BookingAsTask> {
+class BookingsModel extends AbstractTableModel implements ScheduleModel<CarResource, BookingAsTask> {
 
     final FleetCache fleetCache;
     final static String[] COLUMN = {"Registration", "Model", "Client name", "Client email", "Start", "End"};
@@ -102,23 +101,5 @@ class BookingsModel extends AbstractTableModel implements ScheduleModel<CarResou
         return this::setData;
     }
 
-
-    static class BookingAsTask implements Task {
-        final Booking booking;
-
-        BookingAsTask(Booking booking) {
-            this.booking = booking;
-        }
-
-        @Override
-        public ZonedDateTime getStart() {
-            return booking.getStart();
-        }
-
-        @Override
-        public ZonedDateTime getEnd() {
-            return booking.getEnd();
-        }
-    }
 
 }

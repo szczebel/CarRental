@@ -1,8 +1,7 @@
 package client.ui.util;
 
-import common.domain.Booking;
+import common.domain.AbstractAssignment;
 import common.domain.Car;
-import common.domain.HistoricalRental;
 import schedule.model.Resource;
 
 public class CarResource implements Resource {
@@ -10,19 +9,14 @@ public class CarResource implements Resource {
     final String registration;
     final String model;
 
-    public CarResource(HistoricalRental historicalRental) {
-        this.registration = historicalRental.getRegistration();
-        this.model = historicalRental.getModel();
+    public CarResource(AbstractAssignment a) {
+        this.registration = a.getRegistration();
+        this.model = a.getModel();
     }
 
     public CarResource(Car car) {
         this.registration = car.getRegistration();
         this.model = car.getModel();
-    }
-
-    public CarResource(Booking booking) {
-        this.registration = booking.getRegistration();
-        this.model = booking.getModel();
     }
 
     @Override
