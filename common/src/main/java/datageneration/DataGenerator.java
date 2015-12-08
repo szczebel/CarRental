@@ -41,7 +41,7 @@ public class DataGenerator {
     public void generate() throws Exception {
         long now = System.currentTimeMillis();
         System.out.println("Generating data...");
-        generate(250, 200, 60, 60);
+        generate(25, 200, 30, 30);
         //generate(5, 20, 10, 10);
         System.out.println("Data generated in " + (System.currentTimeMillis() - now) + " ms" );
     }

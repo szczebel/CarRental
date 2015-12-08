@@ -4,6 +4,7 @@ import common.domain.Car;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 class FleetTableModel extends AbstractTableModel {
@@ -11,8 +12,9 @@ class FleetTableModel extends AbstractTableModel {
     final static String[] COLUMN = {"Registration", "Model", "Class"};
     private List<Car> fleet = new ArrayList<>();
 
-    void setData(List<Car> fleet) {
-        this.fleet = fleet;
+    void setData(Collection<Car> fleet) {
+        this.fleet.clear();
+        this.fleet.addAll(fleet);
         fireTableDataChanged();
     }
 

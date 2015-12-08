@@ -11,11 +11,10 @@ import server.repositories.PersistentAssignmentDao;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Component("rentalService")
 public class RentalServiceImpl implements RentalService {
@@ -45,27 +44,15 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     public List<CurrentRental> getCurrentRentals() {
-        ArrayList<CurrentRental> currentRentals = new ArrayList<>();
-        dao.findByType(PersistentAssignment.Type.CURRENT).forEach(pcr -> currentRentals.add(pcr.asCurrent()));
-        return currentRentals;
+        return dao.findByType(PersistentAssignment.Type.Current).map(PersistentAssignment::asCurrent).collect(Collectors.toList());
     }
 
-    boolean isAvailable(Car car) {
+    private boolean isAvailable(Car car) {
         return !getCurrentRental(car.getRegistration()).isPresent();
     }
 
     Optional<PersistentAssignment> getCurrentRental(String registration) {
-        Collection<PersistentAssignment> byType = dao.findByType(PersistentAssignment.Type.CURRENT);
-        return byType.stream().filter(cr -> registration.equals(cr.getRegistration())).findFirst();
+        return dao.findByType(PersistentAssignment.Type.Current).filter(cr -> registration.equals(cr.getRegistration())).findFirst();
     }
 
-    public boolean isAvailableAfter(Car car, ZonedDateTime dateTime) {
-        Optional<PersistentAssignment> currentRental = getCurrentRental(car.getRegistration());
-        if(currentRental.isPresent()) {
-            PersistentAssignment a = currentRental.get();
-            return a.asCurrent().getPlannedEnd().isBefore(dateTime);
-        } else {
-            return true;
-        }
-    }
 }

@@ -32,11 +32,10 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     public RentalHistory fetchHistory(Query query) {
-        Collection<HistoricalRental> all = new ArrayList<>();
-        dao.findByType(PersistentAssignment.Type.HISTORICAL).forEach(persistentAssignment ->
-                        all.add(persistentAssignment.asHistorical())
-        );
-        List<HistoricalRental> filtered = all.stream().filter(query).collect(Collectors.toList());
+        List<HistoricalRental> filtered =
+                dao.findByType(PersistentAssignment.Type.Historical)
+                        .map(PersistentAssignment::asHistorical)
+                        .filter(query).collect(Collectors.toList());
         return new RentalHistory(filtered, calculateStatistics(filtered, query));
     }
 

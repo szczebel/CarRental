@@ -24,18 +24,13 @@ public class PersistentAssignment {
 
     protected PersistentAssignment() {}
 
-    public PersistentAssignment(HistoricalRental hr) {
-        type = Type.HISTORICAL;
-        populateFields(hr);
-    }
-
     public PersistentAssignment(CurrentRental cr) {
-        type = Type.CURRENT;
+        type = Type.Current;
         populateFields(cr);
     }
 
     public PersistentAssignment(Booking b) {
-        type = Type.BOOKING;
+        type = Type.Booking;
         populateFields(b);
     }
 
@@ -47,21 +42,21 @@ public class PersistentAssignment {
     }
 
     public Booking asBooking() {
-        if(Type.BOOKING != this.type) throw new RuntimeException("This is not a booking");
+        if(Type.Booking != this.type) throw new RuntimeException("This is not a booking");
         return new Booking(car.toCar(), client.toClient(), getInterval());
     }
 
     public HistoricalRental asHistorical() {
-        if(Type.HISTORICAL != this.type) throw new RuntimeException("This is not a historical rental");
+        if(Type.Historical != this.type) throw new RuntimeException("This is not a historical rental");
         return new HistoricalRental(car.toCar(), client.toClient(), getInterval());
     }
 
     public CurrentRental asCurrent() {
-        if(Type.CURRENT != this.type) throw new RuntimeException("This is not a current rental");
+        if(Type.Current != this.type) throw new RuntimeException("This is not a current rental");
         return new CurrentRental(car.toCar(), client.toClient(), getInterval());
     }
 
-    private Interval getInterval() {
+    public Interval getInterval() {
         return new Interval(
                 Instant.ofEpochMilli(start).atZone(ZoneId.systemDefault()),
                 Instant.ofEpochMilli(end).atZone(ZoneId.systemDefault())
@@ -73,10 +68,10 @@ public class PersistentAssignment {
     }
 
     public void changeToHistorical(ZonedDateTime actualEndDate) {
-        if(Type.CURRENT != this.type) throw new IllegalStateException("Trying to change to HISTORICAL assignment which is not CURRENT");
-        this.type = Type.HISTORICAL;
+        if(Type.Current != this.type) throw new IllegalStateException("Trying to change to Historical assignment which is not Current");
+        this.type = Type.Historical;
         end = actualEndDate.toInstant().toEpochMilli();
     }
 
-    public enum Type { HISTORICAL, CURRENT, BOOKING }
+    public enum Type {Historical, Current, Booking}
 }

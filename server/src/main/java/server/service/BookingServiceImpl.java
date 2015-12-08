@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 import server.entity.PersistentAssignment;
 import server.repositories.PersistentAssignmentDao;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Component("bookingService")
 public class BookingServiceImpl implements BookingService {
@@ -26,9 +26,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Collection<Booking> getBookings() {
-        ArrayList<Booking> bookings = new ArrayList<>();
-        dao.findByType(PersistentAssignment.Type.BOOKING).forEach(persistentAssignment -> bookings.add(persistentAssignment.asBooking()));
-        return bookings;
+        return dao.findByType(PersistentAssignment.Type.Booking).map(PersistentAssignment::asBooking).collect(Collectors.toList());
     }
 
     boolean alreadyBooked(Car car, Interval interval) {

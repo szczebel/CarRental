@@ -5,10 +5,10 @@ import common.domain.RentalClass;
 import common.util.Interval;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
 
 public interface BookabilityService {
-    List<Car> findAvailableCars(Query quaey);
+    Collection<Car> findAvailableCars(Query quaey);
 
     class Query implements Serializable {
         final RentalClass rentalClass;

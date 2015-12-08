@@ -1,12 +1,15 @@
 package mocks;
 
 import common.domain.Car;
+import common.domain.RentalClass;
 import common.service.FleetService;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Component("fleetService")
 public class MockFleetService implements FleetService {
@@ -16,6 +19,12 @@ public class MockFleetService implements FleetService {
     @Override
     public List<Car> fetchAll() {
         return new ArrayList<>(fleet);
+    }
+
+    @Override
+    public Collection<Car> findByRentalClass(RentalClass rentalClass) {
+        if(rentalClass == null) return fetchAll();
+        return fetchAll().stream().filter(car -> rentalClass.getName().equals(car.getRentalClassName())).collect(Collectors.toList());
     }
 
     @Override

@@ -1,12 +1,16 @@
 package server.repositories;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import server.entity.PersistentAssignment;
 
-import java.util.Collection;
+import java.util.stream.Stream;
 
 @Repository
 public interface PersistentAssignmentDao extends CrudRepository<PersistentAssignment, Long> {
-    Collection<PersistentAssignment> findByType(PersistentAssignment.Type type);
+    Stream<PersistentAssignment> findByType(PersistentAssignment.Type type);
+
+    @Query("SELECT t FROM PersistentAssignment t WHERE t.type != 'Historical'")
+    Stream<PersistentAssignment> findWhereTypeIsNotHistorical();
 }
