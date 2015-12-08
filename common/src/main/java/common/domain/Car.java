@@ -23,6 +23,10 @@ public class Car implements Serializable {
         return model;
     }
 
+    public RentalClass getRentalClass() {
+        return rentalClass;
+    }
+
     public String getRentalClassName() {
         return rentalClass.getName();
     }

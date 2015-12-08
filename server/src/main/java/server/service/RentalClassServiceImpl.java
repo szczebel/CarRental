@@ -1,29 +1,28 @@
 package server.service;
 
 import common.domain.RentalClass;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import server.entity.PersistentRentalClass;
+import server.repositories.PersistentRentalClassDao;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 @Component("rentalClassService")
 public class RentalClassServiceImpl implements common.service.RentalClassService {
-    List<RentalClass> rentalClasses = new ArrayList<>();
+
+    @Autowired PersistentRentalClassDao dao;
 
     @Override
     public List<RentalClass> fetchAll() {
-        return new ArrayList<>(rentalClasses);
+        List<RentalClass> rentalClasses = new ArrayList<>();
+        dao.findAll().forEach(prc -> rentalClasses.add(prc.toRentalClass()));
+        return rentalClasses;
     }
 
     @Override
     public void create(RentalClass rentalClass) {
-        if (rentalClasses.stream().anyMatch(name(rentalClass)))
-            throw new IllegalArgumentException("Class already exists: " + rentalClass.getName());
-        rentalClasses.add(rentalClass);
-    }
-
-    private Predicate<RentalClass> name(RentalClass rentalClass) {
-        return client -> client.getName().equals(rentalClass.getName());
+        dao.save(new PersistentRentalClass(rentalClass));
     }
 }

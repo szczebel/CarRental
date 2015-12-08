@@ -3,6 +3,7 @@ package server.service;
 import common.domain.Car;
 import common.domain.RentalClass;
 import common.service.BookabilityService;
+import common.service.FleetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 @Component("bookabilityService")
 public class BookabilityServiceImpl implements BookabilityService {
     @Autowired
-    FleetServiceImpl fleetService;
+    FleetService fleetService;
     @Autowired
     BookingServiceImpl bookingService;
 

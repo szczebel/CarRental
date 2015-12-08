@@ -15,8 +15,8 @@ public class MockBookabilityService implements BookabilityService {
     @Autowired    MockBookingService mockBookingService;
 
     @Override
-    public List<Car> findAvailableCars(Query quaey) {
-        return mockFleetService.fetchAll().stream().filter(car -> ofClass(car, quaey.getRentalClass())).filter(c -> !mockBookingService.alreadyBooked(c, quaey.getInterval())).collect(Collectors.toList());
+    public List<Car> findAvailableCars(Query query) {
+        return mockFleetService.fetchAll().stream().filter(car -> ofClass(car, query.getRentalClass())).filter(c -> !mockBookingService.alreadyBooked(c, query.getInterval())).collect(Collectors.toList());
     }
 
     private boolean ofClass(Car car, RentalClass requiredClass) {

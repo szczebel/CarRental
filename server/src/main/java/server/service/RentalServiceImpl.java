@@ -17,10 +17,6 @@ import java.util.function.Supplier;
 public class RentalServiceImpl implements RentalService {
 
     @Autowired
-    ClientServiceImpl clientService;
-    @Autowired
-    FleetServiceImpl fleetService;
-    @Autowired
     HistoryServiceImpl historyService;
     @Autowired Supplier<Clock> clockProvider;
 
@@ -28,9 +24,6 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     public CurrentRental rent(Car car, Client client, ZonedDateTime plannedEnd) {
-        if (!clientService.clients.contains(client))
-            throw new IllegalArgumentException("Nonexisting client " + client);
-        if (!fleetService.fleet.contains(car)) throw new IllegalArgumentException("Nonexisting car " + car);
         if (!isAvailable(car))
             throw new IllegalArgumentException(car + " already rented to " + currentRentals.get(car));
         CurrentRental currentRental = new CurrentRental(car, client, ZonedDateTime.now(clockProvider.get()), plannedEnd);

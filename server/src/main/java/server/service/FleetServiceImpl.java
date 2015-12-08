@@ -2,38 +2,36 @@ package server.service;
 
 import common.domain.Car;
 import common.service.FleetService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import server.entity.PersistentCar;
+import server.repositories.PersistentCarDao;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 @Component("fleetService")
 public class FleetServiceImpl implements FleetService {
-    List<Car> fleet = new ArrayList<>();
+    @Autowired PersistentCarDao dao;
 
 
     @Override
     public List<Car> fetchAll() {
-        return new ArrayList<>(fleet);
+        ArrayList<Car> cars = new ArrayList<>();
+        dao.findAll().forEach(pc -> cars.add(pc.toCar()));
+        return cars;
     }
 
     @Override
     public void create(Car car) {
-        if (fleet.stream().anyMatch(registration(car)))
-            throw new IllegalArgumentException("Car already exists: " + car);
-        fleet.add(car);
+        dao.save(new PersistentCar(car));
     }
 
-    private Predicate<Car> registration(Car newCar) {
-        return car -> car.getRegistration().equals(newCar.getRegistration());
-    }
-
-    public int fleetSize() {
-        return fleet.size();
+    public long fleetSize() {
+        return dao.count();
     }
 
     public long countOf(String rentalClass) {
-        return fleet.stream().filter(c -> c.isOfClass(rentalClass)).count();
+        return fetchAll().stream().filter(c -> c.isOfClass(rentalClass)).count();
     }
 }

@@ -40,10 +40,15 @@ public class DataGenerator {
     @PostConstruct
     public void generate() throws Exception {
         System.out.println("Generating data...");
+        //generate(50, 200, 60, 60);
+        generate(5, 20, 10, 10);
+    }
+
+    private void generate(int fleetSize, int customerBaseSize, int daysOfHistory, int daysOfBookings) {
         generateClasses();
-        generateFleet();
-        generateClients();
-        generateBetterRentalData();
+        generateFleet(fleetSize);
+        generateClients(customerBaseSize);
+        generateBetterRentalData(daysOfHistory, daysOfBookings);
     }
 
     private void generateClasses() {
@@ -54,12 +59,12 @@ public class DataGenerator {
         rentalClassService.create(new RentalClass("Elite", 10));
     }
 
-    private void generateFleet() {
+    private void generateFleet(int howMany) {
         String[] models = {"Ford Mondeo", "Fiat Multipla", "Lexus", "Mercedes S", "Peugeot 307", "Renault Safrane", "Mazda 6", "Volvo XC60"};
         List<RentalClass> rentalClasses = rentalClassService.fetchAll();
         Map<String, RentalClass> classPerModel = new HashMap<>();
         Arrays.asList(models).forEach(s -> classPerModel.put(s, rentalClasses.get(random.nextInt(rentalClasses.size()))));
-        for (int i = 100; i <= 150; i++) {
+        for (int i = 100; i <= 100+howMany; i++) {
             String model = models[random.nextInt(models.length)];
             fleetService.create(
                     new Car(
@@ -71,20 +76,20 @@ public class DataGenerator {
         }
     }
 
-    private void generateClients() {
+    private void generateClients(int howMany) {
         String[] names = {"John", "Thomas", "Christopher", "Wesley", "Lucas", "Gregory", "Rhonda", "Leticia", "Jane", "Courtney", "Kathy", "Angela", "David", "Brett", "Michael", "Sean", "Ross", "Monica", "Chandler"};
         String[] surnames = {"Suzuki", "White", "Fonda", "Griffin", "Nistor", "Washington", "Rainman", "Butterfly", "Zappa", "Johnson", "Beckham", "Dean", "Fowler", "Beck", "Petty", "Brinkworth", "Nasdac", "Williams", "Cox", "Arquette", "Greene", "Geller", "Bink", "Tribbiani", "Clunky", "Wright", "Bentley", "Coppola", "Pitt", "Jolie", "Padaki"};
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < howMany; i++) {
             String name = names[random.nextInt(names.length)];
             String surname = surnames[random.nextInt(surnames.length)];
             clientService.create(new Client(name + " " + surname, name + "." + surname + "." + random.nextInt(10000) + "@gmail.com"));
         }
     }
 
-    private void generateBetterRentalData() {
+    private void generateBetterRentalData(int daysOfHistory, int daysOfBookings) {
         ZonedDateTime now = ZonedDateTime.now();
-        ZonedDateTime from = now.minusDays(60);
-        ZonedDateTime to = now.plusDays(60);
+        ZonedDateTime from = now.minusDays(daysOfHistory);
+        ZonedDateTime to = now.plusDays(daysOfBookings);
         fleetService.fetchAll().forEach(car -> buildLineOfWork(car, from, to));
     }
 
