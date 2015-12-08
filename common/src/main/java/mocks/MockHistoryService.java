@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import static common.util.TimeUtils.toMidnight;
 
-@Component
+@Component("historyService")
 public class MockHistoryService implements HistoryService {
 
     @Autowired

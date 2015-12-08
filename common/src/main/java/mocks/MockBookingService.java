@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-@Component
+@Component("bookingService")
 public class MockBookingService implements BookingService {
 
     @Autowired MockClientService mockClientService;

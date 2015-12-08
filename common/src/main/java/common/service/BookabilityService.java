@@ -4,12 +4,13 @@ import common.domain.Car;
 import common.domain.RentalClass;
 import common.util.Interval;
 
+import java.io.Serializable;
 import java.util.List;
 
 public interface BookabilityService {
     List<Car> findAvailableCars(Query quaey);
 
-    class Query {
+    class Query implements Serializable {
         final RentalClass rentalClass;
         final Interval interval;
 

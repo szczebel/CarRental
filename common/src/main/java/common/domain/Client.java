@@ -2,9 +2,11 @@ package common.domain;
 
 import java.io.Serializable;
 
-public class Client implements Serializable{
+public class Client implements Serializable {
     private String name;
     private String email;
+
+    public Client(){}
 
     public Client(String name, String email) {
         this.name = name;

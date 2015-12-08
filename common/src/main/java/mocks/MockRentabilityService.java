@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Component("rentabilityService")
 public class MockRentabilityService implements RentabilityService {
     @Autowired
     MockFleetService mockFleetService;

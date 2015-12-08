@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-@Component
+@Component("clientService")
 public class MockClientService implements ClientService {
     List<Client> clients = new ArrayList<>();
 

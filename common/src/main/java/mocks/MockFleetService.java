@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-@Component
+@Component("fleetService")
 public class MockFleetService implements FleetService {
     List<Car> fleet = new ArrayList<>();
 

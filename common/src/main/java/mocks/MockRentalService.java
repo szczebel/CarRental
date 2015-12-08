@@ -5,6 +5,7 @@ import common.domain.Client;
 import common.domain.CurrentRental;
 import common.domain.HistoricalRental;
 import common.service.RentalService;
+import common.util.ClockProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,13 +14,13 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.function.Supplier;
 
-@Component
+@Component("rentalService")
 public class MockRentalService implements RentalService {
 
     @Autowired MockClientService mockClientService;
     @Autowired MockFleetService mockFleetService;
     @Autowired MockHistoryService mockHistoryService;
-    @Autowired Supplier<Clock> clockProvider;
+    @Autowired Supplier<Clock> clockProvider = () -> ClockProvider.SystemClock;
 
     Map<Car, CurrentRental> currentRentals = new HashMap<>();
 

@@ -35,6 +35,7 @@ public class MainFrameBuilder {
     void startup() {
         //todo show splash, initialize cache(s) in the backgorund, and build UI
         fleetCache.reload(r -> buildAndShow());
+//        buildAndShow();
     }
 
     void buildAndShow() {

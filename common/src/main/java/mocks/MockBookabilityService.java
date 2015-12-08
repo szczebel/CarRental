@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Component("bookabilityService")
 public class MockBookabilityService implements BookabilityService {
     @Autowired    MockFleetService mockFleetService;
     @Autowired    MockBookingService mockBookingService;

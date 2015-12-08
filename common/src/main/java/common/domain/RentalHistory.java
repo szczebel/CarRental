@@ -1,12 +1,15 @@
 package common.domain;
 
+import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.util.*;
 
-public class RentalHistory {
+public class RentalHistory implements Serializable {
 
     final List<HistoricalRental> records;
     final Statistics statistics;
+
+    public RentalHistory(){this(null, null);}
 
     public RentalHistory(List<HistoricalRental> records, Statistics statistics) {
         this.records = records;
@@ -21,7 +24,7 @@ public class RentalHistory {
         return statistics;
     }
 
-    public static class Statistics {
+    public static class Statistics implements Serializable {
         final double overallEarnings;
         final double overallUtilization;
         final ValuePerClass earningsPerClass;
@@ -60,7 +63,7 @@ public class RentalHistory {
         }
     }
 
-    public static class ValuePerClass {
+    public static class ValuePerClass implements Serializable{
         Map<String, Double> perClass = new HashMap<>();
 
         public ValuePerClass(List<RentalClass> classes) {

@@ -1,8 +1,9 @@
 package common.util;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-public class Interval {
+public class Interval implements Serializable {
 
     final ZonedDateTime from, to;
 

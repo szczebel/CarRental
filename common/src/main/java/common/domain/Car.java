@@ -2,10 +2,12 @@ package common.domain;
 
 import java.io.Serializable;
 
-public class Car implements Serializable{
+public class Car implements Serializable {
     private String registration;
     private String model;
     private RentalClass rentalClass;
+
+    public Car() {}
 
     public Car(String model, String registration, RentalClass rentalClass) {
         this.model = model;

@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 public class ClockProvider implements Supplier<Clock> {
 
-    static final Clock SystemClock = Clock.system(ZoneId.systemDefault());
+    public static final Clock SystemClock = Clock.system(ZoneId.systemDefault());
     private Clock clock = SystemClock;
 
     @Override

@@ -1,4 +1,4 @@
-package mocks;
+package datageneration;
 
 import common.domain.Car;
 import common.domain.Client;

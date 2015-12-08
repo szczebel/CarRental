@@ -3,13 +3,14 @@ package common.service;
 import common.domain.Car;
 import common.domain.RentalClass;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 public interface RentabilityService {
     List<Car> findAvailableCars(Query quaey);
 
-    class Query {
+    class Query implements Serializable {
         final RentalClass rentalClass;
         private final ZonedDateTime availableUntil;
 

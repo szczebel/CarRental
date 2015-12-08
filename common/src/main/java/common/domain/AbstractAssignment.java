@@ -2,13 +2,18 @@ package common.domain;
 
 import common.util.Interval;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
-public class AbstractAssignment {
+public class AbstractAssignment implements Serializable {
     protected final Car car;
     protected final Client client;
     protected final Interval interval;
+
+    public AbstractAssignment() {
+        this(null, null, null);
+    }
 
     public AbstractAssignment(Car car, Client client, Interval interval) {
         this.car = car;
