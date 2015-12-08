@@ -51,7 +51,7 @@ public class DataGenerator {
         generateBetterRentalData(daysOfHistory, daysOfBookings);
     }
 
-    private void generateClasses() {
+    protected void generateClasses() {
         rentalClassService.create(new RentalClass("Economy", 5));
         rentalClassService.create(new RentalClass("Intermediate", 6));
         rentalClassService.create(new RentalClass("Fullsize", 7));
@@ -59,7 +59,7 @@ public class DataGenerator {
         rentalClassService.create(new RentalClass("Elite", 10));
     }
 
-    private void generateFleet(int howMany) {
+    protected void generateFleet(int howMany) {
         String[] models = {"Ford Mondeo", "Fiat Multipla", "Lexus", "Mercedes S", "Peugeot 307", "Renault Safrane", "Mazda 6", "Volvo XC60"};
         List<RentalClass> rentalClasses = rentalClassService.fetchAll();
         Map<String, RentalClass> classPerModel = new HashMap<>();
@@ -76,7 +76,7 @@ public class DataGenerator {
         }
     }
 
-    private void generateClients(int howMany) {
+    protected void generateClients(int howMany) {
         String[] names = {"John", "Thomas", "Christopher", "Wesley", "Lucas", "Gregory", "Rhonda", "Leticia", "Jane", "Courtney", "Kathy", "Angela", "David", "Brett", "Michael", "Sean", "Ross", "Monica", "Chandler"};
         String[] surnames = {"Suzuki", "White", "Fonda", "Griffin", "Nistor", "Washington", "Rainman", "Butterfly", "Zappa", "Johnson", "Beckham", "Dean", "Fowler", "Beck", "Petty", "Brinkworth", "Nasdac", "Williams", "Cox", "Arquette", "Greene", "Geller", "Bink", "Tribbiani", "Clunky", "Wright", "Bentley", "Coppola", "Pitt", "Jolie", "Padaki"};
         for (int i = 0; i < howMany; i++) {
@@ -86,7 +86,7 @@ public class DataGenerator {
         }
     }
 
-    private void generateBetterRentalData(int daysOfHistory, int daysOfBookings) {
+    protected void generateBetterRentalData(int daysOfHistory, int daysOfBookings) {
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime from = now.minusDays(daysOfHistory);
         ZonedDateTime to = now.plusDays(daysOfBookings);

@@ -22,7 +22,7 @@ public class MockBookingService implements BookingService {
     Set<Booking> bookings = new HashSet<>();
 
     @Override
-    public Booking book(Car car, Client client, Interval interval) {
+    public void book(Car car, Client client, Interval interval) {
         if (!mockClientService.clients.contains(client))
             throw new IllegalArgumentException("Nonexisting client " + client);
         if (!mockFleetService.fleet.contains(car)) throw new IllegalArgumentException("Nonexisting car " + car);
@@ -30,7 +30,6 @@ public class MockBookingService implements BookingService {
             throw new IllegalArgumentException(car + " cannot be booked");
         Booking booking = new Booking(car, client, interval);
         bookings.add(booking);
-        return booking;
     }
 
     @Override

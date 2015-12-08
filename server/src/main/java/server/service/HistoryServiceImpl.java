@@ -8,6 +8,8 @@ import common.domain.RentalHistory;
 import common.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import server.entity.PersistentAssignment;
+import server.repositories.PersistentAssignmentDao;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -25,15 +27,16 @@ public class HistoryServiceImpl implements HistoryService {
     @Autowired
     FleetServiceImpl fleetService;
 
-    private List<HistoricalRental> records = new ArrayList<>();
-
-    void saveEvent(HistoricalRental event) {
-        records.add(event);
-    }
+    @Autowired
+    PersistentAssignmentDao dao;
 
     @Override
     public RentalHistory fetchHistory(Query query) {
-        List<HistoricalRental> filtered = records.stream().filter(query).collect(Collectors.toList());
+        Collection<HistoricalRental> all = new ArrayList<>();
+        dao.findByType(PersistentAssignment.Type.HISTORICAL).forEach(persistentAssignment ->
+                        all.add(persistentAssignment.asHistorical())
+        );
+        List<HistoricalRental> filtered = all.stream().filter(query).collect(Collectors.toList());
         return new RentalHistory(filtered, calculateStatistics(filtered, query));
     }
 

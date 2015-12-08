@@ -9,7 +9,7 @@ import common.util.Interval;
 import java.util.Collection;
 
 public interface BookingService {
-    Booking book(Car car, Client client, Interval interval);
+    void book(Car car, Client client, Interval interval);
 
     Collection<Booking> getBookings();
 

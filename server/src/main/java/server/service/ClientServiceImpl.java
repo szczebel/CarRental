@@ -9,7 +9,6 @@ import server.repositories.PersistentClientDao;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 @Component("clientService")
 public class ClientServiceImpl implements ClientService {
@@ -28,7 +27,4 @@ public class ClientServiceImpl implements ClientService {
         dao.save(new PersistentClient(client));
     }
 
-    private Predicate<Client> email(Client newClient) {
-        return client -> client.getEmail().equals(newClient.getEmail());
-    }
 }

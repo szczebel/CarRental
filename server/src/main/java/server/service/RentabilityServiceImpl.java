@@ -18,7 +18,10 @@ public class RentabilityServiceImpl implements RentabilityService {
 
     @Override
     public List<Car> findAvailableCars(Query quaey) {
-        return fleetService.fetchAll().stream().filter(car -> ofClass(car, quaey.getRentalClass())).filter(rentalService::isAvailable).collect(Collectors.toList());
+        return fleetService.fetchAll().stream()
+                .filter(car -> ofClass(car, quaey.getRentalClass()))
+                .filter(rentalService::isAvailable)
+                .collect(Collectors.toList());
     }
 
     private boolean ofClass(Car car, RentalClass requiredClass) {

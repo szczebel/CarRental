@@ -21,11 +21,11 @@ public class AbstractAssignment implements Serializable {
         this.interval = interval;
     }
 
-    Car getCar() {
+    public Car getCar() {
         return car;
     }
 
-    Client getClient() {
+    public Client getClient() {
         return client;
     }
 

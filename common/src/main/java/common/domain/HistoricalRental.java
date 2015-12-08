@@ -11,6 +11,10 @@ public class HistoricalRental extends AbstractAssignment implements Serializable
     public HistoricalRental() {
     }
 
+    public HistoricalRental(Car car, Client client, Interval interval) {
+        super(car, client, interval);
+    }
+
     public HistoricalRental(CurrentRental currentRental, ZonedDateTime end) {
         super(currentRental.getCar(), currentRental.getClient(), new Interval(currentRental.getStart(), end));
     }

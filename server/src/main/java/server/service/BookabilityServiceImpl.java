@@ -18,8 +18,11 @@ public class BookabilityServiceImpl implements BookabilityService {
     BookingServiceImpl bookingService;
 
     @Override
-    public List<Car> findAvailableCars(Query quaey) {
-        return fleetService.fetchAll().stream().filter(car -> ofClass(car, quaey.getRentalClass())).filter(c -> !bookingService.alreadyBooked(c, quaey.getInterval())).collect(Collectors.toList());
+    public List<Car> findAvailableCars(Query query) {
+        return fleetService.fetchAll().stream()
+                .filter(car -> ofClass(car, query.getRentalClass()))
+                .filter(car -> !bookingService.alreadyBooked(car, query.getInterval()))
+                .collect(Collectors.toList());
     }
 
     private boolean ofClass(Car car, RentalClass requiredClass) {

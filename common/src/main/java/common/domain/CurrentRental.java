@@ -14,6 +14,10 @@ public class CurrentRental extends AbstractAssignment implements Serializable{
         super(car, client, new Interval(start, plannedEnd));
     }
 
+    public CurrentRental(Car car, Client client, Interval interval) {
+        super(car, client, interval);
+    }
+
     public ZonedDateTime getPlannedEnd() {
         return getEnd();
     }
