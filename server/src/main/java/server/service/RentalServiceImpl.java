@@ -58,4 +58,14 @@ public class RentalServiceImpl implements RentalService {
         Collection<PersistentAssignment> byType = dao.findByType(PersistentAssignment.Type.CURRENT);
         return byType.stream().filter(cr -> registration.equals(cr.getRegistration())).findFirst();
     }
+
+    public boolean isAvailableAfter(Car car, ZonedDateTime dateTime) {
+        Optional<PersistentAssignment> currentRental = getCurrentRental(car.getRegistration());
+        if(currentRental.isPresent()) {
+            PersistentAssignment a = currentRental.get();
+            return a.asCurrent().getPlannedEnd().isBefore(dateTime);
+        } else {
+            return true;
+        }
+    }
 }

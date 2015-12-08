@@ -39,9 +39,11 @@ public class DataGenerator {
     @SuppressWarnings("unused")
     @PostConstruct
     public void generate() throws Exception {
+        long now = System.currentTimeMillis();
         System.out.println("Generating data...");
-        //generate(50, 200, 60, 60);
-        generate(5, 20, 10, 10);
+        generate(250, 200, 60, 60);
+        //generate(5, 20, 10, 10);
+        System.out.println("Data generated in " + (System.currentTimeMillis() - now) + " ms" );
     }
 
     private void generate(int fleetSize, int customerBaseSize, int daysOfHistory, int daysOfBookings) {
