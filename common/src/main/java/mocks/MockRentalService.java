@@ -9,21 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.function.Supplier;
 
 @Component
 public class MockRentalService implements RentalService {
-    static final Clock SystemClock = Clock.system(ZoneId.systemDefault());
-    Clock clock = SystemClock;
 
-    @Autowired
-    MockClientService mockClientService;
-    @Autowired
-    MockFleetService mockFleetService;
-    @Autowired
-    MockHistoryService mockHistoryService;
+    @Autowired MockClientService mockClientService;
+    @Autowired MockFleetService mockFleetService;
+    @Autowired MockHistoryService mockHistoryService;
+    @Autowired Supplier<Clock> clockProvider;
 
     Map<Car, CurrentRental> currentRentals = new HashMap<>();
 
@@ -34,7 +30,7 @@ public class MockRentalService implements RentalService {
         if (!mockFleetService.fleet.contains(car)) throw new IllegalArgumentException("Nonexisting car " + car);
         if (!isAvailable(car))
             throw new IllegalArgumentException(car + " already rented to " + currentRentals.get(car));
-        CurrentRental currentRental = new CurrentRental(car, client, ZonedDateTime.now(clock), plannedEnd);
+        CurrentRental currentRental = new CurrentRental(car, client, ZonedDateTime.now(clockProvider.get()), plannedEnd);
         currentRentals.put(car, currentRental);
         return currentRental;
     }
@@ -47,7 +43,7 @@ public class MockRentalService implements RentalService {
         Car key = found.get();
         CurrentRental currentRental = currentRentals.get(key);
         currentRentals.remove(key);
-        mockHistoryService.saveEvent(new HistoricalRental(currentRental, ZonedDateTime.now(clock)));
+        mockHistoryService.saveEvent(new HistoricalRental(currentRental, ZonedDateTime.now(clockProvider.get())));
     }
 
     @Override

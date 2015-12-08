@@ -4,6 +4,8 @@ import common.domain.Car;
 import common.domain.Client;
 import common.domain.CurrentRental;
 import common.domain.RentalClass;
+import common.service.*;
+import common.util.ClockProvider;
 import common.util.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,15 +21,17 @@ import java.util.*;
 public class DataGenerator {
 
     @Autowired
-    MockFleetService fleetService;
+    FleetService fleetService;
     @Autowired
-    MockRentalClassService rentalClassService;
+    RentalClassService rentalClassService;
     @Autowired
-    MockClientService clientService;
+    ClientService clientService;
     @Autowired
-    MockRentalService rentalService;
+    RentalService rentalService;
     @Autowired
-    MockBookingService bookingService;
+    BookingService bookingService;
+    @Autowired
+    ClockProvider clockProvider;
 
 
     private final Random random = new Random();
@@ -103,23 +107,24 @@ public class DataGenerator {
             ZonedDateTime bookingEnd = currentTime;
             bookingService.book(car, randomClient(), new Interval(bookingStart, bookingEnd));
         }
-        rentalService.clock = MockRentalService.SystemClock;
+        clockProvider.resetToSystem();
     }
 
 
     private ZonedDateTime fastForward(ZonedDateTime currentTime) {
         currentTime = currentTime.plusHours(12 + random.nextInt(144)).plusMinutes(random.nextInt(60));
-        rentalService.clock = Clock.fixed(Instant.from(currentTime), ZoneId.systemDefault());
+        clockProvider.setClock(Clock.fixed(Instant.from(currentTime), ZoneId.systemDefault()));
         return currentTime;
     }
 
     private ZonedDateTime fastForwardTo(ZonedDateTime newTime) {
-        rentalService.clock = Clock.fixed(Instant.from(newTime), ZoneId.systemDefault());
+        clockProvider.setClock(Clock.fixed(Instant.from(newTime), ZoneId.systemDefault()));
         return newTime;
     }
 
 
     private Client randomClient() {
-        return clientService.clients.get(random.nextInt(clientService.clients.size()));
+        List<Client> clients = clientService.fetchAll();
+        return clients.get(random.nextInt(clients.size()));
     }
 }
