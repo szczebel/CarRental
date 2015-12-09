@@ -51,10 +51,10 @@ public class MockAvailabilityService implements AvailabilityService {
         candidates.forEach(c -> byRegistration.put(c.getRegistration(), c));
 
         bookingService.getBookings().forEach(a -> {
-            if (a.getInterval().overlaps(interval)) byRegistration.remove(a.getRegistration());
+            if (a.getInterval().intersects(interval)) byRegistration.remove(a.getRegistration());
         });
         rentalService.getCurrentRentals().forEach(a -> {
-            if (a.getInterval().overlaps(interval)) byRegistration.remove(a.getRegistration());
+            if (a.getInterval().intersects(interval)) byRegistration.remove(a.getRegistration());
         });
         return new ArrayList<>(byRegistration.values());
     }

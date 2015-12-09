@@ -18,11 +18,12 @@ import java.util.stream.Collectors;
 public class BookingServiceImpl implements BookingService {
 
     @Autowired PersistentAssignmentDao dao;
+    @Autowired CarAvailabilityEvaluator carAvailabilityEvaluator;
 
     @Transactional
     @Override
     public void book(Car car, Client client, Interval interval) {
-        if (alreadyBooked(car, interval)) throw new IllegalArgumentException(car + " already booked in this time range");
+        if (!carAvailabilityEvaluator.isAvailable(car.getRegistration(), interval)) throw new IllegalArgumentException(car + " not available in this time range");
         dao.save(new PersistentAssignment(new Booking(car, client, interval)));
     }
 
@@ -30,9 +31,5 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Collection<Booking> getBookings() {
         return dao.findByType(PersistentAssignment.Type.Booking).map(PersistentAssignment::asBooking).collect(Collectors.toList());
-    }
-
-    boolean alreadyBooked(Car car, Interval interval) {
-        return dao.findByType(PersistentAssignment.Type.Booking).filter(booking -> car.getRegistration().equals(booking.getRegistration())).anyMatch(b -> interval.overlaps(b.getInterval()));
     }
 }

@@ -20,7 +20,7 @@ public class Interval implements Serializable {
         return to;
     }
 
-    public boolean overlaps(Interval that) {
+    public boolean intersects(Interval that) {
         if (that.to.isBefore(this.from)) return false;
         if (that.from().isAfter(this.to)) return false;
         return true;

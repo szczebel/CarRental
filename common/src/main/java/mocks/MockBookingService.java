@@ -38,6 +38,6 @@ public class MockBookingService implements BookingService {
     }
 
     boolean alreadyBooked(Car car, Interval interval) {
-        return bookings.stream().filter(booking -> car.getRegistration().equals(booking.getRegistration())).anyMatch(b -> interval.overlaps(b.getInterval()));
+        return bookings.stream().filter(booking -> car.getRegistration().equals(booking.getRegistration())).anyMatch(b -> interval.intersects(b.getInterval()));
     }
 }

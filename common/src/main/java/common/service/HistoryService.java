@@ -30,7 +30,7 @@ public interface HistoryService {
 
         @Override
         public boolean test(HistoricalRental historicalRental) {
-            return interval.overlaps(historicalRental.getInterval());
+            return interval.intersects(historicalRental.getInterval());
         }
     }
 }

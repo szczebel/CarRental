@@ -4,6 +4,7 @@ import common.domain.Car;
 import common.domain.Client;
 import common.domain.CurrentRental;
 import common.service.RentalService;
+import common.util.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,16 +23,32 @@ public class RentalServiceImpl implements RentalService {
 
     @Autowired Supplier<Clock> clockProvider;
 
-    @Autowired
-    PersistentAssignmentDao dao;
+    @Autowired PersistentAssignmentDao dao;
+    @Autowired CarAvailabilityEvaluator carAvailabilityEvaluator;
+
 
     @Transactional
     @Override
     public CurrentRental rent(Car car, Client client, ZonedDateTime plannedEnd) {
-        if (!isAvailable(car)) throw new IllegalArgumentException(car + " already rented");
-        CurrentRental currentRental = new CurrentRental(car, client, ZonedDateTime.now(clockProvider.get()), plannedEnd);
+        Interval when = new Interval(ZonedDateTime.now(clockProvider.get()), plannedEnd);
+        if (!carAvailabilityEvaluator.isAvailable(car.getRegistration(), when)) throw new IllegalArgumentException(car + " not available");
+        CurrentRental currentRental = new CurrentRental(car, client, when);
+        //sleepIfNotDataGeneration(10);
         dao.save(new PersistentAssignment(currentRental));
         return currentRental;
+    }
+
+    private void sleepIfNotDataGeneration(int seconds) {
+        StackTraceElement[] stackTrace = new Throwable().getStackTrace();
+        for (StackTraceElement e : stackTrace) {
+            if (e.getClassName().contains("DataGenerator")) return;
+        }
+        System.out.println("sleeping");
+        try {
+            Thread.sleep(seconds*1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Transactional
