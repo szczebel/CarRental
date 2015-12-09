@@ -5,7 +5,7 @@ import client.ui.util.BackgroundOperation;
 import common.domain.Car;
 import common.domain.Client;
 import common.domain.RentalClass;
-import common.service.BookabilityService;
+import common.service.AvailabilityService;
 import common.service.BookingService;
 import common.service.ClientService;
 import common.util.Interval;
@@ -22,7 +22,7 @@ import static client.ui.util.GuiHelper.*;
 @Component
 public class MakeABookingViewBuilder {
 
-    @Autowired    BookabilityService bookabilityService;
+    @Autowired    AvailabilityService availabilityService;
     @Autowired    BookingService bookingService;
     @Autowired    ClientService clientService;
     @Autowired    RentalClasses rentalClasses;
@@ -50,7 +50,7 @@ public class MakeABookingViewBuilder {
                 .build();
     }
 
-    private void bookClicked(JTable table, FleetTableModel tableModel, Supplier<BookabilityService.Query> classChooser) {
+    private void bookClicked(JTable table, FleetTableModel tableModel, Supplier<AvailabilityService.BookingQuery> classChooser) {
         int selectedRow = table.getSelectedRow();
         if (selectedRow < 0) {
             JOptionPane.showMessageDialog(table, "Select a car to book in the table");
@@ -62,7 +62,7 @@ public class MakeABookingViewBuilder {
         }
     }
 
-    private void showBookDialog(JComponent parent, List<Client> clients, Car carToBook, FleetTableModel tableModel, Supplier<BookabilityService.Query> queryProvider) {
+    private void showBookDialog(JComponent parent, List<Client> clients, Car carToBook, FleetTableModel tableModel, Supplier<AvailabilityService.BookingQuery> queryProvider) {
 
         ClientListTableModel clientsModel = new ClientListTableModel();
         clientsModel.setData(clients);
@@ -85,9 +85,9 @@ public class MakeABookingViewBuilder {
         }
     }
 
-    private void refresh(FleetTableModel tableModel, Supplier<BookabilityService.Query> queryProvider) {
+    private void refresh(FleetTableModel tableModel, Supplier<AvailabilityService.BookingQuery> queryProvider) {
         BackgroundOperation.execute(
-                () -> bookabilityService.findAvailableCars(queryProvider.get()),
+                () -> availabilityService.findAvailableToBook(queryProvider.get()),
                 tableModel::setData
         );
     }
@@ -108,16 +108,16 @@ public class MakeABookingViewBuilder {
                             .build();
         }
 
-        BookabilityService.Query getQuery() {
+        AvailabilityService.BookingQuery getQuery() {
             RentalClass selectedItem = (RentalClass) classChooser.getSelectedItem();
-            return new BookabilityService.Query(selectedItem, intervalEditor.getInterval());
+            return new AvailabilityService.BookingQuery(selectedItem, intervalEditor.getInterval());
         }
 
         JComponent getComponent() {
             return component;
         }
 
-        Supplier<BookabilityService.Query> asSupplier() {
+        Supplier<AvailabilityService.BookingQuery> asSupplier() {
             return this::getQuery;
         }
     }

@@ -5,8 +5,8 @@ import client.ui.util.BackgroundOperation;
 import common.domain.Car;
 import common.domain.Client;
 import common.domain.RentalClass;
+import common.service.AvailabilityService;
 import common.service.ClientService;
-import common.service.RentabilityService;
 import common.service.RentalService;
 import common.util.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import static client.ui.util.GuiHelper.*;
 @Component
 public class MakeARentViewBuilder {
 
-    @Autowired    RentabilityService rentabilityService;
+    @Autowired    AvailabilityService availabilityService;
     @Autowired    RentalService rentalService;
     @Autowired    ClientService clientService;
     @Autowired    RentalClasses rentalClasses;
@@ -50,7 +50,7 @@ public class MakeARentViewBuilder {
                 .build();
     }
 
-    private void rentClicked(JTable table, FleetTableModel tableModel, Supplier<RentabilityService.Query> queryProvider) {
+    private void rentClicked(JTable table, FleetTableModel tableModel, Supplier<AvailabilityService.RentQuery> queryProvider) {
         int selectedRow = table.getSelectedRow();
         if (selectedRow < 0) {
             JOptionPane.showMessageDialog(table, "Select a car to rent in the table");
@@ -62,7 +62,7 @@ public class MakeARentViewBuilder {
         }
     }
 
-    private void showRentDialog(JComponent parent, List<Client> clients, Car carToRent, FleetTableModel tableModel, Supplier<RentabilityService.Query> queryProvider) {
+    private void showRentDialog(JComponent parent, List<Client> clients, Car carToRent, FleetTableModel tableModel, Supplier<AvailabilityService.RentQuery> queryProvider) {
 
         ClientListTableModel clientsModel = new ClientListTableModel();
         clientsModel.setData(clients);
@@ -85,9 +85,9 @@ public class MakeARentViewBuilder {
         }
     }
 
-    private void refresh(FleetTableModel tableModel, Supplier<RentabilityService.Query> queryProvider) {
+    private void refresh(FleetTableModel tableModel, Supplier<AvailabilityService.RentQuery> queryProvider) {
         BackgroundOperation.execute(
-                () -> rentabilityService.findAvailableCars(queryProvider.get()),
+                () -> availabilityService.findAvailableToRent(queryProvider.get()),
                 tableModel::setData
         );
     }
@@ -108,16 +108,16 @@ public class MakeARentViewBuilder {
                             .build();
         }
 
-        RentabilityService.Query getQuery() {
+        AvailabilityService.RentQuery getQuery() {
             RentalClass selectedItem = (RentalClass) classChooser.getSelectedItem();
-            return new RentabilityService.Query(selectedItem, intervalEditor.getInterval().to());
+            return new AvailabilityService.RentQuery(selectedItem, intervalEditor.getInterval().to());
         }
 
         JComponent getComponent() {
             return component;
         }
 
-        Supplier<RentabilityService.Query> asSupplier() {
+        Supplier<AvailabilityService.RentQuery> asSupplier() {
             return this::getQuery;
         }
     }

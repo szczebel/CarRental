@@ -61,10 +61,10 @@
                         </bean>
                 </entry>
 
-                <entry key="/http/BookabilityService">
+                <entry key="/http/AvailabilityService">
                     <bean class="org.springframework.remoting.httpinvoker.SimpleHttpInvokerServiceExporter">
-                        <property name="service" ref="bookabilityService"/>
-                        <property name="serviceInterface" value="common.service.BookabilityService"/>
+                        <property name="service" ref="availabilityService"/>
+                        <property name="serviceInterface" value="common.service.AvailabilityService"/>
                     </bean>
                 </entry>
 
@@ -90,12 +90,6 @@
                     <bean class="org.springframework.remoting.httpinvoker.SimpleHttpInvokerServiceExporter">
                         <property name="service" ref="historyService"/>
                         <property name="serviceInterface" value="common.service.HistoryService"/>
-                    </bean>
-                </entry>
-                <entry key="/http/RentabilityService">
-                    <bean class="org.springframework.remoting.httpinvoker.SimpleHttpInvokerServiceExporter">
-                        <property name="service" ref="rentabilityService"/>
-                        <property name="serviceInterface" value="common.service.RentabilityService"/>
                     </bean>
                 </entry>
                 <entry key="/http/RentalClassService">

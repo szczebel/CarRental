@@ -11,8 +11,8 @@
     </bean>
 
     <bean class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-        <property name="serviceUrl" value="http://localhost:8088/http/BookabilityService"/>
-        <property name="serviceInterface" value="common.service.BookabilityService"/>
+        <property name="serviceUrl" value="http://localhost:8088/http/AvailabilityService"/>
+        <property name="serviceInterface" value="common.service.AvailabilityService"/>
     </bean>
 
     <bean class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
@@ -30,10 +30,6 @@
     <bean class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
         <property name="serviceUrl" value="http://localhost:8088/http/HistoryService"/>
         <property name="serviceInterface" value="common.service.HistoryService"/>
-    </bean>
-    <bean class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-        <property name="serviceUrl" value="http://localhost:8088/http/RentabilityService"/>
-        <property name="serviceInterface" value="common.service.RentabilityService"/>
     </bean>
     <bean class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
         <property name="serviceUrl" value="http://localhost:8088/http/RentalClassService"/>
