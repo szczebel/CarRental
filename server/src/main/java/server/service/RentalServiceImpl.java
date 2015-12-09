@@ -6,6 +6,7 @@ import common.domain.CurrentRental;
 import common.service.RentalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import server.entity.PersistentAssignment;
 import server.repositories.PersistentAssignmentDao;
 
@@ -24,7 +25,7 @@ public class RentalServiceImpl implements RentalService {
     @Autowired
     PersistentAssignmentDao dao;
 
-
+    @Transactional
     @Override
     public CurrentRental rent(Car car, Client client, ZonedDateTime plannedEnd) {
         if (!isAvailable(car)) throw new IllegalArgumentException(car + " already rented");
@@ -33,6 +34,7 @@ public class RentalServiceImpl implements RentalService {
         return currentRental;
     }
 
+    @Transactional
     @Override
     public void returnCar(String registration) {
         Optional<PersistentAssignment> cr = getCurrentRental(registration);

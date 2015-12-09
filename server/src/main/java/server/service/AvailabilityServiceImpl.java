@@ -5,6 +5,7 @@ import common.domain.RentalClass;
 import common.service.AvailabilityService;
 import common.service.FleetService;
 import common.util.Interval;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import server.repositories.PersistentAssignmentDao;
@@ -46,12 +47,14 @@ public class AvailabilityServiceImpl implements AvailabilityService {
     }
 
     Collection<Car> findCarsWithoutAssignment(RentalClass rentalClass, Interval interval) {
+        long start = System.currentTimeMillis();
         Collection<Car> candidates = fleetService.findByRentalClass(rentalClass);
         Map<String, Car> byRegistration = new HashMap<>();
         candidates.forEach(c -> byRegistration.put(c.getRegistration(), c));
         dao.findWhereTypeIsNotHistorical().forEach(a -> {
             if (a.getInterval().overlaps(interval)) byRegistration.remove(a.getRegistration());
         });
+        LoggerFactory.getLogger("timnig").info("Availability: found " + byRegistration.size() + " cars in "+(System.currentTimeMillis()-start)+" ms");
         return new ArrayList<>(byRegistration.values());
     }
 

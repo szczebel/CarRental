@@ -101,5 +101,7 @@ class BookingsModel extends AbstractTableModel implements ScheduleModel<CarResou
         return this::setData;
     }
 
-
+    Booking getBooking(int index) {
+        return records.get(index);
+    }
 }

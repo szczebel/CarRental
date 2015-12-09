@@ -22,10 +22,9 @@
     <bean id="clockProvider" class="common.util.ClockProvider"/>
 
     <!--persistence-->
-    <jpa:repositories base-package="server.repositories"/>
+    <jpa:repositories base-package="server.repositories" entity-manager-factory-ref="entityManagerFactory"/>
 
-    <jdbc:embedded-database id="dataSource" type="HSQL">
-    </jdbc:embedded-database>
+    <jdbc:embedded-database id="dataSource" type="H2"/>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource"/>
