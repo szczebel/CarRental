@@ -7,7 +7,6 @@ import common.util.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,14 +24,14 @@ public class MockAvailabilityService implements AvailabilityService {
     @Autowired
     MockRentalService rentalService;
     @Autowired
-    Supplier<Clock> clockProvider;
+    Supplier<ZonedDateTime> currentTime;
 
     @Override
     public Collection<Car> findAvailableToRent(RentQuery query) {
         return findCarsWithoutAssignment(
                 query.getRentalClass(),
                 new Interval(
-                        ZonedDateTime.now(clockProvider.get()),
+                        currentTime.get(),
                         query.getAvailableUntil())
         );
     }

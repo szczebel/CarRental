@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import server.entity.PersistentAssignment;
 import server.repositories.PersistentAssignmentDao;
 
-import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 @Component("rentalService")
 public class RentalServiceImpl implements RentalService {
 
-    @Autowired Supplier<Clock> clockProvider;
+    @Autowired Supplier<ZonedDateTime> currentTime;
 
     @Autowired PersistentAssignmentDao dao;
     @Autowired CarAvailabilityEvaluator carAvailabilityEvaluator;
@@ -31,7 +30,7 @@ public class RentalServiceImpl implements RentalService {
     @Transactional
     @Override
     public CurrentRental rent(Car car, Client client, ZonedDateTime plannedEnd) {
-        Interval when = new Interval(ZonedDateTime.now(clockProvider.get()), plannedEnd);
+        Interval when = new Interval(currentTime.get(), plannedEnd);
         if (!carAvailabilityEvaluator.isAvailable(car.getRegistration(), when)) throw new IllegalArgumentException(car + " not available");
         CurrentRental currentRental = new CurrentRental(car, client, when);
         //sleepIfNotDataGeneration(10);
@@ -58,14 +57,14 @@ public class RentalServiceImpl implements RentalService {
         Optional<PersistentAssignment> cr = getCurrentRental(registration);
         if (!cr.isPresent()) throw new IllegalArgumentException("Returning a car which is not rented: " + registration);
         PersistentAssignment persistentAssignment = cr.get();
-        persistentAssignment.changeToHistorical(ZonedDateTime.now(clockProvider.get()));
+        persistentAssignment.changeToHistorical(currentTime.get());
         dao.save(persistentAssignment);
     }
 
     @Transactional
     @Override
     public void rent(Booking booking) {
-        ZonedDateTime now = ZonedDateTime.now(clockProvider.get());
+        ZonedDateTime now = currentTime.get();
         if(booking.getStart().isAfter(now)) throw new RuntimeException("This booking has start date in future");
         // todo be more forgiving - allow rent if car has no assignments between now and start
         PersistentAssignment pb = dao.findOne(booking.getId());

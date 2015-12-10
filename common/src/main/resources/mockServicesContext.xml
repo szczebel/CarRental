@@ -14,5 +14,5 @@
 
     <context:component-scan base-package="mocks"/>
     <context:annotation-config/>
-    <bean id="clockProvider" class="common.util.ClockProvider"/>
+    <bean id="clockProvider" class="common.util.FreezableClock"/>
 </beans>

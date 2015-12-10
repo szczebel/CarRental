@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import server.repositories.PersistentAssignmentDao;
 
-import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,15 +25,13 @@ public class AvailabilityServiceImpl implements AvailabilityService {
     @Autowired
     FleetService fleetService;
     @Autowired
-    Supplier<Clock> clockProvider;
+    Supplier<ZonedDateTime> currentTime;
 
     @Override
     public Collection<Car> findAvailableToRent(RentQuery query) {
         return findCarsWithoutAssignment(
                 query.getRentalClass(),
-                new Interval(
-                        ZonedDateTime.now(clockProvider.get()),
-                        query.getAvailableUntil())
+                new Interval(currentTime.get(), query.getAvailableUntil())
         );
     }
 

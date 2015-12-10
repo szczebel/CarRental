@@ -2,11 +2,9 @@ package mocks;
 
 import common.domain.*;
 import common.service.RentalService;
-import common.util.ClockProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.function.Supplier;
@@ -18,7 +16,7 @@ public class MockRentalService implements RentalService {
     @Autowired MockClientService mockClientService;
     @Autowired MockFleetService mockFleetService;
     @Autowired MockHistoryService mockHistoryService;
-    @Autowired Supplier<Clock> clockProvider = () -> ClockProvider.SystemClock;
+    @Autowired Supplier<ZonedDateTime> currentTime;
 
     Map<Car, CurrentRental> currentRentals = new HashMap<>();
 
@@ -29,7 +27,7 @@ public class MockRentalService implements RentalService {
         if (!mockFleetService.fleet.contains(car)) throw new IllegalArgumentException("Nonexisting car " + car);
         if (!isAvailable(car))
             throw new IllegalArgumentException(car + " already rented to " + currentRentals.get(car));
-        CurrentRental currentRental = new CurrentRental(car, client, ZonedDateTime.now(clockProvider.get()), plannedEnd);
+        CurrentRental currentRental = new CurrentRental(car, client, currentTime.get(), plannedEnd);
         currentRentals.put(car, currentRental);
         return currentRental;
     }
@@ -42,15 +40,16 @@ public class MockRentalService implements RentalService {
         Car key = found.get();
         CurrentRental currentRental = currentRentals.get(key);
         currentRentals.remove(key);
-        mockHistoryService.saveEvent(new HistoricalRental(currentRental, ZonedDateTime.now(clockProvider.get())));
+        mockHistoryService.saveEvent(new HistoricalRental(currentRental, currentTime.get()));
     }
 
     @Override
     public void rent(Booking booking) {
-        ZonedDateTime now = ZonedDateTime.now(clockProvider.get());
-        //if(booking.getStart().isAfter(now)) check if the car is already available to rent. Throw exception if not //todo
+        ZonedDateTime now = currentTime.get();
+        if(booking.getStart().isAfter(now)) throw new RuntimeException("This booking has start date in future");
+        // todo be more forgiving - allow rent if car has no assignments between now and start
         mockBookingService.bookings.remove(booking.getId());
-        CurrentRental currentRental = new CurrentRental(booking.getCar(), booking.getClient(), ZonedDateTime.now(clockProvider.get()), booking.getEnd());
+        CurrentRental currentRental = new CurrentRental(booking.getCar(), booking.getClient(), currentTime.get(), booking.getEnd());
         currentRentals.put(booking.getCar(), currentRental);
     }
 

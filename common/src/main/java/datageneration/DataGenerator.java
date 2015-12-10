@@ -5,15 +5,12 @@ import common.domain.Client;
 import common.domain.CurrentRental;
 import common.domain.RentalClass;
 import common.service.*;
-import common.util.ClockProvider;
+import common.util.FreezableClock;
 import common.util.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -31,7 +28,7 @@ public class DataGenerator {
     @Autowired
     BookingService bookingService;
     @Autowired
-    ClockProvider clockProvider;
+    FreezableClock freezableClock;
 
 
     private final Random random = new Random();
@@ -114,19 +111,19 @@ public class DataGenerator {
             ZonedDateTime bookingEnd = currentTime;
             bookingService.book(car, randomClient(), new Interval(bookingStart, bookingEnd));
         }
-        clockProvider.resetToSystem();
+        freezableClock.unfreze();
     }
 
 
     private ZonedDateTime fastForward(ZonedDateTime currentTime) {
         currentTime = currentTime.plusHours(12 + random.nextInt(144)).plusMinutes(random.nextInt(60));
-        clockProvider.setClock(Clock.fixed(Instant.from(currentTime), ZoneId.systemDefault()));
+        freezableClock.freezeTime(currentTime);
         return currentTime;
     }
 
-    private ZonedDateTime fastForwardTo(ZonedDateTime newTime) {
-        clockProvider.setClock(Clock.fixed(Instant.from(newTime), ZoneId.systemDefault()));
-        return newTime;
+    private ZonedDateTime fastForwardTo(ZonedDateTime time) {
+        freezableClock.freezeTime(time);
+        return time;
     }
 
 
