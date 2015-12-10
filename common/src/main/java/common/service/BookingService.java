@@ -13,5 +13,9 @@ public interface BookingService {
 
     Collection<Booking> getBookings();
 
+    void cancel(Booking booking);
+
+    Collection<Booking> getBookingsOf(Client client);
+
     //void cancelBooking(String registration);
 }

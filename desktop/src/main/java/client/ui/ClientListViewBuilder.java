@@ -14,36 +14,36 @@ import static client.ui.util.GuiHelper.*;
 public class ClientListViewBuilder {
 
     @Autowired ClientService clientService;
+    @Autowired Customers customers;
 
     public JComponent build() {
 
-        ClientListTableModel tableModel = new ClientListTableModel();
-        JTable table = new JTable(tableModel);
+        JTable table = new JTable(customers);
+        refresh();
 
-        refresh(tableModel);
         return borderLayout()
                 .north(
                         toolbar(
-                                button("Refresh", () -> refresh(tableModel)),
-                                button("Add...", () -> addNewClientClicked(table, tableModel))
+                                button("Refresh", this::refresh),
+                                button("Add...", () -> addNewClientClicked(table))
                         ))
                 .center(inScrollPane(table))
                 .build();
     }
 
-    private void addNewClientClicked(JComponent panel, ClientListTableModel tableModel) {
+    private void addNewClientClicked(JComponent panel) {
         String name = JOptionPane.showInputDialog(panel, "Name", "Add new client", JOptionPane.QUESTION_MESSAGE);
         String phone = JOptionPane.showInputDialog(panel, "Phone", "Add new client", JOptionPane.QUESTION_MESSAGE);
         BackgroundOperation.execute(
                 () -> clientService.create(new Client(name, phone)),
-                () -> refresh(tableModel)
+                this::refresh
         );
     }
 
-    private void refresh(ClientListTableModel tableModel) {
+    private void refresh() {
         BackgroundOperation.execute(
                 clientService::fetchAll,
-                tableModel::setData
+                customers::setData
         );
     }
 }

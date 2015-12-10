@@ -70,6 +70,18 @@ public class GuiHelper {
         };
     }
 
+    public static ListCellRenderer convertingListCellRenderer(Converter<Object, Object> converter) {
+        return new DefaultListCellRenderer() {
+
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                return super.getListCellRendererComponent(list, converter.convert(value), index, isSelected, cellHasFocus);
+            }
+        };
+    }
+
+
+
     public static BorderLayoutBuilder borderLayout() {
         return new BorderLayoutBuilder();
     }

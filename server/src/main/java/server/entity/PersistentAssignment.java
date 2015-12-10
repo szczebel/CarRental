@@ -43,17 +43,17 @@ public class PersistentAssignment {
 
     public Booking asBooking() {
         if(Type.Booking != this.type) throw new RuntimeException("This is not a booking");
-        return new Booking(car.toCar(), client.toClient(), getInterval());
+        return new Booking(id, car.toCar(), client.toClient(), getInterval());
     }
 
     public HistoricalRental asHistorical() {
         if(Type.Historical != this.type) throw new RuntimeException("This is not a historical rental");
-        return new HistoricalRental(car.toCar(), client.toClient(), getInterval());
+        return new HistoricalRental(id, car.toCar(), client.toClient(), getInterval());
     }
 
     public CurrentRental asCurrent() {
         if(Type.Current != this.type) throw new RuntimeException("This is not a current rental");
-        return new CurrentRental(car.toCar(), client.toClient(), getInterval());
+        return new CurrentRental(id, car.toCar(), client.toClient(), getInterval());
     }
 
     public Interval getInterval() {
@@ -66,11 +66,20 @@ public class PersistentAssignment {
     public String getRegistration() {
         return car.registration;
     }
+    public String getClientEmail() {
+        return client.email;
+    }
 
     public void changeToHistorical(ZonedDateTime actualEndDate) {
-        if(Type.Current != this.type) throw new IllegalStateException("Trying to change to Historical assignment which is not Current");
+        if(Type.Current != this.type) throw new IllegalStateException("Trying to change to Historical an assignment which is not Current");
         this.type = Type.Historical;
         end = actualEndDate.toInstant().toEpochMilli();
+    }
+
+    public void changeToCurrent(ZonedDateTime actualStart) {
+        if(Type.Booking != this.type) throw new IllegalStateException("Trying to change to Current an assignment which is not Booking");
+        this.type = Type.Current;
+        start = actualStart.toInstant().toEpochMilli();
     }
 
     public enum Type {Historical, Current, Booking}

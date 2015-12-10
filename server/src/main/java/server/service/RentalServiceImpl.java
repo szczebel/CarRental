@@ -1,5 +1,6 @@
 package server.service;
 
+import common.domain.Booking;
 import common.domain.Car;
 import common.domain.Client;
 import common.domain.CurrentRental;
@@ -61,13 +62,20 @@ public class RentalServiceImpl implements RentalService {
         dao.save(persistentAssignment);
     }
 
+    @Transactional
+    @Override
+    public void rent(Booking booking) {
+        ZonedDateTime now = ZonedDateTime.now(clockProvider.get());
+        if(booking.getStart().isAfter(now)) throw new RuntimeException("This booking has start date in future");
+        // todo be more forgiving - allow rent if car has no assignments between now and start
+        PersistentAssignment pb = dao.findOne(booking.getId());
+        pb.changeToCurrent(now);
+        dao.save(pb);
+    }
+
     @Override
     public List<CurrentRental> getCurrentRentals() {
         return dao.findByType(PersistentAssignment.Type.Current).map(PersistentAssignment::asCurrent).collect(Collectors.toList());
-    }
-
-    private boolean isAvailable(Car car) {
-        return !getCurrentRental(car.getRegistration()).isPresent();
     }
 
     Optional<PersistentAssignment> getCurrentRental(String registration) {

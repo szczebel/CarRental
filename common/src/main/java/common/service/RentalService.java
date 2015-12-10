@@ -1,6 +1,7 @@
 package common.service;
 
 
+import common.domain.Booking;
 import common.domain.Car;
 import common.domain.Client;
 import common.domain.CurrentRental;
@@ -14,4 +15,6 @@ public interface RentalService {
     List<CurrentRental> getCurrentRentals();
 
     void returnCar(String registration);
+
+    void rent(Booking booking);
 }

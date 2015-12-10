@@ -7,15 +7,21 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 
 public class AbstractAssignment implements Serializable {
-    protected final Car car;
-    protected final Client client;
-    protected final Interval interval;
+    private final Car car;
+    private final Client client;
+    private final Interval interval;
+    private final Long id;
 
     public AbstractAssignment() {
         this(null, null, null);
     }
 
     public AbstractAssignment(Car car, Client client, Interval interval) {
+        this(null, car, client, interval);
+    }
+
+    public AbstractAssignment(Long id, Car car, Client client, Interval interval) {
+        this.id = id;
         this.car = car;
         this.client = client;
         this.interval = interval;
@@ -67,5 +73,9 @@ public class AbstractAssignment implements Serializable {
 
     public double getHourlyRate() {
         return car.getHourlyRate();
+    }
+
+    public Long getId() {
+        return id;
     }
 }

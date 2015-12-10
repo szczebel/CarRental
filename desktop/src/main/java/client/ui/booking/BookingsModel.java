@@ -11,7 +11,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 class BookingsModel extends AbstractTableModel implements ScheduleModel<CarResource, BookingAsTask> {
@@ -95,10 +94,6 @@ class BookingsModel extends AbstractTableModel implements ScheduleModel<CarResou
     @Override
     public ZonedDateTime getStart() {
         return delegate.getStart();
-    }
-
-    public Consumer<Collection<Booking>> asConsumer() {
-        return this::setData;
     }
 
     Booking getBooking(int index) {

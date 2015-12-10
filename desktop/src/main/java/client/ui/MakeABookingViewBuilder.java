@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.function.Supplier;
 
 import static client.ui.util.GuiHelper.*;
@@ -26,8 +25,8 @@ public class MakeABookingViewBuilder {
     @Autowired    BookingService bookingService;
     @Autowired    ClientService clientService;
     @Autowired    RentalClasses rentalClasses;
+    @Autowired    Customers customers;
 
-    //todo add schedule chart to visualize bookability?
     public JComponent build() {
         FleetTableModel tableModel = new FleetTableModel();
         AvailabilityQueryEditor availabilityQueryEditor = new AvailabilityQueryEditor(rentalClasses);
@@ -57,16 +56,14 @@ public class MakeABookingViewBuilder {
         } else {
             BackgroundOperation.execute(
                     clientService::fetchAll,
-                    clients -> showBookDialog(table, clients, tableModel.getCarAt(table.convertRowIndexToModel(selectedRow)), tableModel, classChooser)
+                    clients -> showBookDialog(table, tableModel.getCarAt(table.convertRowIndexToModel(selectedRow)), tableModel, classChooser)
             );
         }
     }
 
-    private void showBookDialog(JComponent parent, List<Client> clients, Car carToBook, FleetTableModel tableModel, Supplier<AvailabilityService.BookingQuery> queryProvider) {
+    private void showBookDialog(JComponent parent, Car carToBook, FleetTableModel tableModel, Supplier<AvailabilityService.BookingQuery> queryProvider) {
 
-        ClientListTableModel clientsModel = new ClientListTableModel();
-        clientsModel.setData(clients);
-        JTable clientsTable = new JTable(clientsModel);
+        JTable clientsTable = new JTable(customers);
         int option = JOptionPane.showConfirmDialog(
                 parent,
                 withTitledBorder(inScrollPane(clientsTable), "Select client to book for"),
@@ -76,7 +73,7 @@ public class MakeABookingViewBuilder {
         if (option == JOptionPane.OK_OPTION) {
             int selectedRow = clientsTable.getSelectedRow();
             if (selectedRow >= 0) {
-                Client client = clientsModel.getClientAt(clientsTable.convertRowIndexToModel(selectedRow));
+                Client client = customers.getAt(clientsTable.convertRowIndexToModel(selectedRow));
                 BackgroundOperation.execute(
                         () -> bookingService.book(carToBook, client, queryProvider.get().getInterval()),
                         () -> refresh(tableModel, queryProvider)

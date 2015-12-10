@@ -26,6 +26,7 @@ public class MakeARentViewBuilder {
     @Autowired    RentalService rentalService;
     @Autowired    ClientService clientService;
     @Autowired    RentalClasses rentalClasses;
+    @Autowired    Customers customers;
 
     public JComponent build() {
 
@@ -64,9 +65,7 @@ public class MakeARentViewBuilder {
 
     private void showRentDialog(JComponent parent, List<Client> clients, Car carToRent, FleetTableModel tableModel, Supplier<AvailabilityService.RentQuery> queryProvider) {
 
-        ClientListTableModel clientsModel = new ClientListTableModel();
-        clientsModel.setData(clients);
-        JTable clientsTable = new JTable(clientsModel);
+        JTable clientsTable = new JTable(customers);
         int option = JOptionPane.showConfirmDialog(
                 parent,
                 withTitledBorder(inScrollPane(clientsTable), "Select client to rent to"),
@@ -76,7 +75,7 @@ public class MakeARentViewBuilder {
         if (option == JOptionPane.OK_OPTION) {
             int selectedRow = clientsTable.getSelectedRow();
             if (selectedRow >= 0) {
-                Client client = clientsModel.getClientAt(clientsTable.convertRowIndexToModel(selectedRow));
+                Client client = customers.getAt(clientsTable.convertRowIndexToModel(selectedRow));
                 BackgroundOperation.execute(
                         () -> rentalService.rent(carToRent, client, queryProvider.get().getAvailableUntil()),
                         () -> refresh(tableModel, queryProvider)

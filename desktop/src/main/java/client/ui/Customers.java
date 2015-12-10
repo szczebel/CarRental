@@ -1,18 +1,25 @@
 package client.ui;
 
 import common.domain.Client;
+import org.springframework.stereotype.Component;
 
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-class ClientListTableModel extends AbstractTableModel {
+@Component
+public class Customers extends AbstractTableModel {
 
     final static String[] COLUMN = {"Name", "Email"};
     private List<Client> clients = new ArrayList<>();
+    private DefaultComboBoxModel<Client> comboBoxModel = new DefaultComboBoxModel<>();
 
     void setData(List<Client> clients) {
         this.clients = clients;
+        comboBoxModel.removeAllElements();
+        comboBoxModel.addElement(null);
+        clients.forEach(comboBoxModel::addElement);
         fireTableDataChanged();
     }
 
@@ -39,7 +46,11 @@ class ClientListTableModel extends AbstractTableModel {
         throw new IllegalArgumentException("Unknown column index : " + columnIndex);
     }
 
-    public Client getClientAt(int index) {
+    public Client getAt(int index) {
         return clients.get(index);
+    }
+
+    public ComboBoxModel<Client> getComboBoxModel() {
+        return comboBoxModel;
     }
 }

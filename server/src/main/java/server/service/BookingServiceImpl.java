@@ -27,9 +27,24 @@ public class BookingServiceImpl implements BookingService {
         dao.save(new PersistentAssignment(new Booking(car, client, interval)));
     }
 
-
+    @Transactional
     @Override
     public Collection<Booking> getBookings() {
         return dao.findByType(PersistentAssignment.Type.Booking).map(PersistentAssignment::asBooking).collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Override
+    public void cancel(Booking booking) {
+        dao.delete(booking.getId());
+    }
+
+    @Override
+    public Collection<Booking> getBookingsOf(Client client) {
+        if(client == null) return getBookings();
+        return dao.findByType(PersistentAssignment.Type.Booking)
+                .filter(a -> a.getClientEmail().equals(client.getEmail()))
+                .map(PersistentAssignment::asBooking)
+                .collect(Collectors.toList());
     }
 }

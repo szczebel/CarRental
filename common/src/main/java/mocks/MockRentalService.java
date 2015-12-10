@@ -1,9 +1,6 @@
 package mocks;
 
-import common.domain.Car;
-import common.domain.Client;
-import common.domain.CurrentRental;
-import common.domain.HistoricalRental;
+import common.domain.*;
 import common.service.RentalService;
 import common.util.ClockProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +14,7 @@ import java.util.function.Supplier;
 @Component("rentalService")
 public class MockRentalService implements RentalService {
 
+    @Autowired MockBookingService mockBookingService;
     @Autowired MockClientService mockClientService;
     @Autowired MockFleetService mockFleetService;
     @Autowired MockHistoryService mockHistoryService;
@@ -45,6 +43,15 @@ public class MockRentalService implements RentalService {
         CurrentRental currentRental = currentRentals.get(key);
         currentRentals.remove(key);
         mockHistoryService.saveEvent(new HistoricalRental(currentRental, ZonedDateTime.now(clockProvider.get())));
+    }
+
+    @Override
+    public void rent(Booking booking) {
+        ZonedDateTime now = ZonedDateTime.now(clockProvider.get());
+        //if(booking.getStart().isAfter(now)) check if the car is already available to rent. Throw exception if not //todo
+        mockBookingService.bookings.remove(booking.getId());
+        CurrentRental currentRental = new CurrentRental(booking.getCar(), booking.getClient(), ZonedDateTime.now(clockProvider.get()), booking.getEnd());
+        currentRentals.put(booking.getCar(), currentRental);
     }
 
     @Override
