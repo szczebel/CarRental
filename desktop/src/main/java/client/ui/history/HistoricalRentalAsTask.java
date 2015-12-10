@@ -1,6 +1,6 @@
 package client.ui.history;
 
-import client.ui.fullscheduleview.AbstractAssignmentAsTask;
+import client.ui.scheduleview.AbstractAssignmentAsTask;
 import common.domain.HistoricalRental;
 
 class HistoricalRentalAsTask extends AbstractAssignmentAsTask {

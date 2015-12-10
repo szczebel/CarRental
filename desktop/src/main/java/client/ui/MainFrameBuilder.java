@@ -1,8 +1,8 @@
 package client.ui;
 
 import client.ui.booking.BookingsView;
-import client.ui.fullscheduleview.FullScheduleViewBuilder;
 import client.ui.history.HistoricalRentalsViewBuilder;
+import client.ui.scheduleview.ScheduleViewBuilder;
 import client.ui.util.BackgroundOperation;
 import client.ui.util.FleetCache;
 import common.service.TestService;
@@ -28,7 +28,8 @@ public class MainFrameBuilder {
     @Autowired
     BookingsView bookingsView;
     @Autowired HistoricalRentalsViewBuilder historicalRentalsViewBuilder;
-    @Autowired FullScheduleViewBuilder fullScheduleViewBuilder;
+    @Autowired
+    ScheduleViewBuilder scheduleViewBuilder;
 
 
     @SuppressWarnings("unused")
@@ -59,7 +60,7 @@ public class MainFrameBuilder {
                 .addTab("Fleet",                fleetViewBuilder.build())
                 .addTab("Rental class",         rentalClassViewBuilder.build())
                 .addTab("Clients",              clientListViewBuilder.build())
-                .addTab("Schedule",             fullScheduleViewBuilder.build())
+                .addTab("Schedule",             scheduleViewBuilder.build())
                 .addTab("Other",                createOther(frame))
                 .build();
     }

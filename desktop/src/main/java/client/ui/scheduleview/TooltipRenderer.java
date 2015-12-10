@@ -1,4 +1,4 @@
-package client.ui.fullscheduleview;
+package client.ui.scheduleview;
 
 import schedule.view.TaskRenderer;
 

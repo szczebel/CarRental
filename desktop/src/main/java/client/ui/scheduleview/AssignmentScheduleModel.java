@@ -1,4 +1,4 @@
-package client.ui.fullscheduleview;
+package client.ui.scheduleview;
 
 import client.ui.util.CarResource;
 import client.ui.util.FleetCache;
@@ -13,13 +13,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class FullScheduleModel implements ScheduleModel<CarResource, AbstractAssignmentAsTask> {
+public class AssignmentScheduleModel implements ScheduleModel<CarResource, AbstractAssignmentAsTask> {
 
     final FleetCache fleetCache;
     private BasicScheduleModel<CarResource, AbstractAssignmentAsTask> delegate = new BasicScheduleModel<>();
     private Listener listener;
 
-    FullScheduleModel(FleetCache fleetCache) {
+    AssignmentScheduleModel(FleetCache fleetCache) {
         this.fleetCache = fleetCache;
         delegate.addResources(fleetCache.getFleet().stream().map(CarResource::new).collect(Collectors.toSet()));
     }

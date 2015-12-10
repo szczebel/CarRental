@@ -1,4 +1,4 @@
-package client.ui.interval;
+package client.ui.util;
 
 import common.util.Interval;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;

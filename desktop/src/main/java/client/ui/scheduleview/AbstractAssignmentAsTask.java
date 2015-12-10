@@ -1,4 +1,4 @@
-package client.ui.fullscheduleview;
+package client.ui.scheduleview;
 
 import common.domain.AbstractAssignment;
 import common.domain.Booking;

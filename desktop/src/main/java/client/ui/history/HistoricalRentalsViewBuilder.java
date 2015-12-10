@@ -1,12 +1,8 @@
 package client.ui.history;
 
-import client.ui.fullscheduleview.AbstractAssignmentRenderer;
-import client.ui.fullscheduleview.TooltipRenderer;
-import client.ui.interval.IntervalEditor;
-import client.ui.util.BackgroundOperation;
-import client.ui.util.CarResource;
-import client.ui.util.CarResourceRenderer;
-import client.ui.util.FleetCache;
+import client.ui.scheduleview.AbstractAssignmentRenderer;
+import client.ui.scheduleview.TooltipRenderer;
+import client.ui.util.*;
 import common.domain.RentalHistory;
 import common.service.HistoryService;
 import common.util.Interval;

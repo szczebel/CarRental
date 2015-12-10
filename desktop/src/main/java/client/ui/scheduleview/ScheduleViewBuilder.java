@@ -1,4 +1,4 @@
-package client.ui.fullscheduleview;
+package client.ui.scheduleview;
 
 import client.ui.util.BackgroundOperation;
 import client.ui.util.CarResource;
@@ -18,7 +18,7 @@ import java.time.ZonedDateTime;
 import static client.ui.util.GuiHelper.*;
 
 @org.springframework.stereotype.Component
-public class FullScheduleViewBuilder {
+public class ScheduleViewBuilder {
 
     @Autowired
     BookingService bookingService;
@@ -30,7 +30,7 @@ public class FullScheduleViewBuilder {
     FleetCache fleetCache;
 
     public JComponent build() {
-        FullScheduleModel model = new FullScheduleModel(fleetCache);
+        AssignmentScheduleModel model = new AssignmentScheduleModel(fleetCache);
         ScheduleView<CarResource, AbstractAssignmentAsTask> chart = createChart(model);
 
         return borderLayout()
@@ -45,16 +45,16 @@ public class FullScheduleViewBuilder {
                 .build();
     }
 
-    private void refresh(FullScheduleModel fullScheduleModel) {
-        fullScheduleModel.clear();
+    private void refresh(AssignmentScheduleModel assignmentScheduleModel) {
+        assignmentScheduleModel.clear();
         HistoryService.Query query = new HistoryService.Query(new Interval(ZonedDateTime.now().minusDays(30), ZonedDateTime.now()));
-        BackgroundOperation.execute(() -> historyService.fetchHistory(query), r -> fullScheduleModel.addHistory(r.getRecords()));
-        BackgroundOperation.execute(rentalService::getCurrentRentals, fullScheduleModel::addCurrent);
-        BackgroundOperation.execute(bookingService::getBookings, fullScheduleModel::addBookings);
+        BackgroundOperation.execute(() -> historyService.fetchHistory(query), r -> assignmentScheduleModel.addHistory(r.getRecords()));
+        BackgroundOperation.execute(rentalService::getCurrentRentals, assignmentScheduleModel::addCurrent);
+        BackgroundOperation.execute(bookingService::getBookings, assignmentScheduleModel::addBookings);
     }
 
-    private ScheduleView<CarResource, AbstractAssignmentAsTask> createChart(FullScheduleModel fullScheduleModel) {
-        ScheduleView<CarResource, AbstractAssignmentAsTask> chart = new ScheduleView<>(fullScheduleModel);
+    private ScheduleView<CarResource, AbstractAssignmentAsTask> createChart(AssignmentScheduleModel assignmentScheduleModel) {
+        ScheduleView<CarResource, AbstractAssignmentAsTask> chart = new ScheduleView<>(assignmentScheduleModel);
         chart.setTaskRenderer(new AbstractAssignmentRenderer<>());
         chart.setResourceRenderer(new CarResourceRenderer());
         chart.setMouseInteractions(InstantTooltips.renderWith(new TooltipRenderer<>()));//todo: rightclick&selectionlistener to return/rent/book

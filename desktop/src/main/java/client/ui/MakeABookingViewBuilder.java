@@ -1,7 +1,7 @@
 package client.ui;
 
-import client.ui.interval.IntervalEditor;
 import client.ui.util.BackgroundOperation;
+import client.ui.util.IntervalEditor;
 import common.domain.Car;
 import common.domain.Client;
 import common.domain.RentalClass;
