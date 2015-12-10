@@ -2,6 +2,7 @@ package client.ui.scheduleview;
 
 import client.ui.FleetCache;
 import client.ui.util.BackgroundOperation;
+import common.domain.AbstractAssignment;
 import common.service.BookingService;
 import common.service.HistoryService;
 import common.service.RentalService;
@@ -34,13 +35,22 @@ public class ScheduleViewBuilder {
         return borderLayout()
                 .north(
                         toolbar(
-                                button("Refresh", () -> refresh(model))
+                                button("Refresh", () -> refresh(model)),
+                                label("Filter assignments:"),
+                                textField(10, s -> model.setTaskFilter(t -> containsString(t, s)))
                         )
                 )
                 .center(
                         chart.getComponent()
                 )
                 .build();
+    }
+
+    private boolean containsString(AbstractAssignmentAsTask t, String s) {
+        AbstractAssignment aa = t.getAbstractAssignment();
+        return aa.getClientEmail().contains(s) ||
+                aa.getClientName().contains(s) ||
+                aa.getStart().getDayOfWeek().name().contains(s);
     }
 
     private void refresh(AssignmentScheduleModel assignmentScheduleModel) {

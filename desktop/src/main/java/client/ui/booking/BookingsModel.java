@@ -21,7 +21,7 @@ class BookingsModel extends AbstractTableModel {
 
     void setData(Collection<Booking> bookings) {
         this.records.clear();
-        this.records.addAll(bookings);//todo sort
+        this.records.addAll(bookings);
         fireTableDataChanged();
     }
 

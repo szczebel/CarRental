@@ -10,6 +10,8 @@ import org.springframework.core.convert.converter.Converter;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -58,6 +60,31 @@ public class GuiHelper {
     public static JComponent withBorder(JComponent component, Border border) {
         component.setBorder(border);
         return component;
+    }
+
+    public static JTextField textField(int size, Consumer<String> changeListener) {
+        JTextField tf = new JTextField(20);
+        tf.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                onChange();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                onChange();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                onChange();
+            }
+
+            void onChange() {
+                changeListener.accept(tf.getText().trim());
+            }
+        });
+        return tf;
     }
 
 

@@ -1,10 +1,10 @@
 package client.ui.util;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+
+import static client.ui.util.GuiHelper.textField;
 
 public class FilterableTable {
 
@@ -19,30 +19,8 @@ public class FilterableTable {
     public static FilterableTable create(TableModel model) {
         JTable table = new JTable(model);
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(model);
-        table.setRowSorter (sorter);
-
-        JTextField filter = new JTextField(20);
-        filter.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                onChange();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                onChange();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                onChange();
-            }
-
-            void onChange() {
-                sorter.setRowFilter(RowFilter.regexFilter(filter.getText().trim()));
-            }
-        });
-
+        table.setRowSorter(sorter);
+        JTextField filter = textField(10, s -> sorter.setRowFilter(RowFilter.regexFilter(s)));
         return new FilterableTable(filter, table);
     }
 }
