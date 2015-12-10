@@ -23,6 +23,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     @Override
     public void book(Car car, Client client, Interval interval) {
+        //todo don't allow booking in the past
         if (!carAvailabilityEvaluator.isAvailable(car.getRegistration(), interval)) throw new IllegalArgumentException(car + " not available in this time range");
         dao.save(new PersistentAssignment(new Booking(car, client, interval)));
     }

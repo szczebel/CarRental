@@ -57,7 +57,7 @@ public class FullScheduleViewBuilder {
         ScheduleView<CarResource, AbstractAssignmentAsTask> chart = new ScheduleView<>(fullScheduleModel);
         chart.setTaskRenderer(new AbstractAssignmentRenderer<>());
         chart.setResourceRenderer(new CarResourceRenderer());
-        chart.setMouseInteractions(InstantTooltips.renderWith(new TooltipRenderer<>()));
+        chart.setMouseInteractions(InstantTooltips.renderWith(new TooltipRenderer<>()));//todo: rightclick&selectionlistener to return/rent/book
         return chart;
     }
 }
