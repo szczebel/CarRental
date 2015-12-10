@@ -36,10 +36,14 @@ public class HistoricalRentalsViewBuilder {
         RentalHistoryStatisticsView statisticsView = new RentalHistoryStatisticsView();
         IntervalEditor intervalEditor = new IntervalEditor(new Interval(ZonedDateTime.now().minusDays(30), ZonedDateTime.now()));
 
-        refresh(intervalEditor.asProvider(), model.asConsumer(), statisticsView.asConsumer());
+        refresh(intervalEditor::getInterval, model::setData, statisticsView::setData);
 
         return borderLayout()
-                .north(buildToolbar(model.asConsumer(), statisticsView.asConsumer(), intervalEditor))
+                .north(buildToolbar(
+                        intervalEditor,
+                        model::setData,
+                        statisticsView::setData
+                        ))
                 .center(
                         tabbedPane(SwingUtilities.BOTTOM)
                                 .addTab("Table", inScrollPane(createTable(model)))
@@ -65,15 +69,15 @@ public class HistoricalRentalsViewBuilder {
         return chart;
     }
 
-    private JComponent buildToolbar(Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer, IntervalEditor intervalEditor) {
+    private JComponent buildToolbar(IntervalEditor intervalEditor, Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer) {
 
         return toolbar(
                 button("Change criteria", e -> {
-                            JOptionPane.showMessageDialog((Component) e.getSource(), intervalEditor.getComponent(), "Change search criteria", JOptionPane.PLAIN_MESSAGE);
-                            refresh(intervalEditor.asProvider(), model, statisticsConsumer);
+                            JOptionPane.showMessageDialog((Component) e.getSource(), intervalEditor.createComponent(), "Change search criteria", JOptionPane.PLAIN_MESSAGE);
+                            refresh(intervalEditor::getInterval, model, statisticsConsumer);
                         }
                 ),
-                button("Refresh", () -> refresh(intervalEditor.asProvider(), model, statisticsConsumer))
+                button("Refresh", () -> refresh(intervalEditor::getInterval, model, statisticsConsumer))
         );
     }
 

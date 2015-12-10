@@ -40,8 +40,8 @@ public class BookingsView {
 
     public JComponent build() {
         model = new BookingsModel(fleetCache);
-        customerChooser = new JComboBox<>(customers.getComboBoxModel());
-        customerChooser.setRenderer(convertingListCellRenderer(value -> value != null ? ((Client) value).getName() : "<all>"));
+        customerChooser = new JComboBox<>(customers.getComboBoxModel()); //todo: type ahead
+        customerChooser.setRenderer(convertingListCellRenderer(value -> value != null ? value.getName() : "<all>"));
         ScheduleView<CarResource, BookingAsTask> chart = createChart(model);
         JTable table = createTable(model);
         reloadBookings();
@@ -51,8 +51,8 @@ public class BookingsView {
                 .north(
                         toolbar(
                                 customerChooser,
-                                button("Rent selected", () -> ifSelected(table, this::rent)),
-                                button("Cancel selected", () -> ifSelected(table, this::cancel))
+                                button("Rent selected", () -> ifBookingSelected(table, this::rent)),
+                                button("Cancel selected", () -> ifBookingSelected(table, this::cancel))
                         )
                 )
                 .center(
@@ -64,7 +64,7 @@ public class BookingsView {
                 .build();
     }
 
-    private void ifSelected(JTable table, Consumer<Booking> action) {
+    private void ifBookingSelected(JTable table, Consumer<Booking> action) {
         int selectedRow = table.getSelectedRow();
         if(selectedRow == -1) return;//todo tell user to select sth
         Booking booking = model.getBooking(table.convertRowIndexToModel(selectedRow));

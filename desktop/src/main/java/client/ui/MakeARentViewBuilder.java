@@ -14,8 +14,9 @@ import org.springframework.stereotype.Component;
 import javax.swing.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static client.ui.util.GuiHelper.*;
@@ -34,7 +35,7 @@ public class MakeARentViewBuilder {
 
         FleetTableModel tableModel = new FleetTableModel();
         AvailabilityQueryEditor availabilityQueryEditor = new AvailabilityQueryEditor(rentalClasses);
-        refresh(tableModel, availabilityQueryEditor);
+        refresh(availabilityQueryEditor::getQuery, tableModel::setData);
         JTable table = new JTable(tableModel);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -43,11 +44,11 @@ public class MakeARentViewBuilder {
                         toolbar(
                                 button("Search...", e -> {
                                             JOptionPane.showMessageDialog((java.awt.Component) e.getSource(), availabilityQueryEditor.getComponent(), "Search for available cars...", JOptionPane.PLAIN_MESSAGE);
-                                            refresh(tableModel, availabilityQueryEditor);
+                                            refresh(availabilityQueryEditor::getQuery, tableModel::setData);
                                         }
                                 ),
-                                button("Refresh", () -> refresh(tableModel, availabilityQueryEditor)),
-                                button("Rent selected...", () -> rentClicked(table, tableModel, availabilityQueryEditor))
+                                button("Refresh", () -> refresh(availabilityQueryEditor::getQuery, tableModel::setData)),
+                                button("Rent selected...", () -> rentClicked(table, tableModel, availabilityQueryEditor::getQuery))
                         ))
                 .center(inScrollPane(table))
                 .build();
@@ -60,12 +61,12 @@ public class MakeARentViewBuilder {
         } else {
             BackgroundOperation.execute(
                     clientService::fetchAll,
-                    clients -> showRentDialog(table, clients, tableModel.getCarAt(table.convertRowIndexToModel(selectedRow)), tableModel, queryProvider)
+                    clients -> showRentDialog(table, tableModel.getCarAt(table.convertRowIndexToModel(selectedRow)), queryProvider, tableModel::setData)
             );
         }
     }
 
-    private void showRentDialog(JComponent parent, List<Client> clients, Car carToRent, FleetTableModel tableModel, Supplier<AvailabilityService.RentQuery> queryProvider) {
+    private void showRentDialog(JComponent parent, Car carToRent, Supplier<AvailabilityService.RentQuery> queryProvider, Consumer<Collection<Car>> dataReceiver) {
 
         JTable clientsTable = new JTable(customers);
         int option = JOptionPane.showConfirmDialog(
@@ -80,20 +81,20 @@ public class MakeARentViewBuilder {
                 Client client = customers.getAt(clientsTable.convertRowIndexToModel(selectedRow));
                 BackgroundOperation.execute(
                         () -> rentalService.rent(carToRent, client, queryProvider.get().getAvailableUntil()),
-                        () -> refresh(tableModel, queryProvider)
+                        () -> refresh(queryProvider, dataReceiver)
                 );
             }
         }
     }
 
-    private void refresh(FleetTableModel tableModel, Supplier<AvailabilityService.RentQuery> queryProvider) {
+    private void refresh(Supplier<AvailabilityService.RentQuery> queryProvider, Consumer<Collection<Car>> dataReceiver) {
         BackgroundOperation.execute(
                 () -> availabilityService.findAvailableToRent(queryProvider.get()),
-                tableModel::setData
+                dataReceiver
         );
     }
 
-    static class AvailabilityQueryEditor implements Supplier<AvailabilityService.RentQuery>{
+    static class AvailabilityQueryEditor {
 
         UtilDateModel until = new UtilDateModel(Date.from((ZonedDateTime.now().plusDays(7).toInstant())));
         JComboBox<RentalClass> classChooser;
@@ -101,9 +102,9 @@ public class MakeARentViewBuilder {
 
         public AvailabilityQueryEditor(RentalClasses rentalClasses) {
             classChooser = rentalClassChooser(rentalClasses);
-            component = borderLayout()
-                    .north(classChooser)
-                    .south(datePicker(until))
+            component = simpleForm()
+                    .addRow("Rent until:", datePicker(until))
+                    .addRow("Class:", classChooser)
                     .build();
         }
 
@@ -114,12 +115,6 @@ public class MakeARentViewBuilder {
 
         JComponent getComponent() {
             return component;
-        }
-
-
-        @Override
-        public AvailabilityService.RentQuery get() {
-            return getQuery();
         }
     }
 

@@ -7,36 +7,26 @@ import javax.swing.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.function.Supplier;
 
-import static client.ui.util.GuiHelper.*;
+import static client.ui.util.GuiHelper.datePicker;
+import static client.ui.util.GuiHelper.simpleForm;
 import static common.util.TimeUtils.toMidnight;
 
 public class IntervalEditor {
 
-    UtilDateModel from;
-    UtilDateModel to;
-    JComponent component;
+    protected final UtilDateModel from;
+    protected final UtilDateModel to;
 
-    public IntervalEditor(Interval initialData) {
-        from = new UtilDateModel(Date.from(initialData.from().toInstant()));
-        to = new UtilDateModel(Date.from(initialData.to().toInstant()));
-        component = borderLayout()
-                .north(fromWithLabel())
-                .south(toWithLabel())
+    public IntervalEditor(Interval interval) {
+        from = new UtilDateModel(Date.from(interval.from().toInstant()));
+        to = new UtilDateModel(Date.from(interval.to().toInstant()));
+    }
+
+    public JComponent createComponent() {
+        return simpleForm()
+                .addRow("From:", datePicker(from))
+                .addRow("To:",   datePicker(to))
                 .build();
-    }
-
-    private JComponent fromWithLabel() {
-        return borderLayout().center(label("From:")).east(datePicker(from)).build();
-    }
-
-    private JComponent toWithLabel() {
-        return borderLayout().center(label("To:")).east(datePicker(to)).build();
-    }
-
-    public JComponent getComponent() {
-        return component;
     }
 
     public Interval getInterval() {
@@ -44,9 +34,5 @@ public class IntervalEditor {
                 toMidnight(ZonedDateTime.ofInstant(from.getValue().toInstant(), ZoneId.systemDefault())),
                 toMidnight(ZonedDateTime.ofInstant(to.getValue().toInstant(), ZoneId.systemDefault()))
         );
-    }
-
-    public Supplier<Interval> asProvider() {
-        return this::getInterval;
     }
 }

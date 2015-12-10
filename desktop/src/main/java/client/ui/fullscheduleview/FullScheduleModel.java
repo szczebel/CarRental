@@ -66,10 +66,4 @@ class FullScheduleModel implements ScheduleModel<CarResource, AbstractAssignment
     public ZonedDateTime getStart() {
         return delegate.getStart();
     }
-
-//    public Consumer<Collection<Booking>> asConsumer() {
-//        return this::setData;
-//    }
-
-
 }

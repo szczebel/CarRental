@@ -13,7 +13,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel<CarResource, HistoricalRentalAsTask> {
@@ -27,10 +26,6 @@ class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel
     HistoricalRentalsModel(FleetCache fleetCache) {
         this.fleetCache = fleetCache;
         delegate.addResources(fleetCache.getFleet().stream().map(CarResource::new).collect(Collectors.toSet()));
-    }
-
-    public Consumer<RentalHistory> asConsumer() {
-        return this::setData;
     }
 
     void setData(RentalHistory rentalHistory) {

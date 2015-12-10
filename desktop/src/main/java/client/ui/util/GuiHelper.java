@@ -1,6 +1,7 @@
 package client.ui.util;
 
 import client.ui.RentalClasses;
+import com.jgoodies.forms.builder.FormBuilder;
 import common.domain.RentalClass;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
@@ -13,6 +14,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
@@ -72,12 +74,13 @@ public class GuiHelper {
         };
     }
 
-    public static ListCellRenderer convertingListCellRenderer(Converter<Object, Object> converter) {
-        return new DefaultListCellRenderer() {
+    @SuppressWarnings("unchecked")
+    public static <T> ListCellRenderer<T> convertingListCellRenderer(Converter<T, String> converter) {
+        return (ListCellRenderer<T>) new DefaultListCellRenderer() {
 
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                return super.getListCellRendererComponent(list, converter.convert(value), index, isSelected, cellHasFocus);
+                return super.getListCellRendererComponent(list, converter.convert((T)value), index, isSelected, cellHasFocus);
             }
         };
     }
@@ -100,8 +103,37 @@ public class GuiHelper {
 
     public static JComboBox<RentalClass> rentalClassChooser(RentalClasses rentalClasses) {
         JComboBox<RentalClass> combo = new JComboBox<>(rentalClasses.getComboBoxModel());
-        combo.setRenderer(convertingListCellRenderer(value -> value !=null ? ((RentalClass)value).getName() : "<all>"));
+        combo.setRenderer(convertingListCellRenderer(rc -> rc != null ? rc.getName() : "<all>"));
         return combo;
+    }
+
+    public static SimpleFormBuilder simpleForm() {
+        return new SimpleFormBuilder();
+    }
+
+    public static class SimpleFormBuilder {
+        java.util.List<String> labels = new ArrayList<>();
+        java.util.List<JComponent> components = new ArrayList<>();
+
+        public SimpleFormBuilder addRow(String label, JComponent component) {
+            labels.add(label);
+            components.add(component);
+            return this;
+        }
+
+        public JComponent build() {
+            StringBuilder rowSpec = new StringBuilder("");
+            labels.forEach(s-> rowSpec.append("p, $lg,"));
+            FormBuilder fb = FormBuilder.create()
+                    .columns("pref:grow, ${label-component-gap}, [100dlu, pref]")
+                    .rows(rowSpec.toString());
+            for (int i = 0; i < labels.size(); i++) {
+                String label = labels.get(i);
+                JComponent c = components.get(i);
+                fb.add(label).xy(1, 1 + i*2).add(c).xy(3, 1 + i*2);
+            }
+            return fb.build();
+        }
     }
 
     public static class TabsBuilder {

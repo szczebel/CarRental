@@ -10,7 +10,6 @@ import javax.swing.table.TableModel;
 import java.time.DayOfWeek;
 import java.time.format.TextStyle;
 import java.util.*;
-import java.util.function.Consumer;
 
 import static client.ui.util.GuiHelper.grid;
 import static client.ui.util.GuiHelper.inScrollPane;
@@ -34,11 +33,6 @@ public class RentalHistoryStatisticsView {
         JTable table = new JTable(tableModel);
         table.setDefaultRenderer(Double.class, GuiHelper.convertingRenderer(value -> String.format("%.2f", (double) value)));
         return table;
-    }
-
-
-    Consumer<RentalHistory.Statistics> asConsumer() {
-        return this::setData;
     }
 
     void setData(RentalHistory.Statistics statistics) {
