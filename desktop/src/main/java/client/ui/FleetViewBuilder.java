@@ -39,14 +39,14 @@ public class FleetViewBuilder {
 
         JTextField registration = new JTextField();
         JTextField model = new JTextField();
-        JComboBox<RentalClass> classChooser = new JComboBox<>(rentalClasses.getComboBoxModel());
+        JComboBox<RentalClass> classChooser = rentalClassChooser(rentalClasses);
         JComponent createDialogContent = borderLayout()
                 .north(registration)
                 .center(model)
                 .south(classChooser)
                 .build();
 
-        JOptionPane.showMessageDialog(panel, createDialogContent);
+        JOptionPane.showMessageDialog(panel.getParent(), createDialogContent);
         BackgroundOperation.execute(
                 () -> fleetService.create(new Car(model.getText(), registration.getText(), (RentalClass) classChooser.getSelectedItem())),
                 () -> fleetCache.reload(tableModel::setData)

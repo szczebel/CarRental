@@ -1,6 +1,5 @@
 package client.ui;
 
-import client.ui.interval.IntervalEditor;
 import client.ui.util.BackgroundOperation;
 import common.domain.Car;
 import common.domain.Client;
@@ -8,16 +7,19 @@ import common.domain.RentalClass;
 import common.service.AvailabilityService;
 import common.service.ClientService;
 import common.service.RentalService;
-import common.util.Interval;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Supplier;
 
 import static client.ui.util.GuiHelper.*;
+import static common.util.TimeUtils.toMidnight;
 
 @Component
 public class MakeARentViewBuilder {
@@ -32,7 +34,7 @@ public class MakeARentViewBuilder {
 
         FleetTableModel tableModel = new FleetTableModel();
         AvailabilityQueryEditor availabilityQueryEditor = new AvailabilityQueryEditor(rentalClasses);
-        refresh(tableModel, availabilityQueryEditor.asSupplier());
+        refresh(tableModel, availabilityQueryEditor);
         JTable table = new JTable(tableModel);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -41,11 +43,11 @@ public class MakeARentViewBuilder {
                         toolbar(
                                 button("Search...", e -> {
                                             JOptionPane.showMessageDialog((java.awt.Component) e.getSource(), availabilityQueryEditor.getComponent(), "Search for available cars...", JOptionPane.PLAIN_MESSAGE);
-                                            refresh(tableModel, availabilityQueryEditor.asSupplier());
+                                            refresh(tableModel, availabilityQueryEditor);
                                         }
                                 ),
-                                button("Refresh", () -> refresh(tableModel, availabilityQueryEditor.asSupplier())),
-                                button("Rent selected...", () -> rentClicked(table, tableModel, availabilityQueryEditor.asSupplier()))
+                                button("Refresh", () -> refresh(tableModel, availabilityQueryEditor)),
+                                button("Rent selected...", () -> rentClicked(table, tableModel, availabilityQueryEditor))
                         ))
                 .center(inScrollPane(table))
                 .build();
@@ -91,33 +93,34 @@ public class MakeARentViewBuilder {
         );
     }
 
-    static class AvailabilityQueryEditor {
+    static class AvailabilityQueryEditor implements Supplier<AvailabilityService.RentQuery>{
 
-        IntervalEditor intervalEditor = new IntervalEditor(new Interval(ZonedDateTime.now(), ZonedDateTime.now().plusDays(7)));
+        UtilDateModel until = new UtilDateModel(Date.from((ZonedDateTime.now().plusDays(7).toInstant())));
         JComboBox<RentalClass> classChooser;
         private JComponent component;
 
         public AvailabilityQueryEditor(RentalClasses rentalClasses) {
-            classChooser = new JComboBox<>(rentalClasses.getComboBoxModel());
-            component =
-                    borderLayout()
-                            .center(label("Rental class : "))
-                            .east(classChooser)
-                            .south(intervalEditor.getComponent())
-                            .build();
+            classChooser = rentalClassChooser(rentalClasses);
+            component = borderLayout()
+                    .north(classChooser)
+                    .south(datePicker(until))
+                    .build();
         }
 
         AvailabilityService.RentQuery getQuery() {
             RentalClass selectedItem = (RentalClass) classChooser.getSelectedItem();
-            return new AvailabilityService.RentQuery(selectedItem, intervalEditor.getInterval().to());
+            return new AvailabilityService.RentQuery(selectedItem, toMidnight(ZonedDateTime.ofInstant(until.getValue().toInstant(), ZoneId.systemDefault())));
         }
 
         JComponent getComponent() {
             return component;
         }
 
-        Supplier<AvailabilityService.RentQuery> asSupplier() {
-            return this::getQuery;
+
+        @Override
+        public AvailabilityService.RentQuery get() {
+            return getQuery();
         }
     }
+
 }

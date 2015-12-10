@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-class RentalClasses extends AbstractTableModel {
+public class RentalClasses extends AbstractTableModel {
 
     final static String[] COLUMN = {"Name", "Hourly rate"};
     private List<RentalClass> data = new ArrayList<>();

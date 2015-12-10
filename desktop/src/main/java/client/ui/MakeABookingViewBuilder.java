@@ -96,7 +96,7 @@ public class MakeABookingViewBuilder {
         private JComponent component;
 
         public AvailabilityQueryEditor(RentalClasses rentalClasses) {
-            classChooser = new JComboBox<>(rentalClasses.getComboBoxModel());
+            classChooser = rentalClassChooser(rentalClasses);
             component =
                     borderLayout()
                             .center(label("Rental class : "))

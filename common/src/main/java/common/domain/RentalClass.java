@@ -20,9 +20,4 @@ public class RentalClass implements Serializable {
     public int getHourlyRate() {
         return hourlyRate;
     }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
 }
