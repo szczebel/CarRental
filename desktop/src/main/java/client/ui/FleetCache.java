@@ -1,5 +1,6 @@
-package client.ui.util;
+package client.ui;
 
+import client.ui.util.BackgroundOperation;
 import common.domain.Car;
 import common.service.FleetService;
 import org.springframework.beans.factory.annotation.Autowired;

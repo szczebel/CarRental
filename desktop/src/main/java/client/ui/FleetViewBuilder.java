@@ -1,7 +1,6 @@
 package client.ui;
 
 import client.ui.util.BackgroundOperation;
-import client.ui.util.FleetCache;
 import common.domain.Car;
 import common.domain.RentalClass;
 import common.service.FleetService;

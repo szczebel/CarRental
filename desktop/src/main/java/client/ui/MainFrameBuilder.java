@@ -1,10 +1,9 @@
 package client.ui;
 
-import client.ui.booking.BookingsView;
+import client.ui.booking.BookingsViewBuilder;
 import client.ui.history.HistoricalRentalsViewBuilder;
 import client.ui.scheduleview.ScheduleViewBuilder;
 import client.ui.util.BackgroundOperation;
-import client.ui.util.FleetCache;
 import common.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,11 +24,9 @@ public class MainFrameBuilder {
     @Autowired MakeARentViewBuilder makeARentViewBuilder;
     @Autowired MakeABookingViewBuilder makeABookingViewBuilder;
     @Autowired CurrentRentalsViewBuilder currentRentalsViewBuilder;
-    @Autowired
-    BookingsView bookingsView;
+    @Autowired BookingsViewBuilder bookingsViewBuilder;
     @Autowired HistoricalRentalsViewBuilder historicalRentalsViewBuilder;
-    @Autowired
-    ScheduleViewBuilder scheduleViewBuilder;
+    @Autowired ScheduleViewBuilder scheduleViewBuilder;
 
 
     @SuppressWarnings("unused")
@@ -52,14 +49,14 @@ public class MainFrameBuilder {
 
     JComponent createContent(JFrame frame) {
         return tabbedPane(SwingConstants.LEFT)
-                .addTab("Available to rent", makeARentViewBuilder.build())
+                .addTab("Available to rent",    makeARentViewBuilder.build())
                 .addTab("Current rentals",      currentRentalsViewBuilder.build())
                 .addTab("Available to book",    makeABookingViewBuilder.build())
-                .addTab("Bookings",             bookingsView.build())
+                .addTab("Bookings",             bookingsViewBuilder.build())
                 .addTab("Rental history",       historicalRentalsViewBuilder.build())
                 .addTab("Fleet",                fleetViewBuilder.build())
                 .addTab("Rental class",         rentalClassViewBuilder.build())
-                .addTab("Clients",              clientListViewBuilder.build())
+                .addTab("Clients",              clientListViewBuilder.build().getComponent())
                 .addTab("Schedule",             scheduleViewBuilder.build())
                 .addTab("Other",                createOther(frame))
                 .build();

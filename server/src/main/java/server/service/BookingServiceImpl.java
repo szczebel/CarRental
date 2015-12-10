@@ -40,12 +40,4 @@ public class BookingServiceImpl implements BookingService {
         dao.delete(booking.getId());
     }
 
-    @Override
-    public Collection<Booking> getBookingsOf(Client client) {
-        if(client == null) return getBookings();
-        return dao.findByType(PersistentAssignment.Type.Booking)
-                .filter(a -> a.getClientEmail().equals(client.getEmail()))
-                .map(PersistentAssignment::asBooking)
-                .collect(Collectors.toList());
-    }
 }

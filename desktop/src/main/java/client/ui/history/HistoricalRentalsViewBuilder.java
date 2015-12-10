@@ -1,8 +1,12 @@
 package client.ui.history;
 
+import client.ui.FleetCache;
 import client.ui.scheduleview.AbstractAssignmentRenderer;
+import client.ui.scheduleview.CarResource;
+import client.ui.scheduleview.CarResourceRenderer;
 import client.ui.scheduleview.TooltipRenderer;
-import client.ui.util.*;
+import client.ui.util.BackgroundOperation;
+import client.ui.util.IntervalEditor;
 import common.domain.RentalHistory;
 import common.service.HistoryService;
 import common.util.Interval;
@@ -24,7 +28,8 @@ import static client.ui.util.GuiHelper.*;
 public class HistoricalRentalsViewBuilder {
 
     @Autowired    HistoryService historyService;
-    @Autowired    FleetCache fleetCache;
+    @Autowired
+    FleetCache fleetCache;
 
     public JComponent build() {
         HistoricalRentalsModel model = new HistoricalRentalsModel(fleetCache);
@@ -57,8 +62,8 @@ public class HistoricalRentalsViewBuilder {
         return table;
     }
 
-    private ScheduleView<CarResource, HistoricalRentalAsTask> createChart(HistoricalRentalsModel tableModel) {
-        ScheduleView<CarResource, HistoricalRentalAsTask> chart = new ScheduleView<>(tableModel);
+    private ScheduleView<CarResource, HistoricalRentalAsTask> createChart(HistoricalRentalsModel model) {
+        ScheduleView<CarResource, HistoricalRentalAsTask> chart = new ScheduleView<>(model.asScheduleModel());
         chart.setTaskRenderer(new AbstractAssignmentRenderer<>());
         chart.setResourceRenderer(new CarResourceRenderer());
         chart.setMouseInteractions(InstantTooltips.renderWith(new TooltipRenderer<>()));

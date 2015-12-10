@@ -30,6 +30,7 @@ public class MakeARentViewBuilder {
     @Autowired    ClientService clientService;
     @Autowired    RentalClasses rentalClasses;
     @Autowired    Customers customers;
+    @Autowired    ClientListViewBuilder clientListViewBuilder;
 
     public JComponent build() {
 
@@ -68,10 +69,11 @@ public class MakeARentViewBuilder {
 
     private void showRentDialog(JComponent parent, Car carToRent, Supplier<AvailabilityService.RentQuery> queryProvider, Consumer<Collection<Car>> dataReceiver) {
 
-        JTable clientsTable = new JTable(customers);
+        ClientListView view = clientListViewBuilder.build();
+        JTable clientsTable = view.getTable();
         int option = JOptionPane.showConfirmDialog(
                 parent,
-                withTitledBorder(inScrollPane(clientsTable), "Select client to rent to"),
+                withTitledBorder(view.getComponent(), "Select client to rent to"),
                 "Rent " + carToRent,
                 JOptionPane.OK_CANCEL_OPTION);
 

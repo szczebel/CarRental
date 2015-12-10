@@ -1,4 +1,4 @@
-package client.ui.util;
+package client.ui.scheduleview;
 
 import common.domain.AbstractAssignment;
 import common.domain.Car;

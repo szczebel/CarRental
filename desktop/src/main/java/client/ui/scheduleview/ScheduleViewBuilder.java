@@ -1,9 +1,7 @@
 package client.ui.scheduleview;
 
+import client.ui.FleetCache;
 import client.ui.util.BackgroundOperation;
-import client.ui.util.CarResource;
-import client.ui.util.CarResourceRenderer;
-import client.ui.util.FleetCache;
 import common.service.BookingService;
 import common.service.HistoryService;
 import common.service.RentalService;

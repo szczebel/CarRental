@@ -1,6 +1,6 @@
 package client.ui.booking;
 
-import client.ui.util.FleetCache;
+import client.ui.FleetCache;
 import common.domain.Booking;
 
 import javax.swing.table.AbstractTableModel;

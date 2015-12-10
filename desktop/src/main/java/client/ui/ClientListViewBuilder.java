@@ -1,6 +1,7 @@
 package client.ui;
 
 import client.ui.util.BackgroundOperation;
+import client.ui.util.FilterableTable;
 import common.domain.Client;
 import common.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,22 +14,26 @@ import static client.ui.util.GuiHelper.*;
 @Component
 public class ClientListViewBuilder {
 
-    @Autowired ClientService clientService;
-    @Autowired Customers customers;
+    @Autowired
+    ClientService clientService;
+    @Autowired
+    Customers customers;
 
-    public JComponent build() {
+    public ClientListView build() {
 
-        JTable table = new JTable(customers);
-        refresh();
-
-        return borderLayout()
+        FilterableTable ft = FilterableTable.create(customers);
+        JComponent content = borderLayout()
                 .north(
                         toolbar(
                                 button("Refresh", this::refresh),
-                                button("Add...", () -> addNewClientClicked(table))
+                                button("Add...", () -> addNewClientClicked(ft.table)),
+                                label("Filter:"),
+                                ft.filter
                         ))
-                .center(inScrollPane(table))
+                .center(inScrollPane(ft.table))
                 .build();
+        refresh();
+        return new ClientListView(content, ft.table);
     }
 
     private void addNewClientClicked(JComponent panel) {

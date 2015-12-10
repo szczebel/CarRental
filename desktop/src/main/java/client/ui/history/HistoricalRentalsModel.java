@@ -1,27 +1,25 @@
 package client.ui.history;
 
-import client.ui.util.CarResource;
-import client.ui.util.FleetCache;
+import client.ui.FleetCache;
+import client.ui.scheduleview.CarResource;
 import common.domain.HistoricalRental;
 import common.domain.RentalHistory;
-import schedule.basic.BasicScheduleModel;
+import schedule.basic.GenericScheduleModel;
 import schedule.model.ScheduleModel;
 
 import javax.swing.table.AbstractTableModel;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel<CarResource, HistoricalRentalAsTask> {
+class HistoricalRentalsModel extends AbstractTableModel {
 
     final static String[] COLUMN = {"Registration", "Model", "Client name", "Client email", "Start", "End", "Duration"};
     final FleetCache fleetCache;
     private List<HistoricalRental> records = new ArrayList<>();
-    private BasicScheduleModel<CarResource, HistoricalRentalAsTask> delegate = new BasicScheduleModel<>();
-    private ScheduleModel.Listener listener;
+    private GenericScheduleModel<CarResource, HistoricalRentalAsTask> delegate = new GenericScheduleModel<>();
 
     HistoricalRentalsModel(FleetCache fleetCache) {
         this.fleetCache = fleetCache;
@@ -30,11 +28,10 @@ class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel
 
     void setData(RentalHistory rentalHistory) {
         this.records = rentalHistory.getRecords();
+        fireTableDataChanged();
         delegate.clearAllData();
         delegate.addResources(fleetCache.getFleet().stream().map(CarResource::new).collect(Collectors.toSet()));
-        records.forEach(hr -> delegate.assign(new CarResource(hr), new HistoricalRentalAsTask(hr)));
-        fireTableDataChanged();
-        listener.dataChanged();
+        delegate.assignAll(records.stream().map(HistoricalRentalAsTask::new), t -> new CarResource(t.getAbstractAssignment()));
     }
 
 
@@ -73,30 +70,7 @@ class HistoricalRentalsModel extends AbstractTableModel implements ScheduleModel
         return super.getColumnClass(columnIndex);
     }
 
-    @Override
-    public List<CarResource> getResources() {
-        return delegate.getResources();
+    public ScheduleModel<CarResource, HistoricalRentalAsTask> asScheduleModel() {
+        return delegate;
     }
-
-    @Override
-    public Collection<HistoricalRentalAsTask> getEventsAssignedTo(CarResource carResource) {
-        return delegate.getEventsAssignedTo(carResource);
-    }
-
-    @Override
-    public void setListener(ScheduleModel.Listener listener) {
-        this.listener = listener;
-    }
-
-    @Override
-    public ZonedDateTime getEnd() {
-        return delegate.getEnd();
-    }
-
-    @Override
-    public ZonedDateTime getStart() {
-        return delegate.getStart();
-    }
-
-
 }

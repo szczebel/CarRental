@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component("bookingService")
 public class MockBookingService implements BookingService {
@@ -37,13 +36,6 @@ public class MockBookingService implements BookingService {
     @Override
     public Collection<Booking> getBookings() {
         return new ArrayList<>(bookings.values());
-    }
-
-    @Override
-    public Collection<Booking> getBookingsOf(Client client) {
-        return bookings.values().stream()
-                .filter(c -> c.getClientEmail().equals(client.getEmail()))
-                .collect(Collectors.toList());
     }
 
     @Override

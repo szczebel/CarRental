@@ -67,11 +67,17 @@
             <version>1.9.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.swinglabs</groupId>
+            <artifactId>swingx</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+
 
         <dependency>
             <groupId>sandbox</groupId>
             <artifactId>schedulechart</artifactId>
-            <version>1.4</version>
+            <version>1.7</version>
         </dependency>
 
 
