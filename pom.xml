@@ -13,6 +13,7 @@
         <module>server</module>
         <module>desktop</module>
         <module>standalone</module>
+        <module>webgui</module>
     </modules>
 
     <properties>
