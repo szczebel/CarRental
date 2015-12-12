@@ -10,9 +10,8 @@ import java.net.UnknownHostException;
 public class TestServiceImpl implements TestService {
     public String getServerInfo() {
         try {
-            Thread.sleep(3000);
             return InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException | InterruptedException e) {
+        } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
     }
