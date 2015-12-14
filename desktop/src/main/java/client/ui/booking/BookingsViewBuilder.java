@@ -13,7 +13,10 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 
-import static client.ui.util.GuiHelper.*;
+import static client.ui.util.GuiHelper.convertingRenderer;
+import static swingutils.components.ComponentFactory.*;
+import static swingutils.layout.LayoutBuilders.borderLayout;
+import static swingutils.layout.LayoutBuilders.flowLayout;
 
 @org.springframework.stereotype.Component
 public class BookingsViewBuilder {
@@ -46,7 +49,7 @@ public class BookingsViewBuilder {
 
             component = borderLayout()
                     .north(
-                            toolbar(
+                            flowLayout(
                                     label("Filter"),
                                     ft.filter,
                                     button("Rent selected", () -> ifBookingSelected(ft.table, this::rent)),

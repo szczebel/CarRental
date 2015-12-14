@@ -80,6 +80,11 @@
             <version>1.7</version>
         </dependency>
 
+        <dependency>
+            <groupId>swingtools</groupId>
+            <artifactId>swingutils</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
     </dependencies>
 

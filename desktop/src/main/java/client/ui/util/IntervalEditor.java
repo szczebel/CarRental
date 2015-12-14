@@ -9,8 +9,8 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 
 import static client.ui.util.GuiHelper.datePicker;
-import static client.ui.util.GuiHelper.simpleForm;
 import static common.util.TimeUtils.toMidnight;
+import static swingutils.layout.forms.FormLayoutBuilders.simpleForm;
 
 public class IntervalEditor {
 

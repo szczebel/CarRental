@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 
-import static client.ui.util.GuiHelper.*;
+import static swingutils.components.ComponentFactory.button;
+import static swingutils.layout.LayoutBuilders.flowLayout;
+import static swingutils.layout.LayoutBuilders.tabbedPane;
 
 @Component
 public class MainFrameBuilder {
@@ -72,7 +74,7 @@ public class MainFrameBuilder {
     }
 
     private JComponent createOther(java.awt.Component parent) {
-        return toolbar(
+        return flowLayout(
                 button(
                         "Test connection",
                         () -> BackgroundOperation.execute(

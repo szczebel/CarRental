@@ -14,7 +14,11 @@ import schedule.view.ScheduleView;
 import javax.swing.*;
 import java.time.ZonedDateTime;
 
-import static client.ui.util.GuiHelper.*;
+import static client.ui.util.GuiHelper.textField;
+import static swingutils.components.ComponentFactory.button;
+import static swingutils.components.ComponentFactory.label;
+import static swingutils.layout.LayoutBuilders.borderLayout;
+import static swingutils.layout.LayoutBuilders.flowLayout;
 
 @org.springframework.stereotype.Component
 public class ScheduleViewBuilder {
@@ -34,7 +38,7 @@ public class ScheduleViewBuilder {
 
         return borderLayout()
                 .north(
-                        toolbar(
+                        flowLayout(
                                 button("Refresh", () -> refresh(model)),
                                 label("Filter assignments:"),
                                 textField(10, s -> model.setTaskFilter(t -> containsString(t, s)))

@@ -22,7 +22,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static client.ui.util.GuiHelper.*;
+import static client.ui.util.GuiHelper.convertingRenderer;
+import static swingutils.components.ComponentFactory.button;
+import static swingutils.components.ComponentFactory.inScrollPane;
+import static swingutils.layout.LayoutBuilders.*;
 
 @org.springframework.stereotype.Component
 public class HistoricalRentalsViewBuilder {
@@ -72,7 +75,7 @@ public class HistoricalRentalsViewBuilder {
 
     private JComponent buildToolbar(IntervalEditor intervalEditor, Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer) {
 
-        return toolbar(
+        return flowLayout(
                 button("Change criteria", e -> {
                             JOptionPane.showMessageDialog((Component) e.getSource(), intervalEditor.createComponent(), "Change search criteria", JOptionPane.PLAIN_MESSAGE);
                             refresh(intervalEditor::getInterval, model, statisticsConsumer);

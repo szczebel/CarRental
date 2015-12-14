@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 
-import static client.ui.util.GuiHelper.*;
+import static swingutils.components.ComponentFactory.*;
+import static swingutils.layout.LayoutBuilders.borderLayout;
+import static swingutils.layout.LayoutBuilders.flowLayout;
 
 @Component
 public class ClientListViewBuilder {
@@ -24,7 +26,7 @@ public class ClientListViewBuilder {
         FilterableTable ft = FilterableTable.create(customers);
         JComponent content = borderLayout()
                 .north(
-                        toolbar(
+                        flowLayout(
                                 button("Refresh", this::refresh),
                                 button("Add...", () -> addNewClientClicked(ft.table)),
                                 label("Filter:"),

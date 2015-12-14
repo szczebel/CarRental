@@ -19,8 +19,13 @@ import java.util.Date;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static client.ui.util.GuiHelper.*;
+import static client.ui.util.GuiHelper.datePicker;
+import static client.ui.util.GuiHelper.rentalClassChooser;
 import static common.util.TimeUtils.toMidnight;
+import static swingutils.components.ComponentFactory.*;
+import static swingutils.layout.LayoutBuilders.borderLayout;
+import static swingutils.layout.LayoutBuilders.flowLayout;
+import static swingutils.layout.forms.FormLayoutBuilders.simpleForm;
 
 @Component
 public class MakeARentViewBuilder {
@@ -42,7 +47,7 @@ public class MakeARentViewBuilder {
 
         return borderLayout()
                 .north(
-                        toolbar(
+                        flowLayout(
                                 button("Search...", e -> {
                                             JOptionPane.showMessageDialog((java.awt.Component) e.getSource(), availabilityQueryEditor.getComponent(), "Search for available cars...", JOptionPane.PLAIN_MESSAGE);
                                             refresh(availabilityQueryEditor::getQuery, tableModel::setData);

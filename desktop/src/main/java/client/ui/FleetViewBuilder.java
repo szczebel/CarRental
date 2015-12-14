@@ -9,7 +9,12 @@ import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 
-import static client.ui.util.GuiHelper.*;
+import static client.ui.util.GuiHelper.rentalClassChooser;
+import static swingutils.components.ComponentFactory.button;
+import static swingutils.components.ComponentFactory.inScrollPane;
+import static swingutils.layout.LayoutBuilders.borderLayout;
+import static swingutils.layout.LayoutBuilders.flowLayout;
+import static swingutils.layout.forms.FormLayoutBuilders.simpleForm;
 
 @Component
 public class FleetViewBuilder {
@@ -26,7 +31,7 @@ public class FleetViewBuilder {
 
         return borderLayout()
                 .north(
-                        toolbar(
+                        flowLayout(
                                 button("Refresh", () -> fleetCache.reload(tableModel::setData)),
                                 button("Add...", () -> addCarClicked(table, tableModel))
                         ))

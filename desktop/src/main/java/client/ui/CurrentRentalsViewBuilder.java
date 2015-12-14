@@ -11,7 +11,10 @@ import javax.swing.*;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static client.ui.util.GuiHelper.*;
+import static client.ui.util.GuiHelper.convertingRenderer;
+import static swingutils.components.ComponentFactory.*;
+import static swingutils.layout.LayoutBuilders.borderLayout;
+import static swingutils.layout.LayoutBuilders.flowLayout;
 
 @Component
 public class CurrentRentalsViewBuilder {
@@ -27,7 +30,7 @@ public class CurrentRentalsViewBuilder {
 
         return borderLayout()
                 .north(
-                        toolbar(
+                        flowLayout(
                                 button("Refresh", () -> refresh(tableModel)),
                                 label("Filter:"),
                                 ft.filter,

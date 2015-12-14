@@ -11,8 +11,9 @@ import java.time.DayOfWeek;
 import java.time.format.TextStyle;
 import java.util.*;
 
-import static client.ui.util.GuiHelper.grid;
-import static client.ui.util.GuiHelper.inScrollPane;
+import static swingutils.components.ComponentFactory.inScrollPane;
+import static swingutils.layout.LayoutBuilders.gridLayout;
+
 
 public class RentalHistoryStatisticsView {
 
@@ -23,7 +24,7 @@ public class RentalHistoryStatisticsView {
 
     public RentalHistoryStatisticsView() {
 
-        component = grid(2, 1,
+        component = gridLayout(2, 1,
                 inScrollPane(createTable(summaryStatsTableModel)),
                 inScrollPane(createTable(utilizationPerDayOfWeek))
         );

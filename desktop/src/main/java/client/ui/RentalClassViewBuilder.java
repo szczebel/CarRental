@@ -8,7 +8,10 @@ import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 
-import static client.ui.util.GuiHelper.*;
+import static swingutils.components.ComponentFactory.button;
+import static swingutils.components.ComponentFactory.inScrollPane;
+import static swingutils.layout.LayoutBuilders.borderLayout;
+import static swingutils.layout.LayoutBuilders.flowLayout;
 
 @Component
 public class RentalClassViewBuilder {
@@ -23,7 +26,7 @@ public class RentalClassViewBuilder {
 
         return borderLayout()
                 .north(
-                        toolbar(
+                        flowLayout(
                                 button("Refresh", () -> refresh(tableModel)),
                                 button("Add...", () -> addCLicked(table, tableModel))
                         ))
