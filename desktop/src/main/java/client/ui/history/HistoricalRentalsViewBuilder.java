@@ -6,6 +6,7 @@ import client.ui.scheduleview.CarResource;
 import client.ui.scheduleview.CarResourceRenderer;
 import client.ui.scheduleview.TooltipRenderer;
 import client.ui.util.BackgroundOperation;
+import client.ui.util.FilterableTable;
 import client.ui.util.IntervalEditor;
 import common.domain.RentalHistory;
 import common.service.HistoryService;
@@ -23,8 +24,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static client.ui.util.GuiHelper.convertingRenderer;
-import static swingutils.components.ComponentFactory.button;
-import static swingutils.components.ComponentFactory.inScrollPane;
+import static swingutils.components.ComponentFactory.*;
 import static swingutils.layout.LayoutBuilders.*;
 
 @org.springframework.stereotype.Component
@@ -39,18 +39,20 @@ public class HistoricalRentalsViewBuilder {
         ScheduleView<CarResource, HistoricalRentalAsTask> chart = createChart(model);
         RentalHistoryStatisticsView statisticsView = new RentalHistoryStatisticsView();
         IntervalEditor intervalEditor = new IntervalEditor(new Interval(ZonedDateTime.now().minusDays(30), ZonedDateTime.now()));
+        FilterableTable ft = FilterableTable.create(model);
 
         refresh(intervalEditor::getInterval, model::setData, statisticsView::setData);
 
         return borderLayout()
                 .north(buildToolbar(
                         intervalEditor,
+                        ft.filter,
                         model::setData,
                         statisticsView::setData
-                        ))
+                ))
                 .center(
                         tabbedPane(SwingUtilities.BOTTOM)
-                                .addTab("Table", inScrollPane(createTable(model)))
+                                .addTab("Table", inScrollPane(addRenderers(ft.table)))
                                 .addTab("Chart", chart.getComponent())
                                 .addTab("Statistics", statisticsView.getComponent())
                                 .build()
@@ -58,8 +60,7 @@ public class HistoricalRentalsViewBuilder {
                 .build();
     }
 
-    private JTable createTable(HistoricalRentalsModel model) {
-        JTable table = new JTable(model);
+    private JTable addRenderers(JTable table) {
         table.setDefaultRenderer(ZonedDateTime.class, convertingRenderer(value -> ((ZonedDateTime) value).format(DateTimeFormatter.ofPattern("dd.MM.yyy '@' HH:mm"))));
         table.setDefaultRenderer(Duration.class, convertingRenderer(value -> ((Duration) value).toHours() + " hours"));
         return table;
@@ -73,7 +74,7 @@ public class HistoricalRentalsViewBuilder {
         return chart;
     }
 
-    private JComponent buildToolbar(IntervalEditor intervalEditor, Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer) {
+    private JComponent buildToolbar(IntervalEditor intervalEditor, JTextField filter, Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer) {
 
         return flowLayout(
                 button("Change criteria", e -> {
@@ -81,7 +82,9 @@ public class HistoricalRentalsViewBuilder {
                             refresh(intervalEditor::getInterval, model, statisticsConsumer);
                         }
                 ),
-                button("Refresh", () -> refresh(intervalEditor::getInterval, model, statisticsConsumer))
+                button("Refresh", () -> refresh(intervalEditor::getInterval, model, statisticsConsumer)),
+                label("Filter:"),
+                filter
         );
     }
 

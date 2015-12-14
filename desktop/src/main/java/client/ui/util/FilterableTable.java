@@ -20,7 +20,7 @@ public class FilterableTable {
         JTable table = new JTable(model);
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
-        JTextField filter = textField(10, s -> sorter.setRowFilter(RowFilter.regexFilter(s)));
+        JTextField filter = textField(10, s -> sorter.setRowFilter(RowFilter.regexFilter("(?i)" + s)));
         return new FilterableTable(filter, table);
     }
 }
