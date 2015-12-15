@@ -7,13 +7,19 @@ import client.ui.util.BackgroundOperation;
 import common.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import swingutils.Colors;
+import swingutils.components.GradientPanel;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
+import java.awt.*;
 
-import static swingutils.components.ComponentFactory.button;
+import static swingutils.components.ComponentFactory.flatButton;
 import static swingutils.layout.LayoutBuilders.flowLayout;
-import static swingutils.layout.LayoutBuilders.tabbedPane;
+import static swingutils.layout.LayoutBuilders.wrapInPanel;
+import static swingutils.layout.cards.CardSwitcherFactory.MenuPlacement.LEFT;
+import static swingutils.layout.cards.CardSwitcherFactory.cardLayoutBuilder;
+import static swingutils.layout.cards.MenuItemFunctions.create;
 
 @Component
 public class MainFrameBuilder {
@@ -50,7 +56,7 @@ public class MainFrameBuilder {
     }
 
     JComponent createContent(JFrame frame) {
-        return tabbedPane(SwingConstants.LEFT)
+        return cardLayoutBuilder(LEFT, create(this::button, JComponent::setOpaque), menuPanel())
                 .addTab("Available to rent",    makeARentViewBuilder.build())
                 .addTab("Current rentals",      currentRentalsViewBuilder.build())
                 .addTab("Available to book",    makeABookingViewBuilder.build())
@@ -60,8 +66,19 @@ public class MainFrameBuilder {
                 .addTab("Rental class",         rentalClassViewBuilder.build())
                 .addTab("Clients",              clientListViewBuilder.build().getComponent())
                 .addTab("Schedule",             scheduleViewBuilder.build())
-                .addTab("Other",                createOther(frame))
+                .addTab("Other", createOther(frame))
                 .build();
+    }
+
+    private JComponent button(String label, Runnable action) {
+        JComponent panel = wrapInPanel(flatButton(label, action));
+        panel.setBackground(Colors.niceOrange);
+        panel.setOpaque(false);
+        return panel;
+    }
+
+    private JPanel menuPanel() {
+        return new GradientPanel(Color.white, Color.lightGray, true);
     }
 
     private void installLAF() {

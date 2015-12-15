@@ -16,7 +16,6 @@ import schedule.interaction.InstantTooltips;
 import schedule.view.ScheduleView;
 
 import javax.swing.*;
-import java.awt.*;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -77,8 +76,8 @@ public class HistoricalRentalsViewBuilder {
     private JComponent buildToolbar(IntervalEditor intervalEditor, JTextField filter, Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer) {
 
         return flowLayout(
-                button("Change criteria", e -> {
-                            JOptionPane.showMessageDialog((Component) e.getSource(), intervalEditor.createComponent(), "Change search criteria", JOptionPane.PLAIN_MESSAGE);
+                button("Change criteria", () -> {
+                            JOptionPane.showMessageDialog(null, intervalEditor.createComponent(), "Change search criteria", JOptionPane.PLAIN_MESSAGE);
                             refresh(intervalEditor::getInterval, model, statisticsConsumer);
                         }
                 ),

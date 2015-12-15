@@ -11,6 +11,7 @@ import common.service.ClientService;
 import common.util.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import swingutils.components.table.TablePanel;
 
 import javax.swing.*;
 import java.time.ZonedDateTime;
@@ -20,7 +21,8 @@ import java.util.function.Supplier;
 
 import static client.ui.util.GuiHelper.datePicker;
 import static client.ui.util.GuiHelper.rentalClassChooser;
-import static swingutils.components.ComponentFactory.*;
+import static swingutils.components.ComponentFactory.button;
+import static swingutils.components.ComponentFactory.withTitledBorder;
 import static swingutils.layout.LayoutBuilders.borderLayout;
 import static swingutils.layout.LayoutBuilders.flowLayout;
 import static swingutils.layout.forms.FormLayoutBuilders.simpleForm;
@@ -32,58 +34,57 @@ public class MakeABookingViewBuilder {
     @Autowired    BookingService bookingService;
     @Autowired    ClientService clientService;
     @Autowired    RentalClasses rentalClasses;
-    @Autowired    Customers customers;
+    @Autowired    ClientListViewBuilder clientListViewBuilder;
 
     public JComponent build() {
-        FleetTableModel tableModel = new FleetTableModel();
+        Cars cars = new Cars();
         AvailabilityQueryEditor availabilityQueryEditor = new AvailabilityQueryEditor(rentalClasses);
-        refresh(availabilityQueryEditor::getQuery, tableModel::setData);
-        JTable table = new JTable(tableModel);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        refresh(availabilityQueryEditor::getQuery, cars::setData);
+        TablePanel<Car> table = cars.createTable();
+        table.getTable().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         return borderLayout()
                 .north(
                         flowLayout(
-                                button("Search...", e -> {
-                                            JOptionPane.showMessageDialog((java.awt.Component) e.getSource(), availabilityQueryEditor.createComponent(), "Search for available cars...", JOptionPane.PLAIN_MESSAGE);
-                                            refresh(availabilityQueryEditor::getQuery, tableModel::setData);
+                                button("Search...", () -> {
+                                            JOptionPane.showMessageDialog(null, availabilityQueryEditor.createComponent(), "Search for available cars...", JOptionPane.PLAIN_MESSAGE);
+                                            refresh(availabilityQueryEditor::getQuery, cars::setData);
                                         }
                                 ),
-                                button("Refresh", () -> refresh(availabilityQueryEditor::getQuery, tableModel::setData)),
-                                button("Book selected...", () -> bookClicked(table, tableModel, availabilityQueryEditor::getQuery))
+                                button("Refresh", () -> refresh(availabilityQueryEditor::getQuery, cars::setData)),
+                                button("Book selected...", () -> bookClicked(table.getScrollPane(), table.getSelection(), availabilityQueryEditor::getQuery, cars::setData)),
+                                table.getToolbar()
                         ))
-                .center(inScrollPane(table))
+                .center(table.getScrollPane())
                 .build();
     }
 
-    private void bookClicked(JTable table, FleetTableModel tableModel, Supplier<AvailabilityService.BookingQuery> classChooser) {
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(table, "Select a car to book in the table");
+    private void bookClicked(JComponent parent, Car selection, Supplier<AvailabilityService.BookingQuery> classChooser, Consumer<Collection<Car>> dataReceiver) {
+        if (selection == null) {
+            JOptionPane.showMessageDialog(parent, "Select a car to book in the table");
         } else {
             BackgroundOperation.execute(
                     clientService::fetchAll,
-                    clients -> showBookDialog(table, tableModel.getCarAt(table.convertRowIndexToModel(selectedRow)), tableModel, classChooser)
+                    clients -> showBookDialog(parent, selection, classChooser, dataReceiver)
             );
         }
     }
 
-    private void showBookDialog(JComponent parent, Car carToBook, FleetTableModel tableModel, Supplier<AvailabilityService.BookingQuery> queryProvider) {
+    private void showBookDialog(JComponent parent, Car carToBook, Supplier<AvailabilityService.BookingQuery> queryProvider, Consumer<Collection<Car>> dataReceiver) {
 
-        JTable clientsTable = new JTable(customers);
+        TablePanel<Client> table = clientListViewBuilder.build();
         int option = JOptionPane.showConfirmDialog(
                 parent,
-                withTitledBorder(inScrollPane(clientsTable), "Select client to book for"),
+                withTitledBorder(table.getComponent(), "Select client to book for"),
                 "Rent " + carToBook,
                 JOptionPane.OK_CANCEL_OPTION);
 
         if (option == JOptionPane.OK_OPTION) {
-            int selectedRow = clientsTable.getSelectedRow();
-            if (selectedRow >= 0) {
-                Client client = customers.getAt(clientsTable.convertRowIndexToModel(selectedRow));
+            Client selected = table.getSelection();
+            if (selected != null) {
                 BackgroundOperation.execute(
-                        () -> bookingService.book(carToBook, client, queryProvider.get().getInterval()),
-                        () -> refresh(queryProvider, tableModel::setData)
+                        () -> bookingService.book(carToBook, selected, queryProvider.get().getInterval()),
+                        () -> refresh(queryProvider, dataReceiver)
                 );
             }
         }

@@ -13,7 +13,7 @@ public class RentalClasses extends AbstractTableModel {
 
     final static String[] COLUMN = {"Name", "Hourly rate"};
     private List<RentalClass> data = new ArrayList<>();
-    private DefaultComboBoxModel<RentalClass> comboBoxModel = new DefaultComboBoxModel<>();
+    private DefaultComboBoxModel<RentalClass> comboBoxModel = new DefaultComboBoxModel<>();//fixme memory leak
 
     void setData(List<RentalClass> data) {
         this.data = data;

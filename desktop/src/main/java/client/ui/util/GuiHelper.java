@@ -14,6 +14,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class GuiHelper {
 
@@ -46,11 +47,11 @@ public class GuiHelper {
         return tf;
     }
 
-    public static TableCellRenderer convertingRenderer(Converter<Object, Object> converter) {
+    public static TableCellRenderer convertingRenderer(Function<Object, Object> converter) {
         return new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                return super.getTableCellRendererComponent(table, converter.convert(value), isSelected, hasFocus, row, column);
+                return super.getTableCellRendererComponent(table, converter.apply(value), isSelected, hasFocus, row, column);
             }
         };
     }

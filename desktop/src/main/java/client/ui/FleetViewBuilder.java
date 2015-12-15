@@ -6,12 +6,12 @@ import common.domain.RentalClass;
 import common.service.FleetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import swingutils.components.table.TablePanel;
 
 import javax.swing.*;
 
 import static client.ui.util.GuiHelper.rentalClassChooser;
 import static swingutils.components.ComponentFactory.button;
-import static swingutils.components.ComponentFactory.inScrollPane;
 import static swingutils.layout.LayoutBuilders.borderLayout;
 import static swingutils.layout.LayoutBuilders.flowLayout;
 import static swingutils.layout.forms.FormLayoutBuilders.simpleForm;
@@ -25,21 +25,21 @@ public class FleetViewBuilder {
 
     public JComponent build() {
 
-        FleetTableModel tableModel = new FleetTableModel();
-        tableModel.setData(fleetCache.getFleet());
-        JTable table = new JTable(tableModel);
+        Cars cars = new Cars();
+        cars.setData(fleetCache.getFleet());
+        TablePanel<Car> table = cars.createTable();
 
         return borderLayout()
                 .north(
                         flowLayout(
-                                button("Refresh", () -> fleetCache.reload(tableModel::setData)),
-                                button("Add...", () -> addCarClicked(table, tableModel))
+                                button("Refresh", () -> fleetCache.reload(cars::setData)),
+                                button("Add...", () -> addCarClicked(table.getComponent(), cars))
                         ))
-                .center(inScrollPane(table))
+                .center(table.getComponent())
                 .build();
     }
 
-    private void addCarClicked(JComponent panel, FleetTableModel tableModel) {
+    private void addCarClicked(JComponent panel, Cars tableModel) {
 
         JTextField registration = new JTextField();
         JTextField model = new JTextField();
