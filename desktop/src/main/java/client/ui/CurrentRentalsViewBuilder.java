@@ -1,18 +1,17 @@
 package client.ui;
 
 import client.ui.util.BackgroundOperation;
-import client.ui.util.FilterableTable;
 import common.domain.CurrentRental;
 import common.service.RentalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import swingutils.components.table.TablePanel;
 
 import javax.swing.*;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.function.Consumer;
 
-import static client.ui.util.GuiHelper.convertingRenderer;
-import static swingutils.components.ComponentFactory.*;
+import static swingutils.components.ComponentFactory.button;
 import static swingutils.layout.LayoutBuilders.borderLayout;
 import static swingutils.layout.LayoutBuilders.flowLayout;
 
@@ -22,42 +21,37 @@ public class CurrentRentalsViewBuilder {
     @Autowired RentalService rentalService;
 
     public JComponent build() {
-        CurrentRentalsTableModel tableModel = new CurrentRentalsTableModel();
-        refresh(tableModel);
-        FilterableTable ft = FilterableTable.create(tableModel);
-        JTable table = ft.table;
-        table.setDefaultRenderer(ZonedDateTime.class, convertingRenderer(value -> ((ZonedDateTime) value).format(DateTimeFormatter.ofPattern("dd.MM.yyy '@' HH:mm"))));
+        CurrentRentals currentRentals = new CurrentRentals();
+        TablePanel<CurrentRental> table = currentRentals.createTable();
+        refresh(currentRentals::setData);
 
         return borderLayout()
                 .north(
                         flowLayout(
-                                button("Refresh", () -> refresh(tableModel)),
-                                label("Filter:"),
-                                ft.filter,
-                                button("Return selected", () -> returnClicked(table, tableModel))
+                                button("Refresh", () -> refresh(currentRentals::setData)),
+                                button("Return selected", () -> returnClicked(table.getScrollPane(), table.getSelection(), currentRentals::setData)),
+                                table.getToolbar()
                         ))
-                .center(inScrollPane(table))
+                .center(table.getScrollPane())
                 .build();
     }
 
 
-    private void returnClicked(JTable table, CurrentRentalsTableModel tableModel) {
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow >= 0) {
-            CurrentRental r = tableModel.getAt(table.convertRowIndexToModel(selectedRow));
+    private void returnClicked(JComponent parent, CurrentRental selection, Consumer<List<CurrentRental>> setData) {
+        if (selection != null) {
             BackgroundOperation.execute(
-                    () -> rentalService.returnCar(r.getRegistration()),
-                    () -> refresh(tableModel)
+                    () -> rentalService.returnCar(selection.getRegistration()),
+                    () -> refresh(setData)
             );
         } else {
-            JOptionPane.showMessageDialog(table, "Please select a car being returned");
+            JOptionPane.showMessageDialog(parent, "Please select a car being returned");
         }
     }
 
-    private void refresh(CurrentRentalsTableModel tableModel) {
+    private void refresh(Consumer<List<CurrentRental>> consumer) {
         BackgroundOperation.execute(
                 rentalService::getCurrentRentals,
-                tableModel::setData
+                consumer
         );
     }
 }

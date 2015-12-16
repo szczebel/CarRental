@@ -2,24 +2,37 @@ package client.ui.history;
 
 import client.ui.FleetCache;
 import client.ui.scheduleview.CarResource;
+import common.domain.AbstractAssignment;
 import common.domain.HistoricalRental;
 import common.domain.RentalHistory;
 import schedule.basic.GenericScheduleModel;
 import schedule.model.ScheduleModel;
+import swingutils.EventListHolder;
+import swingutils.components.table.TableFactory;
+import swingutils.components.table.TablePanel;
+import swingutils.components.table.descriptor.Columns;
 
-import javax.swing.table.AbstractTableModel;
-import java.time.Duration;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
-class HistoricalRentalsModel extends AbstractTableModel {
+class HistoricalRentalsModel extends EventListHolder<HistoricalRental> {
 
-    final static String[] COLUMN = {"Registration", "Model", "Client name", "Client email", "Start", "End", "Duration"};
     final FleetCache fleetCache;
-    private List<HistoricalRental> records = new ArrayList<>();
     private GenericScheduleModel<CarResource, HistoricalRentalAsTask> delegate = new GenericScheduleModel<>();
+
+    TablePanel<HistoricalRental> createTable() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyy '@' HH:mm");
+        Columns<HistoricalRental> columns = Columns.create(HistoricalRental.class)
+                .column("Registration", String.class, AbstractAssignment::getRegistration)
+                .column("Model", String.class, AbstractAssignment::getModel)
+                .column("Customer name", String.class, AbstractAssignment::getClientName)
+                .column("Customer email", String.class, AbstractAssignment::getClientEmail)
+                .column("Start", String.class, cr -> cr.getStart().format(formatter))
+                .column("End", String.class, cr -> cr.getEnd().format(formatter))
+                .column("Duration", String.class, cr -> String.valueOf(cr.getDuration().toHours()) + " hours")
+                ;
+        return TableFactory.createTablePanel(getData(), columns);
+    }
 
     HistoricalRentalsModel(FleetCache fleetCache) {
         this.fleetCache = fleetCache;
@@ -27,47 +40,10 @@ class HistoricalRentalsModel extends AbstractTableModel {
     }
 
     void setData(RentalHistory rentalHistory) {
-        this.records = rentalHistory.getRecords();
-        fireTableDataChanged();
+        setData(rentalHistory.getRecords());
         delegate.clearAllData();
         delegate.addResources(fleetCache.getFleet().stream().map(CarResource::new).collect(Collectors.toSet()));
-        delegate.assignAll(records.stream().map(HistoricalRentalAsTask::new), t -> new CarResource(t.getAbstractAssignment()));
-    }
-
-
-    @Override
-    public int getRowCount() {
-        return records.size();
-    }
-
-    @Override
-    public int getColumnCount() {
-        return COLUMN.length;
-    }
-
-    @Override
-    public String getColumnName(int column) {
-        return COLUMN[column];
-    }
-
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        HistoricalRental event = records.get(rowIndex);
-        if (columnIndex == 0) return event.getRegistration();
-        if (columnIndex == 1) return event.getModel();
-        if (columnIndex == 2) return event.getClientName();
-        if (columnIndex == 3) return event.getClientEmail();
-        if (columnIndex == 4) return event.getStart();
-        if (columnIndex == 5) return event.getEnd();
-        if (columnIndex == 6) return event.getDuration();
-        throw new IllegalArgumentException("Unknown column index : " + columnIndex);
-    }
-
-    @Override
-    public Class<?> getColumnClass(int columnIndex) {
-        if (columnIndex == 4 || columnIndex == 5) return ZonedDateTime.class;
-        if (columnIndex == 6) return Duration.class;
-        return super.getColumnClass(columnIndex);
+        delegate.assignAll(getData().stream().map(HistoricalRentalAsTask::new), t -> new CarResource(t.getAbstractAssignment()));
     }
 
     public ScheduleModel<CarResource, HistoricalRentalAsTask> asScheduleModel() {

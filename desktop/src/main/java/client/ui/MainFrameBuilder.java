@@ -71,7 +71,9 @@ public class MainFrameBuilder {
     }
 
     private JComponent button(String label, Runnable action) {
-        JComponent panel = wrapInPanel(flatButton(label, action));
+        JButton button = flatButton(label, action);
+        button.setBorder(BorderFactory.createEmptyBorder(4, 16, 4, 16));
+        JComponent panel = wrapInPanel(button);
         panel.setBackground(Colors.niceOrange);
         panel.setOpaque(false);
         return panel;

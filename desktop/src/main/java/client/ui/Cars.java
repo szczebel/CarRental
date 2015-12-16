@@ -8,7 +8,6 @@ import swingutils.components.table.descriptor.Columns;
 
 class Cars extends EventListHolder<Car> {
 
-
     TablePanel<Car> createTable() {
         Columns<Car> columns = Columns.create(Car.class)
                 .column("Registration", String.class, Car::getRegistration)
