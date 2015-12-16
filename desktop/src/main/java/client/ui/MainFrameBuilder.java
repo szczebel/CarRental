@@ -18,7 +18,7 @@ import static swingutils.components.ComponentFactory.flatButton;
 import static swingutils.layout.LayoutBuilders.flowLayout;
 import static swingutils.layout.LayoutBuilders.wrapInPanel;
 import static swingutils.layout.cards.CardSwitcherFactory.MenuPlacement.LEFT;
-import static swingutils.layout.cards.CardSwitcherFactory.cardLayoutBuilder;
+import static swingutils.layout.cards.CardSwitcherFactory.cardLayout;
 import static swingutils.layout.cards.MenuItemFunctions.create;
 
 @Component
@@ -56,7 +56,7 @@ public class MainFrameBuilder {
     }
 
     JComponent createContent(JFrame frame) {
-        return cardLayoutBuilder(LEFT, create(this::button, JComponent::setOpaque), menuPanel())
+        return cardLayout(LEFT, create(this::button, JComponent::setOpaque), menuPanel())
                 .addTab("Available to rent",    makeARentViewBuilder.build())
                 .addTab("Current rentals",      currentRentalsViewBuilder.build())
                 .addTab("Available to book",    makeABookingViewBuilder.build())

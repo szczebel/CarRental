@@ -1,28 +1,35 @@
 package client.ui.history;
 
 import client.ui.FleetCache;
-import client.ui.scheduleview.AbstractAssignmentRenderer;
-import client.ui.scheduleview.CarResource;
-import client.ui.scheduleview.CarResourceRenderer;
-import client.ui.scheduleview.TooltipRenderer;
+import client.ui.scheduleview.*;
 import client.ui.util.BackgroundOperation;
 import client.ui.util.IntervalEditor;
+import common.domain.AbstractAssignment;
 import common.domain.HistoricalRental;
 import common.domain.RentalHistory;
 import common.service.HistoryService;
 import common.util.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
+import schedule.basic.GenericScheduleModel;
 import schedule.interaction.InstantTooltips;
+import schedule.model.ScheduleModel;
 import schedule.view.ScheduleView;
+import swingutils.components.GradientPanel;
 import swingutils.components.table.TablePanel;
+import swingutils.layout.cards.CardSwitcherFactory;
 
 import javax.swing.*;
+import java.awt.*;
 import java.time.ZonedDateTime;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static client.ui.util.GuiHelper.textField;
 import static swingutils.components.ComponentFactory.button;
-import static swingutils.layout.LayoutBuilders.*;
+import static swingutils.components.ComponentFactory.label;
+import static swingutils.layout.LayoutBuilders.borderLayout;
+import static swingutils.layout.LayoutBuilders.flowLayout;
+import static swingutils.layout.cards.CardSwitcherFactory.cardLayout;
 
 @org.springframework.stereotype.Component
 public class HistoricalRentalsViewBuilder {
@@ -34,7 +41,8 @@ public class HistoricalRentalsViewBuilder {
 
     public JComponent build() {
         HistoricalRentalsModel model = new HistoricalRentalsModel(fleetCache);
-        ScheduleView<CarResource, HistoricalRentalAsTask> chart = createChart(model);
+        GenericScheduleModel<CarResource, HistoricalRentalAsTask> scheduleModel = model.asScheduleModel();
+        ScheduleView<CarResource, HistoricalRentalAsTask> chart = createChart(scheduleModel);
         RentalHistoryStatisticsView statisticsView = new RentalHistoryStatisticsView();
         IntervalEditor intervalEditor = new IntervalEditor(new Interval(ZonedDateTime.now().minusDays(30), ZonedDateTime.now()));
         TablePanel<HistoricalRental> table = model.createTable();
@@ -51,9 +59,17 @@ public class HistoricalRentalsViewBuilder {
                                 button("Refresh", () -> refresh(intervalEditor::getInterval, model::setData, statisticsView::setData))
                         ))
                 .center(
-                        tabbedPane(SwingUtilities.RIGHT)
+                        cardLayout(CardSwitcherFactory.MenuPlacement.TOP, new GradientPanel(Color.white, Color.lightGray, false))
                                 .addTab("Table", table.getComponent())
-                                .addTab("Chart", chart.getComponent())
+                                .addTab("Chart",
+                                        borderLayout()
+                                                .north(flowLayout(
+                                                        label("Filter assignments:"),
+                                                        textField(10, s -> scheduleModel.setTaskFilter(t -> containsString(t, s)))
+                                                ))
+                                                .center(chart.getComponent())
+                                                .build()
+                                )
                                 .addTab("Statistics", statisticsView.getComponent())
                                 .build()
                 )
@@ -65,12 +81,19 @@ public class HistoricalRentalsViewBuilder {
         refresh(intervalEditor::getInterval, model::setData, statisticsView::setData);
     }
 
-    private ScheduleView<CarResource, HistoricalRentalAsTask> createChart(HistoricalRentalsModel model) {
-        ScheduleView<CarResource, HistoricalRentalAsTask> chart = new ScheduleView<>(model.asScheduleModel());
+    private ScheduleView<CarResource, HistoricalRentalAsTask> createChart(ScheduleModel<CarResource, HistoricalRentalAsTask> scheduleModel) {
+        ScheduleView<CarResource, HistoricalRentalAsTask> chart = new ScheduleView<>(scheduleModel);
         chart.setTaskRenderer(new AbstractAssignmentRenderer<>());
         chart.setResourceRenderer(new CarResourceRenderer());
         chart.setMouseInteractions(InstantTooltips.renderWith(new TooltipRenderer<>()));
         return chart;
+    }
+
+    private boolean containsString(AbstractAssignmentAsTask t, String s) {
+        AbstractAssignment aa = t.getAbstractAssignment();
+        return aa.getClientEmail().contains(s) ||
+                aa.getClientName().contains(s) ||
+                aa.getStart().getDayOfWeek().name().contains(s);
     }
 
     private void refresh(Supplier<Interval> intervalSupplier, Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer) {

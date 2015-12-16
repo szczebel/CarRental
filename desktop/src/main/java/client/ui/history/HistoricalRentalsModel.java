@@ -6,7 +6,6 @@ import common.domain.AbstractAssignment;
 import common.domain.HistoricalRental;
 import common.domain.RentalHistory;
 import schedule.basic.GenericScheduleModel;
-import schedule.model.ScheduleModel;
 import swingutils.EventListHolder;
 import swingutils.components.table.TableFactory;
 import swingutils.components.table.TablePanel;
@@ -46,7 +45,7 @@ class HistoricalRentalsModel extends EventListHolder<HistoricalRental> {
         delegate.assignAll(getData().stream().map(HistoricalRentalAsTask::new), t -> new CarResource(t.getAbstractAssignment()));
     }
 
-    public ScheduleModel<CarResource, HistoricalRentalAsTask> asScheduleModel() {
+    public GenericScheduleModel<CarResource, HistoricalRentalAsTask> asScheduleModel() {
         return delegate;
     }
 }
