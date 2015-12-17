@@ -1,10 +1,10 @@
 package client.ui;
 
-import client.ui.util.BackgroundOperation;
 import common.domain.RentalClass;
 import common.service.RentalClassService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import swingutils.BackgroundOperation;
 
 import javax.swing.*;
 

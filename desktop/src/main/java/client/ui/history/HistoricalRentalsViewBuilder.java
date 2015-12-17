@@ -2,7 +2,6 @@ package client.ui.history;
 
 import client.ui.FleetCache;
 import client.ui.scheduleview.*;
-import client.ui.util.BackgroundOperation;
 import client.ui.util.IntervalEditor;
 import common.domain.AbstractAssignment;
 import common.domain.HistoricalRental;
@@ -14,7 +13,11 @@ import schedule.basic.GenericScheduleModel;
 import schedule.interaction.InstantTooltips;
 import schedule.model.ScheduleModel;
 import schedule.view.ScheduleView;
+import swingutils.BackgroundOperation;
 import swingutils.components.GradientPanel;
+import swingutils.components.progress.BusyFactory;
+import swingutils.components.progress.ProgressIndicatingComponent;
+import swingutils.components.progress.ProgressIndicator;
 import swingutils.components.table.TablePanel;
 import swingutils.layout.cards.CardSwitcherFactory;
 
@@ -47,16 +50,16 @@ public class HistoricalRentalsViewBuilder {
         IntervalEditor intervalEditor = new IntervalEditor(new Interval(ZonedDateTime.now().minusDays(30), ZonedDateTime.now()));
         TablePanel<HistoricalRental> table = model.createTable();
 
-        refresh(intervalEditor::getInterval, model::setData, statisticsView::setData);
+        ProgressIndicatingComponent pi = BusyFactory.lockAndWhirlWhenBusy();
 
-        return borderLayout()
+        pi.setContent(borderLayout()
                 .north(
                         flowLayout(
                                 button("Change criteria", () -> {
-                                            changeCriteria(model, statisticsView, intervalEditor);
+                                            changeCriteria(model, statisticsView, intervalEditor, pi);
                                         }
                                 ),
-                                button("Refresh", () -> refresh(intervalEditor::getInterval, model::setData, statisticsView::setData))
+                                button("Refresh", () -> refresh(intervalEditor::getInterval, model::setData, statisticsView::setData, pi))
                         ))
                 .center(
                         cardLayout(CardSwitcherFactory.MenuPlacement.TOP, new GradientPanel(Color.white, Color.lightGray, false))
@@ -73,12 +76,15 @@ public class HistoricalRentalsViewBuilder {
                                 .addTab("Statistics", statisticsView.getComponent())
                                 .build()
                 )
-                .build();
+                .build());
+        refresh(intervalEditor::getInterval, model::setData, statisticsView::setData, pi);
+
+        return pi.getComponent();
     }
 
-    private void changeCriteria(HistoricalRentalsModel model, RentalHistoryStatisticsView statisticsView, IntervalEditor intervalEditor) {
+    private void changeCriteria(HistoricalRentalsModel model, RentalHistoryStatisticsView statisticsView, IntervalEditor intervalEditor, ProgressIndicator pi) {
         JOptionPane.showMessageDialog(null, intervalEditor.createComponent(), "Change search criteria", JOptionPane.PLAIN_MESSAGE);
-        refresh(intervalEditor::getInterval, model::setData, statisticsView::setData);
+        refresh(intervalEditor::getInterval, model::setData, statisticsView::setData, pi);
     }
 
     private ScheduleView<CarResource, HistoricalRentalAsTask> createChart(ScheduleModel<CarResource, HistoricalRentalAsTask> scheduleModel) {
@@ -96,13 +102,14 @@ public class HistoricalRentalsViewBuilder {
                 aa.getStart().getDayOfWeek().name().contains(s);
     }
 
-    private void refresh(Supplier<Interval> intervalSupplier, Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer) {
+    private void refresh(Supplier<Interval> intervalSupplier, Consumer<RentalHistory> model, Consumer<RentalHistory.Statistics> statisticsConsumer, ProgressIndicator pi) {
         BackgroundOperation.execute(
                 () -> historyService.fetchHistory(new HistoryService.Query(intervalSupplier.get())),
                 result -> {
                     model.accept(result);
                     statisticsConsumer.accept(result.getStatistics());
-                }
+                },
+                pi
         );
     }
 

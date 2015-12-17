@@ -1,7 +1,6 @@
 package client.ui.scheduleview;
 
 import client.ui.FleetCache;
-import client.ui.util.BackgroundOperation;
 import common.domain.AbstractAssignment;
 import common.service.BookingService;
 import common.service.HistoryService;
@@ -10,6 +9,7 @@ import common.util.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import schedule.interaction.InstantTooltips;
 import schedule.view.ScheduleView;
+import swingutils.BackgroundOperation;
 
 import javax.swing.*;
 import java.time.ZonedDateTime;

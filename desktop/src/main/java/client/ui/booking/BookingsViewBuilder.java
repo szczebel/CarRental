@@ -1,10 +1,12 @@
 package client.ui.booking;
 
-import client.ui.util.BackgroundOperation;
 import common.domain.Booking;
 import common.service.BookingService;
 import common.service.RentalService;
 import org.springframework.beans.factory.annotation.Autowired;
+import swingutils.BackgroundOperation;
+import swingutils.components.progress.BusyFactory;
+import swingutils.components.progress.ProgressIndicatingComponent;
 import swingutils.components.table.TablePanel;
 
 import javax.swing.*;
@@ -32,15 +34,16 @@ public class BookingsViewBuilder {
         private final BookingService bookingService;
         private final Bookings model;
         final JComponent component;
+        private final ProgressIndicatingComponent pi;
+
 
         View(RentalService rentalService, BookingService bookingService) {
             this.rentalService = rentalService;
             this.bookingService = bookingService;
             model = new Bookings();
-            reloadBookings();
             TablePanel<Booking> table = model.createTable();
-
-            component = borderLayout()
+            pi = BusyFactory.lockAndWhirlWhenBusy();
+            pi.setContent(borderLayout()
                     .north(
                             flowLayout(
                                     button("Rent selected", () -> ifBookingSelected(table.getSelection(), this::rent)),
@@ -51,7 +54,9 @@ public class BookingsViewBuilder {
                     .center(
                             table.getScrollPane()
                     )
-                    .build();
+                    .build());
+            reloadBookings();
+            component = pi.getComponent();
         }
 
         private void ifBookingSelected(Booking selection, Consumer<Booking> action) {
@@ -60,15 +65,15 @@ public class BookingsViewBuilder {
         }
 
         private void rent(Booking b) {
-            BackgroundOperation.execute(() -> rentalService.rent(b), this::reloadBookings);
+            BackgroundOperation.execute(() -> rentalService.rent(b), this::reloadBookings, pi);
         }
 
         private void cancel(Booking b) {
-            BackgroundOperation.execute(() -> bookingService.cancel(b), this::reloadBookings);
+            BackgroundOperation.execute(() -> bookingService.cancel(b), this::reloadBookings, pi);
         }
 
         private void reloadBookings() {
-            BackgroundOperation.execute(bookingService::getBookings, model::setData);
+            BackgroundOperation.execute(bookingService::getBookings, model::setData, pi);
         }
     }
 }
