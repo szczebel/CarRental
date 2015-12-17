@@ -13,7 +13,7 @@ import schedule.basic.GenericScheduleModel;
 import schedule.interaction.InstantTooltips;
 import schedule.model.ScheduleModel;
 import schedule.view.ScheduleView;
-import swingutils.BackgroundOperation;
+import swingutils.background.BackgroundOperation;
 import swingutils.components.GradientPanel;
 import swingutils.components.progress.BusyFactory;
 import swingutils.components.progress.ProgressIndicatingComponent;

@@ -4,7 +4,7 @@ import common.domain.Client;
 import common.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import swingutils.BackgroundOperation;
+import swingutils.background.BackgroundOperation;
 import swingutils.components.progress.ProgressIndicator;
 import swingutils.components.table.TablePanel;
 

@@ -4,7 +4,7 @@ import common.domain.RentalClass;
 import common.service.RentalClassService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import swingutils.BackgroundOperation;
+import swingutils.background.BackgroundOperation;
 
 import javax.swing.*;
 

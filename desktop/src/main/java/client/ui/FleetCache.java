@@ -4,7 +4,7 @@ import common.domain.Car;
 import common.service.FleetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import swingutils.BackgroundOperation;
+import swingutils.background.BackgroundOperation;
 
 import java.util.Collections;
 import java.util.List;

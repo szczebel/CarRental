@@ -4,7 +4,7 @@ import common.domain.Booking;
 import common.service.BookingService;
 import common.service.RentalService;
 import org.springframework.beans.factory.annotation.Autowired;
-import swingutils.BackgroundOperation;
+import swingutils.background.BackgroundOperation;
 import swingutils.components.progress.BusyFactory;
 import swingutils.components.progress.ProgressIndicatingComponent;
 import swingutils.components.table.TablePanel;

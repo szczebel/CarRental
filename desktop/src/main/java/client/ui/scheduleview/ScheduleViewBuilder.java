@@ -9,7 +9,7 @@ import common.util.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import schedule.interaction.InstantTooltips;
 import schedule.view.ScheduleView;
-import swingutils.BackgroundOperation;
+import swingutils.background.BackgroundOperation;
 
 import javax.swing.*;
 import java.time.ZonedDateTime;

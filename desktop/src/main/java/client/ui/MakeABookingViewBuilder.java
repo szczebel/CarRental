@@ -10,7 +10,7 @@ import common.service.ClientService;
 import common.util.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import swingutils.BackgroundOperation;
+import swingutils.background.BackgroundOperation;
 import swingutils.components.progress.BusyFactory;
 import swingutils.components.progress.ProgressIndicatingComponent;
 import swingutils.components.progress.ProgressIndicator;
