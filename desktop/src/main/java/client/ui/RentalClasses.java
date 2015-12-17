@@ -2,51 +2,28 @@ package client.ui;
 
 import common.domain.RentalClass;
 import org.springframework.stereotype.Component;
+import swingutils.EventListHolder;
+import swingutils.components.table.TableFactory;
+import swingutils.components.table.TablePanel;
+import swingutils.components.table.descriptor.Columns;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
-public class RentalClasses extends AbstractTableModel {
+public class RentalClasses extends EventListHolder<RentalClass> {
 
-    final static String[] COLUMN = {"Name", "Hourly rate"};
-    private List<RentalClass> data = new ArrayList<>();
-    private DefaultComboBoxModel<RentalClass> comboBoxModel = new DefaultComboBoxModel<>();//fixme memory leak
-
-    void setData(List<RentalClass> data) {
-        this.data = data;
-        comboBoxModel.removeAllElements();
-        comboBoxModel.addElement(null);
-        data.forEach(comboBoxModel::addElement);
-        fireTableDataChanged();
+    TablePanel<RentalClass> createTable() {
+        Columns<RentalClass> columns = Columns.create(RentalClass.class)
+                .column("Name", String.class, RentalClass::getName)
+                .column("Hourly rate", Integer.class, RentalClass::getHourlyRate)
+                ;
+        return TableFactory.createTablePanel(getData(), columns);
     }
 
-    @Override
-    public int getRowCount() {
-        return data.size();
-    }
-
-    @Override
-    public int getColumnCount() {
-        return COLUMN.length;
-    }
-
-    @Override
-    public String getColumnName(int column) {
-        return COLUMN[column];
-    }
-
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        RentalClass aClass = data.get(rowIndex);
-        if (columnIndex == 0) return aClass.getName();
-        if (columnIndex == 1) return aClass.getHourlyRate();
-        throw new IllegalArgumentException("Unknown column index : " + columnIndex);
-    }
-
-    public ComboBoxModel<RentalClass> getComboBoxModel() {
+    public ComboBoxModel<RentalClass> createComboBoxModel(boolean includeNull) {
+        DefaultComboBoxModel<RentalClass> comboBoxModel = new DefaultComboBoxModel<>();
+        if(includeNull) comboBoxModel.addElement(null);
+        getData().forEach(comboBoxModel::addElement);
         return comboBoxModel;
     }
 }

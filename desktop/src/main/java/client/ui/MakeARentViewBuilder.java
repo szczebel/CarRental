@@ -55,7 +55,7 @@ public class MakeARentViewBuilder {
                 .north(
                         flowLayout(
                                 button("Search...", () -> {
-                                            JOptionPane.showMessageDialog(null, availabilityQueryEditor.getComponent(), "Search for available cars...", JOptionPane.PLAIN_MESSAGE);
+                                            JOptionPane.showMessageDialog(null, availabilityQueryEditor.createComponent(), "Search for available cars...", JOptionPane.PLAIN_MESSAGE);
                                             refresh(availabilityQueryEditor::getQuery, cars::setData, pi);
                                         }
                                 ),
@@ -112,16 +112,13 @@ public class MakeARentViewBuilder {
 
     static class AvailabilityQueryEditor {
 
+        private final RentalClasses rentalClasses;
         UtilDateModel until = new UtilDateModel(Date.from((ZonedDateTime.now().plusDays(7).toInstant())));
         JComboBox<RentalClass> classChooser;
-        private JComponent component;
 
         public AvailabilityQueryEditor(RentalClasses rentalClasses) {
-            classChooser = rentalClassChooser(rentalClasses);
-            component = simpleForm()
-                    .addRow("Rent until:", datePicker(until))
-                    .addRow("Class:", classChooser)
-                    .build();
+            this.rentalClasses = rentalClasses;
+            classChooser = rentalClassChooser(rentalClasses.createComboBoxModel(true));
         }
 
         AvailabilityService.RentQuery getQuery() {
@@ -129,8 +126,13 @@ public class MakeARentViewBuilder {
             return new AvailabilityService.RentQuery(selectedItem, toMidnight(ZonedDateTime.ofInstant(until.getValue().toInstant(), ZoneId.systemDefault())));
         }
 
-        JComponent getComponent() {
-            return component;
+        JComponent createComponent() {
+            classChooser.setModel(rentalClasses.createComboBoxModel(true));
+            return simpleForm()
+                    .addRow("Rent until:", datePicker(until))
+                    .addRow("Class:", classChooser)
+                    .build();
+
         }
     }
 

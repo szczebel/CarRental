@@ -17,7 +17,7 @@ public class RentalClass implements Serializable {
         return name;
     }
 
-    public int getHourlyRate() {
+    public Integer getHourlyRate() {
         return hourlyRate;
     }
 }

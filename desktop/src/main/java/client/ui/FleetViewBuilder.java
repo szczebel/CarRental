@@ -48,7 +48,7 @@ public class FleetViewBuilder {
 
         JTextField registration = new JTextField();
         JTextField model = new JTextField();
-        JComboBox<RentalClass> classChooser = rentalClassChooser(rentalClasses);
+        JComboBox<RentalClass> classChooser = rentalClassChooser(rentalClasses.createComboBoxModel(false));
         JComponent dialogContent = simpleForm()
                 .addRow("Reg#:", registration)
                 .addRow("Model:", model)

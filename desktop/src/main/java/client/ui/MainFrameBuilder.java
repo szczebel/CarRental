@@ -16,6 +16,7 @@ import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
 
+import static swingutils.components.ComponentFactory.button;
 import static swingutils.components.ComponentFactory.flatButton;
 import static swingutils.layout.LayoutBuilders.flowLayout;
 import static swingutils.layout.LayoutBuilders.wrapInPanel;
@@ -58,7 +59,7 @@ public class MainFrameBuilder {
     }
 
     JComponent createContent(JFrame frame) {
-        return cardLayout(LEFT, create(this::button, JComponent::setOpaque), menuPanel())
+        return cardLayout(LEFT, create(this::menuButton, JComponent::setOpaque), menuPanel())
                 .addTab("Available to rent",    makeARentViewBuilder.build())
                 .addTab("Current rentals",      currentRentalsViewBuilder.build())
                 .addTab("Available to book",    makeABookingViewBuilder.build())
@@ -78,7 +79,7 @@ public class MainFrameBuilder {
         return pi.getComponent();
     }
 
-    private JComponent button(String label, Runnable action) {
+    private JComponent menuButton(String label, Runnable action) {
         JButton button = flatButton(label, action);
         button.setBorder(BorderFactory.createEmptyBorder(4, 16, 4, 16));
         JComponent panel = wrapInPanel(button);

@@ -106,15 +106,18 @@ public class MakeABookingViewBuilder {
 
     static class AvailabilityQueryEditor extends IntervalEditor {
 
+        private final RentalClasses rentalClasses;
         JComboBox<RentalClass> classChooser;
 
         public AvailabilityQueryEditor(RentalClasses rentalClasses) {
             super(new Interval(ZonedDateTime.now(), ZonedDateTime.now().plusDays(7)));
-            classChooser = rentalClassChooser(rentalClasses);
+            this.rentalClasses = rentalClasses;
+            classChooser = rentalClassChooser(rentalClasses.createComboBoxModel(true));
         }
 
         @Override
         public JComponent createComponent() {
+            classChooser.setModel(rentalClasses.createComboBoxModel(true));
             return simpleForm()
                     .addRow("From:", datePicker(from))
                     .addRow("To:",   datePicker(to))

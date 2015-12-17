@@ -5,11 +5,13 @@ import common.service.RentalClassService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import swingutils.background.BackgroundOperation;
+import swingutils.components.table.TablePanel;
 
 import javax.swing.*;
+import java.util.List;
+import java.util.function.Consumer;
 
 import static swingutils.components.ComponentFactory.button;
-import static swingutils.components.ComponentFactory.inScrollPane;
 import static swingutils.layout.LayoutBuilders.borderLayout;
 import static swingutils.layout.LayoutBuilders.flowLayout;
 
@@ -17,36 +19,37 @@ import static swingutils.layout.LayoutBuilders.flowLayout;
 public class RentalClassViewBuilder {
 
     @Autowired RentalClassService rentalClassService;
-    @Autowired RentalClasses tableModel;
+    @Autowired RentalClasses rentalClasses;
 
     public JComponent build() {
 
-        refresh(tableModel);
-        JTable table = new JTable(tableModel);
+        TablePanel<RentalClass> table = rentalClasses.createTable();
 
+        refresh(rentalClasses::setData);
         return borderLayout()
                 .north(
                         flowLayout(
-                                button("Refresh", () -> refresh(tableModel)),
-                                button("Add...", () -> addCLicked(table, tableModel))
+                                button("Refresh", () -> refresh(rentalClasses::setData)),
+                                button("Add...", () -> addClicked(table.getScrollPane(), rentalClasses)),
+                                table.getToolbar()
                         ))
-                .center(inScrollPane(table))
+                .center(table.getScrollPane())
                 .build();
     }
 
-    private void addCLicked(JComponent panel, RentalClasses tableModel) {
+    private void addClicked(JComponent panel, RentalClasses tableModel) {
         String name = JOptionPane.showInputDialog(panel, "Name", "Add rental class", JOptionPane.QUESTION_MESSAGE);
         String rate = JOptionPane.showInputDialog(panel, "Hourly rate", "Add rental class", JOptionPane.QUESTION_MESSAGE);
         BackgroundOperation.execute(
                 () -> rentalClassService.create(new RentalClass(name, Integer.parseInt(rate))),
-                () -> refresh(tableModel)
+                () -> refresh(tableModel::setData)
         );
     }
 
-    private void refresh(RentalClasses tableModel) {
+    private void refresh(Consumer<List<RentalClass>> consumer) {
         BackgroundOperation.execute(
                 rentalClassService::fetchAll,
-                tableModel::setData
+                consumer
         );
     }
 

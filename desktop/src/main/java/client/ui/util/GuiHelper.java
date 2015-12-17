@@ -1,6 +1,5 @@
 package client.ui.util;
 
-import client.ui.RentalClasses;
 import common.domain.RentalClass;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
@@ -67,8 +66,8 @@ public class GuiHelper {
         };
     }
 
-    public static JComboBox<RentalClass> rentalClassChooser(RentalClasses rentalClasses) {
-        JComboBox<RentalClass> combo = new JComboBox<>(rentalClasses.getComboBoxModel());
+    public static JComboBox<RentalClass> rentalClassChooser(ComboBoxModel<RentalClass> model) {
+        JComboBox<RentalClass> combo = new JComboBox<>(model);
         combo.setRenderer(convertingListCellRenderer(rc -> rc != null ? rc.getName() : "<all>"));
         return combo;
     }
