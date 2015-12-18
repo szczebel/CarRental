@@ -13,30 +13,31 @@ import schedule.basic.GenericScheduleModel;
 import schedule.interaction.InstantTooltips;
 import schedule.model.ScheduleModel;
 import schedule.view.ScheduleView;
+import swingutils.Colors;
 import swingutils.background.BackgroundOperation;
-import swingutils.components.GradientPanel;
 import swingutils.components.progress.BusyFactory;
 import swingutils.components.progress.ProgressIndicatingComponent;
 import swingutils.components.progress.ProgressIndicator;
 import swingutils.components.table.TablePanel;
 import swingutils.layout.cards.CardSwitcherFactory;
+import swingutils.layout.cards.MenuItemFunctions;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.time.ZonedDateTime;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static client.ui.util.GuiHelper.textField;
-import static swingutils.components.ComponentFactory.button;
-import static swingutils.components.ComponentFactory.label;
-import static swingutils.layout.LayoutBuilders.borderLayout;
-import static swingutils.layout.LayoutBuilders.flowLayout;
+import static swingutils.components.ComponentFactory.*;
+import static swingutils.layout.LayoutBuilders.*;
 import static swingutils.layout.cards.CardSwitcherFactory.cardLayout;
 
 @org.springframework.stereotype.Component
 public class HistoricalRentalsViewBuilder {
 
+    public static final Border LINE_BORDER = BorderFactory.createLineBorder(SystemColor.controlShadow);
     @Autowired
     HistoryService historyService;
     @Autowired
@@ -62,24 +63,33 @@ public class HistoricalRentalsViewBuilder {
                                 button("Refresh", () -> refresh(intervalEditor::getInterval, model::setData, statisticsView::setData, pi))
                         ))
                 .center(
-                        cardLayout(CardSwitcherFactory.MenuPlacement.TOP, new GradientPanel(Color.white, Color.lightGray, false))
-                                .addTab("Table", table.getComponent())
-                                .addTab("Chart",
-                                        borderLayout()
-                                                .north(flowLayout(
-                                                        label("Filter assignments:"),
-                                                        textField(10, s -> scheduleModel.setTaskFilter(t -> containsString(t, s)))
-                                                ))
-                                                .center(chart.getComponent())
-                                                .build()
-                                )
-                                .addTab("Statistics", statisticsView.getComponent())
+                        cardLayout(CardSwitcherFactory.MenuPlacement.RIGHT, createButtonStyle(), menu -> decorate(menu).withEmptyBorder(0, 4, 4, 4).get())
+                                .addTab("Table", decorate(table.getComponent())                         .withBorder(BorderFactory.createLineBorder(SystemColor.controlShadow)).get())
+                                .addTab("Chart", decorate(buildChartComponent(scheduleModel, chart))    .withBorder(BorderFactory.createLineBorder(SystemColor.controlShadow)).get())
+                                .addTab("Stats", decorate(statisticsView.getComponent()).withBorder(BorderFactory.createLineBorder(SystemColor.controlShadow)).get())
                                 .build()
                 )
                 .build());
         refresh(intervalEditor::getInterval, model::setData, statisticsView::setData, pi);
 
         return pi.getComponent();
+    }
+
+    private JPanel buildChartComponent(GenericScheduleModel<CarResource, HistoricalRentalAsTask> scheduleModel, ScheduleView<CarResource, HistoricalRentalAsTask> chart) {
+        return borderLayout()
+                .north(flowLayout(
+                        label("Filter assignments:"),
+                        textField(10, s -> scheduleModel.setTaskFilter(t -> containsString(t, s)))
+                ))
+                .center(chart.getComponent())
+                .build();
+    }
+
+    private MenuItemFunctions<JComponent> createButtonStyle() {
+        return MenuItemFunctions.create(
+                (s, r) -> decorate(wrapInPanel(flatButton(s, r))).withBorder(LINE_BORDER).backgroundColor(Colors.niceOrange).get(),
+                JComponent::setOpaque
+        );
     }
 
     private void changeCriteria(HistoricalRentalsModel model, RentalHistoryStatisticsView statisticsView, IntervalEditor intervalEditor, ProgressIndicator pi) {

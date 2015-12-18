@@ -16,8 +16,7 @@ import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
 
-import static swingutils.components.ComponentFactory.button;
-import static swingutils.components.ComponentFactory.flatButton;
+import static swingutils.components.ComponentFactory.*;
 import static swingutils.layout.LayoutBuilders.flowLayout;
 import static swingutils.layout.LayoutBuilders.wrapInPanel;
 import static swingutils.layout.cards.CardSwitcherFactory.MenuPlacement.LEFT;
@@ -59,17 +58,17 @@ public class MainFrameBuilder {
     }
 
     JComponent createContent(JFrame frame) {
-        return cardLayout(LEFT, create(this::menuButton, JComponent::setOpaque), menuPanel())
-                .addTab("Available to rent",    makeARentViewBuilder.build())
-                .addTab("Current rentals",      currentRentalsViewBuilder.build())
-                .addTab("Available to book",    makeABookingViewBuilder.build())
-                .addTab("Bookings",             bookingsViewBuilder.build())
-                .addTab("Rental history",       historicalRentalsViewBuilder.build())
-                .addTab("Fleet",                fleetViewBuilder.build())
-                .addTab("Rental class",         rentalClassViewBuilder.build())
-                .addTab("Clients",              clientListTab())
-                .addTab("Schedule",             scheduleViewBuilder.build())
-                .addTab("Other", createOther(frame))
+        return cardLayout(LEFT, create(this::menuButton, JComponent::setOpaque), menu -> new GradientPanel(Color.white, Color.lightGray, true, decorate(menu).withEmptyBorder(4, 0, 4, 0).get()))
+                .addTab("Available to rent", decorate(makeARentViewBuilder.build()).withGradientHeader("Cars available to rent at the moment").withEmptyBorder(4, 4, 4, 4).get())
+                .addTab("Current rentals",      decorate(currentRentalsViewBuilder.build()   ).withGradientHeader("Cars currently rented").withEmptyBorder(4,4,4,4).get())
+                .addTab("Available to book",    decorate(makeABookingViewBuilder.build()     ).withGradientHeader("Cars available to book").withEmptyBorder(4,4,4,4).get())
+                .addTab("Bookings",             decorate(bookingsViewBuilder.build()         ).withGradientHeader("Bookings").withEmptyBorder(4,4,4,4).get())
+                .addTab("Rental history",       decorate(historicalRentalsViewBuilder.build()).withGradientHeader("History of rentals").withEmptyBorder(4,4,4,4).get())
+                .addTab("Fleet",                decorate(fleetViewBuilder.build()            ).withGradientHeader("My fleet").withEmptyBorder(4,4,4,4).get())
+                .addTab("Rental class",         decorate(rentalClassViewBuilder.build()      ).withGradientHeader("My rental classes").withEmptyBorder(4,4,4,4).get())
+                .addTab("Customers",            decorate(clientListTab()                     ).withGradientHeader("My customers").withEmptyBorder(4,4,4,4).get())
+                .addTab("Schedule",             decorate(scheduleViewBuilder.build()         ).withGradientHeader("Schedule chart for historical rentals, current rentals and bookings").withEmptyBorder(4,4,4,4).get())
+                .addTab("Other",                decorate(createOther(frame)                  ).withGradientHeader("Other tools and settings").withEmptyBorder(4,4,4,4).get())
                 .build();
     }
 
@@ -86,10 +85,6 @@ public class MainFrameBuilder {
         panel.setBackground(Colors.niceOrange);
         panel.setOpaque(false);
         return panel;
-    }
-
-    private JPanel menuPanel() {
-        return new GradientPanel(Color.white, Color.lightGray, true);
     }
 
     private void installLAF() {
