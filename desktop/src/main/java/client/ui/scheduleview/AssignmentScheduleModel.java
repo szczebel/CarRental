@@ -4,7 +4,7 @@ import client.ui.FleetCache;
 import common.domain.Booking;
 import common.domain.CurrentRental;
 import common.domain.HistoricalRental;
-import schedule.basic.GenericScheduleModel;
+import schedule.model.GenericScheduleModel;
 
 import java.util.Collection;
 import java.util.List;

@@ -5,7 +5,7 @@ import client.ui.scheduleview.CarResource;
 import common.domain.AbstractAssignment;
 import common.domain.HistoricalRental;
 import common.domain.RentalHistory;
-import schedule.basic.GenericScheduleModel;
+import schedule.model.GenericScheduleModel;
 import swingutils.EventListHolder;
 import swingutils.components.table.TableFactory;
 import swingutils.components.table.TablePanel;
