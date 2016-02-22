@@ -15,6 +15,7 @@ import swingutils.components.progress.ProgressIndicatingComponent;
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
+import java.util.function.Function;
 
 import static swingutils.components.ComponentFactory.*;
 import static swingutils.layout.LayoutBuilders.flowLayout;
@@ -58,7 +59,7 @@ public class MainFrameBuilder {
     }
 
     JComponent createContent(JFrame frame) {
-        return cardLayout(LEFT, create(this::menuButton, JComponent::setOpaque), menu -> new GradientPanel(Color.white, Color.lightGray, true, decorate(menu).withEmptyBorder(4, 0, 4, 0).get()))
+        return cardLayout(LEFT, create(this::menuButton, JComponent::setOpaque), customizer())
                 .addTab("Available to rent",    buildNiceTab(makeARentViewBuilder.build(),          "Cars available to rent at the moment"))
                 .addTab("Current rentals",      buildNiceTab(currentRentalsViewBuilder.build(),     "Cars currently rented"))
                 .addTab("Available to book",    buildNiceTab(makeABookingViewBuilder.build(),       "Cars available to book"))
@@ -70,6 +71,10 @@ public class MainFrameBuilder {
                 .addTab("Schedule",             buildNiceTab(scheduleViewBuilder.build(),           "Schedule chart for historical rentals, current rentals and bookings"))
                 .addTab("Other",                buildNiceTab(createOther(frame),                    "Other tools and settings"))
                 .build();
+    }
+
+    private Function<JComponent, JComponent> customizer() {
+        return menu -> new GradientPanel(Color.white, Color.lightGray, true, decorate(menu).withEmptyBorder(4, 0, 4, 0).get());
     }
 
     private JComponent buildNiceTab(JComponent toDecorate, String header) {
