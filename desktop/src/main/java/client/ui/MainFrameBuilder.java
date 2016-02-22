@@ -59,17 +59,21 @@ public class MainFrameBuilder {
 
     JComponent createContent(JFrame frame) {
         return cardLayout(LEFT, create(this::menuButton, JComponent::setOpaque), menu -> new GradientPanel(Color.white, Color.lightGray, true, decorate(menu).withEmptyBorder(4, 0, 4, 0).get()))
-                .addTab("Available to rent", decorate(makeARentViewBuilder.build()).withGradientHeader("Cars available to rent at the moment").withEmptyBorder(4, 4, 4, 4).get())
-                .addTab("Current rentals",      decorate(currentRentalsViewBuilder.build()   ).withGradientHeader("Cars currently rented").withEmptyBorder(4,4,4,4).get())
-                .addTab("Available to book",    decorate(makeABookingViewBuilder.build()     ).withGradientHeader("Cars available to book").withEmptyBorder(4,4,4,4).get())
-                .addTab("Bookings",             decorate(bookingsViewBuilder.build()         ).withGradientHeader("Bookings").withEmptyBorder(4,4,4,4).get())
-                .addTab("Rental history",       decorate(historicalRentalsViewBuilder.build()).withGradientHeader("History of rentals").withEmptyBorder(4,4,4,4).get())
-                .addTab("Fleet",                decorate(fleetViewBuilder.build()            ).withGradientHeader("My fleet").withEmptyBorder(4,4,4,4).get())
-                .addTab("Rental class",         decorate(rentalClassViewBuilder.build()      ).withGradientHeader("My rental classes").withEmptyBorder(4,4,4,4).get())
-                .addTab("Customers",            decorate(clientListTab()                     ).withGradientHeader("My customers").withEmptyBorder(4,4,4,4).get())
-                .addTab("Schedule",             decorate(scheduleViewBuilder.build()         ).withGradientHeader("Schedule chart for historical rentals, current rentals and bookings").withEmptyBorder(4,4,4,4).get())
-                .addTab("Other",                decorate(createOther(frame)                  ).withGradientHeader("Other tools and settings").withEmptyBorder(4,4,4,4).get())
+                .addTab("Available to rent",    buildNiceTab(makeARentViewBuilder.build(),          "Cars available to rent at the moment"))
+                .addTab("Current rentals",      buildNiceTab(currentRentalsViewBuilder.build(),     "Cars currently rented"))
+                .addTab("Available to book",    buildNiceTab(makeABookingViewBuilder.build(),       "Cars available to book"))
+                .addTab("Bookings",             buildNiceTab(bookingsViewBuilder.build(),           "Bookings"))
+                .addTab("Rental history",       buildNiceTab(historicalRentalsViewBuilder.build(),  "History of rentals"))
+                .addTab("Fleet",                buildNiceTab(fleetViewBuilder.build(),              "My fleet"))
+                .addTab("Rental class",         buildNiceTab(rentalClassViewBuilder.build(),        "My rental classes"))
+                .addTab("Customers",            buildNiceTab(clientListTab(),                       "My customers"))
+                .addTab("Schedule",             buildNiceTab(scheduleViewBuilder.build(),           "Schedule chart for historical rentals, current rentals and bookings"))
+                .addTab("Other",                buildNiceTab(createOther(frame),                    "Other tools and settings"))
                 .build();
+    }
+
+    private JComponent buildNiceTab(JComponent toDecorate, String header) {
+        return decorate(toDecorate).withGradientHeader(header).withEmptyBorder(4,4,4,4).get();
     }
 
     private JComponent clientListTab() {
