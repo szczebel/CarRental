@@ -2,6 +2,7 @@ package server.service;
 
 import common.service.TestService;
 import org.springframework.stereotype.Service;
+import server.multitenancy.CurrentTenantProvider;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -10,7 +11,9 @@ import java.net.UnknownHostException;
 public class TestServiceImpl implements TestService {
     public String getServerInfo() {
         try {
-            return InetAddress.getLocalHost().getHostAddress();
+            String hostAddress = InetAddress.getLocalHost().getHostAddress();
+            String tenantForTransaction = CurrentTenantProvider.getTenantForTransaction();
+            return tenantForTransaction + " @ " + hostAddress;
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }

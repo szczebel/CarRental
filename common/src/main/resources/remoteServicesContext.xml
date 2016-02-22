@@ -5,9 +5,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
+    <bean id="tenantExecutor" class="invoker.TenantInvokerRequestExecutor"/>
+
     <bean class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
         <property name="serviceUrl" value="http://localhost:8088/http/TestService"/>
         <property name="serviceInterface" value="common.service.TestService"/>
+        <property name="httpInvokerRequestExecutor" ref="tenantExecutor"/>
     </bean>
 
     <bean class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
