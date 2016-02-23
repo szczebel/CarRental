@@ -6,23 +6,22 @@ import client.ui.scheduleview.ScheduleViewBuilder;
 import common.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import swingutils.Colors;
 import swingutils.background.BackgroundOperation;
 import swingutils.components.GradientPanel;
 import swingutils.components.progress.BusyFactory;
 import swingutils.components.progress.ProgressIndicatingComponent;
+import swingutils.layout.cards.MenuItems;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
 import java.util.function.Function;
 
-import static swingutils.components.ComponentFactory.*;
+import static swingutils.components.ComponentFactory.button;
+import static swingutils.components.ComponentFactory.decorate;
 import static swingutils.layout.LayoutBuilders.flowLayout;
-import static swingutils.layout.LayoutBuilders.wrapInPanel;
 import static swingutils.layout.cards.CardSwitcherFactory.MenuPlacement.LEFT;
 import static swingutils.layout.cards.CardSwitcherFactory.cardLayout;
-import static swingutils.layout.cards.MenuItemFunctions.create;
 
 @Component
 public class MainFrameBuilder {
@@ -59,7 +58,7 @@ public class MainFrameBuilder {
     }
 
     JComponent createContent(JFrame frame) {
-        return cardLayout(LEFT, create(this::menuButton, JComponent::setOpaque), customizer())
+        return cardLayout(LEFT, MenuItems.NakedOrange, customizer())
                 .addTab("Available to rent",    buildNiceTab(makeARentViewBuilder.build(),          "Cars available to rent at the moment"))
                 .addTab("Current rentals",      buildNiceTab(currentRentalsViewBuilder.build(),     "Cars currently rented"))
                 .addTab("Available to book",    buildNiceTab(makeABookingViewBuilder.build(),       "Cars available to book"))
@@ -85,15 +84,6 @@ public class MainFrameBuilder {
         ProgressIndicatingComponent pi = BusyFactory.lockAndWhirlWhenBusy();
         pi.setContent(clientListViewBuilder.build(pi).getComponent());
         return pi.getComponent();
-    }
-
-    private JComponent menuButton(String label, Runnable action) {
-        JButton button = flatButton(label, action);
-        button.setBorder(BorderFactory.createEmptyBorder(4, 16, 4, 16));
-        JComponent panel = wrapInPanel(button);
-        panel.setBackground(Colors.niceOrange);
-        panel.setOpaque(false);
-        return panel;
     }
 
     private void installLAF() {

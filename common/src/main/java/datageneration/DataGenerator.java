@@ -47,7 +47,7 @@ public class DataGenerator {
         generateClasses();
         generateFleet(fleetSize);
         generateClients(customerBaseSize);
-        generateBetterRentalData(daysOfHistory, daysOfBookings);
+        generateRentalData(daysOfHistory, daysOfBookings);
     }
 
     protected void generateClasses() {
@@ -85,7 +85,7 @@ public class DataGenerator {
         }
     }
 
-    protected void generateBetterRentalData(int daysOfHistory, int daysOfBookings) {
+    protected void generateRentalData(int daysOfHistory, int daysOfBookings) {
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime from = now.minusDays(daysOfHistory);
         ZonedDateTime to = now.plusDays(daysOfBookings);
@@ -128,7 +128,7 @@ public class DataGenerator {
 
 
     private Client randomClient() {
-        List<Client> clients = clientService.fetchAll();
+        List<Client> clients = clientService.fetchAll();//todo: cache it, so no need to fetch all each time
         return clients.get(random.nextInt(clients.size()));
     }
 }
