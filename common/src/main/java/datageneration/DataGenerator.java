@@ -32,14 +32,15 @@ public class DataGenerator {
 
 
     private final Random random = new Random();
+    private List<Client> clients;
 
     @SuppressWarnings("unused")
     @PostConstruct
     public void generate() throws Exception {
         long now = System.currentTimeMillis();
         System.out.println("Generating data...");
-        generate(100, 200, 60, 60);
-        //generate(5, 20, 10, 10);
+        //generate(100, 200, 60, 60);
+        generate(5, 20, 10, 10);
         System.out.println("Data generated in " + (System.currentTimeMillis() - now) + " ms" );
     }
 
@@ -83,6 +84,7 @@ public class DataGenerator {
             String surname = surnames[random.nextInt(surnames.length)];
             clientService.create(new Client(name + " " + surname, name + "." + surname + "." + random.nextInt(10000) + "@gmail.com"));
         }
+        clients = clientService.fetchAll();
     }
 
     protected void generateRentalData(int daysOfHistory, int daysOfBookings) {
@@ -128,7 +130,6 @@ public class DataGenerator {
 
 
     private Client randomClient() {
-        List<Client> clients = clientService.fetchAll();//todo: cache it, so no need to fetch all each time
         return clients.get(random.nextInt(clients.size()));
     }
 }

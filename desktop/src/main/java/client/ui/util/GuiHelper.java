@@ -4,7 +4,6 @@ import common.domain.RentalClass;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
-import org.springframework.core.convert.converter.Converter;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -55,13 +54,14 @@ public class GuiHelper {
         };
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> ListCellRenderer<T> convertingListCellRenderer(Converter<T, String> converter) {
+    public static <T> ListCellRenderer<T> convertingListCellRenderer(Function<T, String> converter) {
+        //noinspection unchecked
         return (ListCellRenderer<T>) new DefaultListCellRenderer() {
 
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                return super.getListCellRendererComponent(list, converter.convert((T)value), index, isSelected, cellHasFocus);
+                //noinspection unchecked
+                return super.getListCellRendererComponent(list, converter.apply((T)value), index, isSelected, cellHasFocus);
             }
         };
     }

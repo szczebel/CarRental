@@ -103,7 +103,6 @@ public class MainFrameBuilder {
                         () -> BackgroundOperation.execute(
                                 testService::getServerInfo,
                                 result -> JOptionPane.showMessageDialog(parent, "Server said: " + result),
-                                exception -> JOptionPane.showMessageDialog(parent, "Connection failed"),
                                 pi
                         )
                 )
