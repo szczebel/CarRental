@@ -88,8 +88,8 @@ public class MainFrameBuilder {
 
     private void installLAF() {
         try {
-
-            UIManager.setLookAndFeel(new com.jgoodies.looks.windows.WindowsLookAndFeel());
+            UIManager.setLookAndFeel(new com.jgoodies.looks.plastic.PlasticLookAndFeel());
+            UIManager.setLookAndFeel(new com.jgoodies.looks.windows.WindowsLookAndFeel());//this will fail on linux, so the above will be the default
         } catch (UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
