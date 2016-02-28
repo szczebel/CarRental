@@ -18,8 +18,6 @@ import swingutils.components.progress.BusyFactory;
 import swingutils.components.progress.ProgressIndicatingComponent;
 import swingutils.components.progress.ProgressIndicator;
 import swingutils.components.table.TablePanel;
-import swingutils.layout.cards.CardSwitcherFactory;
-import swingutils.layout.cards.MenuItems;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,15 +29,15 @@ import static client.ui.util.GuiHelper.textField;
 import static swingutils.components.ComponentFactory.*;
 import static swingutils.layout.LayoutBuilders.borderLayout;
 import static swingutils.layout.LayoutBuilders.flowLayout;
+import static swingutils.layout.cards.CardSwitcherFactory.MenuPlacement.RIGHT;
 import static swingutils.layout.cards.CardSwitcherFactory.cardLayout;
+import static swingutils.layout.cards.MenuItems.BorderedOrange;
 
 @org.springframework.stereotype.Component
 public class HistoricalRentalsViewBuilder {
 
-    @Autowired
-    HistoryService historyService;
-    @Autowired
-    FleetCache fleetCache;
+    @Autowired HistoryService historyService;
+    @Autowired FleetCache fleetCache;
 
     public JComponent build() {
         HistoricalRentalsModel model = new HistoricalRentalsModel(fleetCache);
@@ -54,17 +52,14 @@ public class HistoricalRentalsViewBuilder {
         pi.setContent(borderLayout()
                 .north(
                         flowLayout(
-                                button("Change criteria", () -> {
-                                            changeCriteria(model, statisticsView, intervalEditor, pi);
-                                        }
-                                ),
+                                button("Change criteria", () -> changeCriteria(model, statisticsView, intervalEditor, pi)),
                                 button("Refresh", () -> refresh(intervalEditor::getInterval, model::setData, statisticsView::setData, pi))
                         ))
                 .center(
-                        cardLayout(CardSwitcherFactory.MenuPlacement.RIGHT, MenuItems.BorderedOrange, menu -> decorate(menu).withEmptyBorder(0, 4, 4, 4).get())
-                                .addTab("Table", decorate(table.getComponent()).withBorder(BorderFactory.createLineBorder(SystemColor.controlShadow)).get())
-                                .addTab("Chart", decorate(buildChartComponent(scheduleModel, chart)).withBorder(BorderFactory.createLineBorder(SystemColor.controlShadow)).get())
-                                .addTab("Stats", decorate(statisticsView.getComponent()).withBorder(BorderFactory.createLineBorder(SystemColor.controlShadow)).get())
+                        cardLayout(RIGHT, BorderedOrange, menu -> decorate(menu).withEmptyBorder(0, 4, 4, 4).get())
+                                .addTab("Table", decorate(table.getComponent()).withLineBorder(SystemColor.controlShadow).get())
+                                .addTab("Chart", decorate(buildChartComponent(scheduleModel, chart)).withLineBorder(SystemColor.controlShadow).get())
+                                .addTab("Stats", decorate(statisticsView.getComponent()).withLineBorder(SystemColor.controlShadow).get())
                                 .build()
                 )
                 .build());
