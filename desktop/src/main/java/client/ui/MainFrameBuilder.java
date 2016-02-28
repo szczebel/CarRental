@@ -6,6 +6,7 @@ import client.ui.scheduleview.ScheduleViewBuilder;
 import common.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import swingutils.Colors;
 import swingutils.background.BackgroundOperation;
 import swingutils.components.GradientPanel;
 import swingutils.components.progress.BusyFactory;
@@ -38,7 +39,6 @@ public class MainFrameBuilder {
     @Autowired HistoricalRentalsViewBuilder historicalRentalsViewBuilder;
     @Autowired ScheduleViewBuilder scheduleViewBuilder;
 
-
     @SuppressWarnings("unused")
     @PostConstruct
     void startup() {
@@ -58,7 +58,7 @@ public class MainFrameBuilder {
     }
 
     JComponent createContent(JFrame frame) {
-        return cardLayout(LEFT, MenuItems.NakedOrange, customizer())
+        return cardLayout(LEFT, MenuItems.NakedOrange, mainMenuCustomizer)
                 .addTab("Available to rent",    buildNiceTab(makeARentViewBuilder.build(),          "Cars available to rent at the moment"))
                 .addTab("Current rentals",      buildNiceTab(currentRentalsViewBuilder.build(),     "Cars currently rented"))
                 .addTab("Available to book",    buildNiceTab(makeABookingViewBuilder.build(),       "Cars available to book"))
@@ -72,9 +72,9 @@ public class MainFrameBuilder {
                 .build();
     }
 
-    private Function<JComponent, JComponent> customizer() {
-        return menu -> new GradientPanel(Color.white, Color.lightGray, true, decorate(menu).withEmptyBorder(4, 0, 4, 0).get());
-    }
+    private Function<JComponent, JComponent> mainMenuCustomizer =
+            menu -> new GradientPanel(Colors.niceBlue, SystemColor.control, true, decorate(menu).withEmptyBorder(4, 0, 4, 0).get());
+
 
     private JComponent buildNiceTab(JComponent toDecorate, String header) {
         return decorate(toDecorate).withGradientHeader(header).withEmptyBorder(4,4,4,4).get();
