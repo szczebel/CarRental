@@ -18,6 +18,8 @@ import swingutils.components.progress.BusyFactory;
 import swingutils.components.progress.ProgressIndicatingComponent;
 import swingutils.components.progress.ProgressIndicator;
 import swingutils.components.table.TablePanel;
+import swingutils.layout.cards.CardMenuBuilder;
+import swingutils.layout.cards.CardMenuBuilders;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,15 +31,16 @@ import static client.ui.util.GuiHelper.textField;
 import static swingutils.components.ComponentFactory.*;
 import static swingutils.layout.LayoutBuilders.borderLayout;
 import static swingutils.layout.LayoutBuilders.flowLayout;
-import static swingutils.layout.cards.CardSwitcherFactory.MenuPlacement.RIGHT;
-import static swingutils.layout.cards.CardSwitcherFactory.cardLayout;
-import static swingutils.layout.cards.MenuItems.BorderedOrange;
+import static swingutils.layout.cards.CardLayoutBuilder.cardLayout;
+import static swingutils.layout.cards.MenuPlacement.RIGHT;
 
 @org.springframework.stereotype.Component
 public class HistoricalRentalsViewBuilder {
 
-    @Autowired HistoryService historyService;
-    @Autowired FleetCache fleetCache;
+    @Autowired
+    HistoryService historyService;
+    @Autowired
+    FleetCache fleetCache;
 
     public JComponent build() {
         HistoricalRentalsModel model = new HistoricalRentalsModel(fleetCache);
@@ -49,6 +52,9 @@ public class HistoricalRentalsViewBuilder {
 
         ProgressIndicatingComponent pi = BusyFactory.lockAndWhirlWhenBusy();
 
+        CardMenuBuilder<JComponent> cardMenuBuilder = CardMenuBuilders.BorderedOrange()
+                .menuBarCustomizer(bar -> decorate(bar).withEmptyBorder(0, 4, 4, 4).get())
+                .menuPlacement(RIGHT);
         pi.setContent(borderLayout()
                 .north(
                         flowLayout(
@@ -56,7 +62,7 @@ public class HistoricalRentalsViewBuilder {
                                 button("Refresh", () -> refresh(intervalEditor::getInterval, model::setData, statisticsView::setData, pi))
                         ))
                 .center(
-                        cardLayout(RIGHT, BorderedOrange, menu -> decorate(menu).withEmptyBorder(0, 4, 4, 4).get())
+                        cardLayout(cardMenuBuilder)
                                 .addTab("Table", decorate(table.getComponent()).withLineBorder(SystemColor.controlShadow).get())
                                 .addTab("Chart", decorate(buildChartComponent(scheduleModel, chart)).withLineBorder(SystemColor.controlShadow).get())
                                 .addTab("Stats", decorate(statisticsView.getComponent()).withLineBorder(SystemColor.controlShadow).get())

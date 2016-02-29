@@ -6,23 +6,22 @@ import client.ui.scheduleview.ScheduleViewBuilder;
 import common.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import swingutils.Colors;
 import swingutils.background.BackgroundOperation;
 import swingutils.components.GradientPanel;
 import swingutils.components.progress.BusyFactory;
 import swingutils.components.progress.ProgressIndicatingComponent;
-import swingutils.layout.cards.MenuItems;
+import swingutils.layout.cards.CardMenuBuilder;
+import swingutils.layout.cards.CardMenuBuilders;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
-import java.util.function.Function;
 
 import static swingutils.components.ComponentFactory.button;
 import static swingutils.components.ComponentFactory.decorate;
 import static swingutils.layout.LayoutBuilders.flowLayout;
-import static swingutils.layout.cards.CardSwitcherFactory.MenuPlacement.LEFT;
-import static swingutils.layout.cards.CardSwitcherFactory.cardLayout;
+import static swingutils.layout.cards.CardLayoutBuilder.cardLayout;
+import static swingutils.layout.cards.MenuPlacement.LEFT;
 
 @Component
 public class MainFrameBuilder {
@@ -58,7 +57,11 @@ public class MainFrameBuilder {
     }
 
     JComponent createContent(JFrame frame) {
-        return cardLayout(LEFT, MenuItems.NakedOrange, mainMenuCustomizer)
+        CardMenuBuilder<JComponent> cardMenuBuilder = CardMenuBuilders.NoBorderOrange()
+                .menuPlacement(LEFT)
+                .menuBarCustomizer((menu) -> new GradientPanel(SystemColor.controlShadow, SystemColor.control, true, decorate(menu).withEmptyBorder(4, 0, 4, 0).get()));
+
+        return cardLayout(cardMenuBuilder)
                 .addTab("Available to rent",    buildNiceTab(makeARentViewBuilder.build(),          "Cars available to rent at the moment"))
                 .addTab("Current rentals",      buildNiceTab(currentRentalsViewBuilder.build(),     "Cars currently rented"))
                 .addTab("Available to book",    buildNiceTab(makeABookingViewBuilder.build(),       "Cars available to book"))
@@ -72,12 +75,8 @@ public class MainFrameBuilder {
                 .build();
     }
 
-    private Function<JComponent, JComponent> mainMenuCustomizer =
-            menu -> new GradientPanel(Colors.niceBlue, SystemColor.control, true, decorate(menu).withEmptyBorder(4, 0, 4, 0).get());
-
-
     private JComponent buildNiceTab(JComponent toDecorate, String header) {
-        return decorate(toDecorate).withGradientHeader(header).withEmptyBorder(4,4,4,4).get();
+        return decorate(toDecorate).withGradientHeader(header).withEmptyBorder(4, 4, 4, 4).get();
     }
 
     private JComponent clientListTab() {
