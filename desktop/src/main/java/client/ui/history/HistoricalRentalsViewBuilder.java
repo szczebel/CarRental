@@ -78,7 +78,7 @@ public class HistoricalRentalsViewBuilder {
         return borderLayout()
                 .north(flowLayout(
                         label("Filter assignments:"),
-                        textField(10, s -> scheduleModel.setTaskFilter(t -> containsString(t, s)))
+                        textField(10, string -> scheduleModel.setTaskFilter(task -> containsString(task, string)))
                 ))
                 .center(chart.getComponent())
                 .build();

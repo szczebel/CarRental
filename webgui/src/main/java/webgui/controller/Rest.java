@@ -11,8 +11,8 @@ public class Rest {
 
     @Autowired TestService testService;
 
-    @RequestMapping(value = "/what")
-    public String rest() {
-        return "What? What? " + testService.getServerInfo();
+    @RequestMapping(value = "/check")
+    public String serverInfo() {
+        return testService.getServerInfo();
     }
 }

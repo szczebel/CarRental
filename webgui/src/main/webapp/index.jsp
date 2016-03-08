@@ -5,8 +5,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Car rental</title>
+<script src="scripts.js"></script>
 </head>
 <body>
-    Time is : ${time}
+<button onclick="check();">Check</button>
 </body>
 </html>
