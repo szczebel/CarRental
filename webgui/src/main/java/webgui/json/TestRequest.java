@@ -1,4 +1,4 @@
-package webgui.controller;
+package webgui.json;
 
 public class TestRequest {
     String handshake;
@@ -9,12 +9,5 @@ public class TestRequest {
 
     public void setHandshake(String handshake) {
         this.handshake = handshake;
-    }
-
-    @Override
-    public String toString() {
-        return "TestRequest{" +
-                "handshake='" + handshake + '\'' +
-                '}';
     }
 }

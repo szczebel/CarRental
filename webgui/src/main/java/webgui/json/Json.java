@@ -1,4 +1,4 @@
-package webgui.controller;
+package webgui.json;
 
 
 import common.service.TestService;
@@ -9,13 +9,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class Rest {
+public class Json {
 
     @Autowired TestService testService;
 
     @RequestMapping(value = "/testconnection", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public TestResponse serverInfo(@RequestBody TestRequest param) {
-        System.out.println("param: "+param);
+    public TestResponse testConnection(@RequestBody TestRequest param) {
         return new TestResponse("unknown", testService.getServerInfo(), param.getHandshake());
     }
 }

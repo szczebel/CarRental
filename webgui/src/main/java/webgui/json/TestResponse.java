@@ -1,4 +1,4 @@
-package webgui.controller;
+package webgui.json;
 
 public class TestResponse {
     String requestor;
