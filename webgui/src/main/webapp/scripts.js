@@ -5,6 +5,7 @@ function check() {
                 alert(xmlhttp.responseText);
             }
     };
-    xmlhttp.open("GET", "/rest/check", true);
-    xmlhttp.send();
+    xmlhttp.open("POST", "/rest/testconnection");
+    xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xmlhttp.send(JSON.stringify({handshake:"qqq"}));
 }
