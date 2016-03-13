@@ -1,17 +1,20 @@
 package client;
 
 
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import datageneration.DataGenerator;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportResource;
 
 import javax.swing.*;
 
+@ComponentScan(basePackages = "client.ui")
+@ImportResource("classpath:mockServicesContext.xml")
+@Import(DataGenerator.class)
 public class GUIWithMocks {
 
     public static void main(String[] args) {
-        ClassPathXmlApplicationContext mocks = new ClassPathXmlApplicationContext(
-                "/dataGenerationContext.xml",
-                "/mockServicesContext.xml");
-        //and now building GUI
-        SwingUtilities.invokeLater(() -> new ClassPathXmlApplicationContext(new String[]{"/mainClientContext.xml"}, mocks));
+        SwingUtilities.invokeLater(() -> new AnnotationConfigApplicationContext(GUIWithMocks.class));
     }
 }

@@ -1,16 +1,17 @@
 package client;
 
 
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ImportResource;
 
 import javax.swing.*;
 
+@ComponentScan(basePackages = "client.ui")
+@ImportResource("classpath:remoteServicesContext.xml")
 public class GUI {
 
     public static void main(String[] args) {
-        ClassPathXmlApplicationContext remote = new ClassPathXmlApplicationContext(
-                "/remoteServicesContext.xml");
-        //and now building GUI
-        SwingUtilities.invokeLater(() -> new ClassPathXmlApplicationContext(new String[]{"/mainClientContext.xml"}, remote));
+        SwingUtilities.invokeLater(() -> new AnnotationConfigApplicationContext(GUI.class));
     }
 }

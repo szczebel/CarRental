@@ -31,9 +31,9 @@ public class ClientListViewBuilder {
 
     private void addNewClientClicked(JComponent panel, Consumer<List<Client>> customers, ProgressIndicator pi) {
         String name = JOptionPane.showInputDialog(panel, "Name", "Add new client", JOptionPane.QUESTION_MESSAGE);
-        String phone = JOptionPane.showInputDialog(panel, "Phone", "Add new client", JOptionPane.QUESTION_MESSAGE);
+        String email = JOptionPane.showInputDialog(panel, "Email", "Add new client", JOptionPane.QUESTION_MESSAGE);
         BackgroundOperation.execute(
-                () -> clientService.create(new Client(name, phone)),
+                () -> clientService.create(new Client(name, email)),
                 () -> refresh(customers, pi)
         );
     }

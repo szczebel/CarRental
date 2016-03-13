@@ -16,9 +16,7 @@ public class TestServiceImpl implements TestService {
         try {
             String hostAddress = InetAddress.getLocalHost().getHostAddress();
             String tenantForTransaction = CurrentTenantProvider.getTenantForTransaction();
-            String info = tenantForTransaction + " @ " + hostAddress;
-            System.out.println("Returning: " + info);
-            return info;
+            return tenantForTransaction + " @ " + hostAddress;
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
