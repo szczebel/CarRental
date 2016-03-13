@@ -40,7 +40,7 @@ public class DataGenerator {
         long now = System.currentTimeMillis();
         System.out.println("Generating data...");
         //generate(100, 200, 60, 60);
-        generate(5, 20, 10, 10);
+        generate(5, 20, 20, 20);
         System.out.println("Data generated in " + (System.currentTimeMillis() - now) + " ms" );
     }
 
