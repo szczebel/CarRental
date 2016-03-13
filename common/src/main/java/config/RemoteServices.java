@@ -4,33 +4,27 @@ import common.service.*;
 import invoker.TenantInvokerRequestExecutor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean;
 
-@PropertySource("classpath:remoteServices.properties")
+import java.util.logging.Logger;
+
 public class RemoteServices {
+    @Value("${hostUrl:http://localhost:8088}") String hostUrl;
 
-    @Value("${test.service.url}")           String testServiceUrl;
-    @Value("${availability.service.url}")   String availabilityServiceUrl;
-    @Value("${booking.service.url}")        String bookingServiceUrl;
-    @Value("${client.service.url}")         String clientServiceUrl;
-    @Value("${fleet.service.url}")          String fleetServiceUrl;
-    @Value("${history.service.url}")        String historyServiceUrl;
-    @Value("${rentalClass.service.url}")    String rentalClassServiceUrl;
-    @Value("${rental.service.url}")         String rentalServiceUrl;
-
-    @Bean TestService testService()                 {return create(TestService.class,           testServiceUrl);}
-    @Bean AvailabilityService availabilityService() {return create(AvailabilityService.class,   availabilityServiceUrl);}
-    @Bean BookingService bookingService()           {return create(BookingService.class,        bookingServiceUrl);}
-    @Bean ClientService clientService()             {return create(ClientService.class,         clientServiceUrl);}
-    @Bean FleetService fleetService()               {return create(FleetService.class,          fleetServiceUrl);}
-    @Bean HistoryService historyService()           {return create(HistoryService.class,        historyServiceUrl);}
-    @Bean RentalClassService rentalClassService()   {return create(RentalClassService.class,    rentalClassServiceUrl);}
-    @Bean RentalService rentalService()             {return create(RentalService.class,         rentalServiceUrl);}
+    @Bean TestService testService()                 {return create(TestService.class);}
+    @Bean AvailabilityService availabilityService() {return create(AvailabilityService.class);}
+    @Bean BookingService bookingService()           {return create(BookingService.class);}
+    @Bean ClientService clientService()             {return create(ClientService.class);}
+    @Bean FleetService fleetService()               {return create(FleetService.class);}
+    @Bean HistoryService historyService()           {return create(HistoryService.class);}
+    @Bean RentalClassService rentalClassService()   {return create(RentalClassService.class);}
+    @Bean RentalService rentalService()             {return create(RentalService.class);}
 
     private TenantInvokerRequestExecutor requestExecutor = new TenantInvokerRequestExecutor();
-    private <T> T create(Class<T> serviceInterface, String url) {
+    private <T> T create(Class<T> serviceInterface) {
+        String url = hostUrl + "/http/" + serviceInterface.getSimpleName();
+        Logger.getLogger("[remoting]").info("Binding " + serviceInterface.getSimpleName() + " to " + url);
         HttpInvokerProxyFactoryBean fb = new HttpInvokerProxyFactoryBean();
         fb.setServiceInterface(serviceInterface);
         fb.setServiceUrl(url);

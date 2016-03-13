@@ -16,7 +16,6 @@ public class AssignmentScheduleModel extends GenericScheduleModel<CarResource, A
 
     AssignmentScheduleModel(FleetCache fleetCache) {
         this.fleetCache = fleetCache;
-        addResources(fleetCache.getFleet().stream().map(CarResource::new).collect(Collectors.toSet()));
     }
 
     void clear() {

@@ -35,7 +35,6 @@ class HistoricalRentalsModel extends EventListHolder<HistoricalRental> {
 
     HistoricalRentalsModel(FleetCache fleetCache) {
         this.fleetCache = fleetCache;
-        delegate.addResources(fleetCache.getFleet().stream().map(CarResource::new).collect(Collectors.toSet()));
     }
 
     void setData(RentalHistory rentalHistory) {

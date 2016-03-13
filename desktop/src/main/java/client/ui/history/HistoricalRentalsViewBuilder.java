@@ -69,7 +69,6 @@ public class HistoricalRentalsViewBuilder {
                                 .build()
                 )
                 .build());
-        refresh(intervalEditor::getInterval, model::setData, statisticsView::setData, pi);
 
         return pi.getComponent();
     }

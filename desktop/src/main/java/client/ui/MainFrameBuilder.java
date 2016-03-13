@@ -26,7 +26,6 @@ import static swingutils.layout.cards.MenuPlacement.LEFT;
 @Component
 public class MainFrameBuilder {
 
-    @Autowired FleetCache fleetCache;
     @Autowired TestService testService;
     @Autowired FleetViewBuilder fleetViewBuilder;
     @Autowired RentalClassViewBuilder rentalClassViewBuilder;
@@ -42,8 +41,7 @@ public class MainFrameBuilder {
     @PostConstruct
     void startup() {
         //todo show splash, initialize cache(s) in the backgorund, and build UI
-        fleetCache.reload(r -> buildAndShow());
-//        buildAndShow();
+        buildAndShow();
     }
 
     void buildAndShow() {

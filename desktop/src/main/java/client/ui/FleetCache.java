@@ -34,7 +34,8 @@ public class FleetCache {
     public List<Car> getFleet() {
         if (fleet != null) return Collections.unmodifiableList(fleet);
         else {
-            System.err.println("Cache not initialized, will need to refresh");
+            System.err.println("Cache not initialized, reloading");
+            reload(f->{});
             return Collections.emptyList();
         }
     }
