@@ -59,7 +59,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/").permitAll()
                 .antMatchers("/view/**").access("hasRole('CUSTOMER')")
                 .antMatchers("/json/**").access("hasRole('CUSTOMER')")
-                .and().httpBasic()
+                .and().formLogin()
                 .and().csrf().disable();
     }
 }
