@@ -26,6 +26,7 @@ public class DispatcherServletInitializer extends AbstractAnnotationConfigDispat
         return new String[]{
                 "/view/*",
                 "/json/*",
+                "/register",
         };
     }
 }

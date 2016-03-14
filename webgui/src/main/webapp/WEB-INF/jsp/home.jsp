@@ -5,9 +5,30 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Car rental</title>
-<script src="/scripts.js"></script>
-</head>
-<body>
-<button onclick="check();">Check</button>
-</body>
+
+<html>
+    <head>
+        <title>Car Rental</title>
+        <script src="/scripts.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"></script>
+    </head>
+<!-- todo use angularjs controllers and bindings to fetch and display data -->
+    <body ng-app>
+        <div>
+        <h1>General information</h1>
+        <button onclick="check()">Check</button>
+        </div>
+
+        <div>
+        <h1>Book a car</h1>
+        </div>
+
+        <div>
+        <h1>Your bookings</h1>
+        </div>
+
+        <div>
+        <h1>Your history</h1>
+        </div>
+    </body>
 </html>
