@@ -14,8 +14,7 @@ import java.util.Map;
 
 public class HttpConfig {
 
-    @Autowired
-    ServerInfoService serverInfoService;
+    @Autowired ServerInfoService serverInfoService;
     @Autowired AvailabilityService availabilityService;
     @Autowired BookingService bookingService;
     @Autowired ClientService clientService;

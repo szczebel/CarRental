@@ -17,15 +17,13 @@ import static swingutils.components.ComponentFactory.button;
 @Component
 public class ClientListViewBuilder {
 
-    @Autowired
-    ClientService clientService;
+    @Autowired ClientService clientService;
+    @Autowired Customers customers;
 
     public TablePanel<Client> build(ProgressIndicator pi) {
-        Customers customers = new Customers();
         TablePanel<Client> table = customers.createTable();
         table.getToolbar().add(button("Add...", () -> addNewClientClicked(table.getToolbar(), customers::setData, pi)), 0);
         table.getToolbar().add(button("Refresh", () -> refresh(customers::setData, pi)), 0);
-        refresh(customers::setData, pi);
         return table;
     }
 
@@ -34,7 +32,7 @@ public class ClientListViewBuilder {
         String email = JOptionPane.showInputDialog(panel, "Email", "Add new client", JOptionPane.QUESTION_MESSAGE);
         BackgroundOperation.execute(
                 () -> clientService.create(new Client(name, email)),
-                () -> refresh(customers, pi)
+                () -> {}
         );
     }
 

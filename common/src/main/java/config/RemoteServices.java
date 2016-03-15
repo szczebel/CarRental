@@ -12,15 +12,14 @@ import java.util.logging.Logger;
 public class RemoteServices {
     @Value("${hostUrl:http://localhost:8088}") String hostUrl;
 
-    @Bean
-    ServerInfoService testService()                 {return create(ServerInfoService.class);}
-    @Bean AvailabilityService availabilityService() {return create(AvailabilityService.class);}
-    @Bean BookingService bookingService()           {return create(BookingService.class);}
-    @Bean ClientService clientService()             {return create(ClientService.class);}
-    @Bean FleetService fleetService()               {return create(FleetService.class);}
-    @Bean HistoryService historyService()           {return create(HistoryService.class);}
-    @Bean RentalClassService rentalClassService()   {return create(RentalClassService.class);}
-    @Bean RentalService rentalService()             {return create(RentalService.class);}
+    @Bean ServerInfoService     testService()           {return create(ServerInfoService.class);}
+    @Bean AvailabilityService   availabilityService()   {return create(AvailabilityService.class);}
+    @Bean BookingService        bookingService()        {return create(BookingService.class);}
+    @Bean ClientService         clientService()         {return create(ClientService.class);}
+    @Bean FleetService          fleetService()          {return create(FleetService.class);}
+    @Bean HistoryService        historyService()        {return create(HistoryService.class);}
+    @Bean RentalClassService    rentalClassService()    {return create(RentalClassService.class);}
+    @Bean RentalService         rentalService()         {return create(RentalService.class);}
 
     private TenantInvokerRequestExecutor requestExecutor = new TenantInvokerRequestExecutor();
     private <T> T create(Class<T> serviceInterface) {

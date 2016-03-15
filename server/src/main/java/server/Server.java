@@ -6,8 +6,8 @@ import datageneration.DataGenerator;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.*;
 
-@Import({DataGenerator.class, HttpConfig.class})
-@ComponentScan({"server.multitenancy","server.service"})
+@Import({DataGenerator.class, HttpConfig.class, JmsConfig.class})
+@ComponentScan({"server.multitenancy","server.service","server.publish"})
 @ImportResource("/persistence-${persistencetype:h2}.xml")
 @EnableAspectJAutoProxy
 public class Server {
