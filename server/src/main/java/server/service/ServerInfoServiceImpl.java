@@ -1,22 +1,24 @@
 package server.service;
 
-import common.service.TestService;
+import common.domain.ServerInfo;
+import common.service.ServerInfoService;
 import org.springframework.stereotype.Service;
 import server.multitenancy.CurrentTenantProvider;
 import server.multitenancy.RequiresTenant;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.ZonedDateTime;
 
-@Service("testService")
-public class TestServiceImpl implements TestService {
+@Service("serverInfoService")
+public class ServerInfoServiceImpl implements ServerInfoService {
 
     @RequiresTenant
-    public String getServerInfo() {
+    public ServerInfo getServerInfo() {
         try {
             String hostAddress = InetAddress.getLocalHost().getHostAddress();
             String tenantForTransaction = CurrentTenantProvider.getTenantForTransaction();
-            return tenantForTransaction + " @ " + hostAddress;
+            return new ServerInfo(tenantForTransaction, hostAddress, ZonedDateTime.now());
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }

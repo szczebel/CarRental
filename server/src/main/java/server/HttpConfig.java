@@ -14,7 +14,8 @@ import java.util.Map;
 
 public class HttpConfig {
 
-    @Autowired TestService testService;
+    @Autowired
+    ServerInfoService serverInfoService;
     @Autowired AvailabilityService availabilityService;
     @Autowired BookingService bookingService;
     @Autowired ClientService clientService;
@@ -27,7 +28,7 @@ public class HttpConfig {
         SimpleHttpServerFactoryBean fb = new SimpleHttpServerFactoryBean();
         fb.setPort(8088);
         Map<String, HttpHandler> contexts = new HashMap<>();
-        contexts.put(path(TestService.class),         handler(TestService.class,         testService));
+        contexts.put(path(ServerInfoService.class),         handler(ServerInfoService.class, serverInfoService));
         contexts.put(path(AvailabilityService.class), handler(AvailabilityService.class, availabilityService));
         contexts.put(path(BookingService.class),      handler(BookingService.class,      bookingService));
         contexts.put(path(ClientService.class),       handler(ClientService.class,       clientService));

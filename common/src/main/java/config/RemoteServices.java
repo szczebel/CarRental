@@ -12,7 +12,8 @@ import java.util.logging.Logger;
 public class RemoteServices {
     @Value("${hostUrl:http://localhost:8088}") String hostUrl;
 
-    @Bean TestService testService()                 {return create(TestService.class);}
+    @Bean
+    ServerInfoService testService()                 {return create(ServerInfoService.class);}
     @Bean AvailabilityService availabilityService() {return create(AvailabilityService.class);}
     @Bean BookingService bookingService()           {return create(BookingService.class);}
     @Bean ClientService clientService()             {return create(ClientService.class);}

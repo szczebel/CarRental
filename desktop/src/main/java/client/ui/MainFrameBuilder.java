@@ -3,7 +3,7 @@ package client.ui;
 import client.ui.booking.BookingsViewBuilder;
 import client.ui.history.HistoricalRentalsViewBuilder;
 import client.ui.scheduleview.ScheduleViewBuilder;
-import common.service.TestService;
+import common.service.ServerInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import swingutils.background.BackgroundOperation;
@@ -26,7 +26,8 @@ import static swingutils.layout.cards.MenuPlacement.LEFT;
 @Component
 public class MainFrameBuilder {
 
-    @Autowired TestService testService;
+    @Autowired
+    ServerInfoService serverInfoService;
     @Autowired FleetViewBuilder fleetViewBuilder;
     @Autowired RentalClassViewBuilder rentalClassViewBuilder;
     @Autowired ClientListViewBuilder clientListViewBuilder;
@@ -98,7 +99,7 @@ public class MainFrameBuilder {
                 button(
                         "Test connection",
                         () -> BackgroundOperation.execute(
-                                testService::getServerInfo,
+                                serverInfoService::getServerInfo,
                                 result -> JOptionPane.showMessageDialog(parent, "Server said: " + result),
                                 pi
                         )
