@@ -8,7 +8,8 @@ import org.springframework.jms.config.JmsListenerContainerFactory;
 
 public class PubSub {
 
-    public static final String NEW_CLIENT_CHANNEL_TOPIC = "NEW_CLIENT_CHANNEL";
+    public static final String NEW_CLIENT_TOPIC = "NEW_CLIENT_TOPIC";
+    public static final String NEW_CAR_TOPIC = "NEW_CAR_TOPIC";
 
     @Value("${jmsUrl:tcp://localhost:8089}")
     String jmsUrl;

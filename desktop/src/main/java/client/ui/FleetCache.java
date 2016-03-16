@@ -1,42 +1,21 @@
 package client.ui;
 
+import client.PubSub;
 import common.domain.Car;
-import common.service.FleetService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
-import swingutils.background.BackgroundOperation;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Consumer;
+import javax.swing.*;
 
 @Component
-public class FleetCache {
+public class FleetCache extends Cars {
 
-    @Autowired
-    FleetService fleetService;
-
-    List<Car> fleet;
-
-    void setData(List<Car> fleet) {
-        this.fleet = fleet;
+    @JmsListener(destination = PubSub.NEW_CAR_TOPIC)
+    void onNewCar(Car car) {
+        SwingUtilities.invokeLater(() -> addCar(car));
     }
 
-    public void reload(Consumer<List<Car>> callWhenDone) {
-        BackgroundOperation.execute(fleetService::fetchAll,
-                result -> {
-                    setData(result);
-                    callWhenDone.accept(getFleet());
-                }
-        );
-    }
-
-    public List<Car> getFleet() {
-        if (fleet != null) return Collections.unmodifiableList(fleet);
-        else {
-            System.err.println("Cache not initialized, reloading");
-            reload(f->{});
-            return Collections.emptyList();
-        }
+    void addCar(Car car) {
+        getData().add(car);
     }
 }

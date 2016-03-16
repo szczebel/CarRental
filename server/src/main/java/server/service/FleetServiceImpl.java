@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import server.entity.PersistentCar;
 import server.entity.PersistentRentalClass;
+import server.publish.ChangePublisher;
 import server.repositories.PersistentCarDao;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.List;
 @Component("fleetService")
 public class FleetServiceImpl implements FleetService {
     @Autowired PersistentCarDao dao;
-
+    @Autowired ChangePublisher changePublisher;
 
     @Override
     public List<Car> fetchAll() {
@@ -36,7 +37,9 @@ public class FleetServiceImpl implements FleetService {
 
     @Override
     public void create(Car car) {
+        if(dao.exists(car.getRegistration())) throw new IllegalArgumentException("Car with this registration already exists");
         dao.save(new PersistentCar(car));
+        changePublisher.publishNewCar(car);
     }
 
     public long fleetSize() {

@@ -23,7 +23,7 @@ public class Customers extends EventListHolder<Client> {
         return TableFactory.createTablePanel(getData(), columns);
     }
 
-    @JmsListener(destination = PubSub.NEW_CLIENT_CHANNEL_TOPIC)
+    @JmsListener(destination = PubSub.NEW_CLIENT_TOPIC)
     void onNewClient(Client client) {
         SwingUtilities.invokeLater(() -> addClient(client));
     }

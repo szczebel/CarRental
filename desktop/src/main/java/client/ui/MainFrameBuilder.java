@@ -5,6 +5,7 @@ import client.ui.history.HistoricalRentalsViewBuilder;
 import client.ui.scheduleview.ScheduleViewBuilder;
 import common.service.ServerInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 import swingutils.background.BackgroundOperation;
 import swingutils.components.GradientPanel;
@@ -24,10 +25,10 @@ import static swingutils.layout.cards.CardLayoutBuilder.cardLayout;
 import static swingutils.layout.cards.MenuPlacement.LEFT;
 
 @Component
+@DependsOn("dataInitializer")
 public class MainFrameBuilder {
 
-    @Autowired
-    ServerInfoService serverInfoService;
+    @Autowired ServerInfoService serverInfoService;
     @Autowired FleetViewBuilder fleetViewBuilder;
     @Autowired RentalClassViewBuilder rentalClassViewBuilder;
     @Autowired ClientListViewBuilder clientListViewBuilder;
@@ -40,11 +41,6 @@ public class MainFrameBuilder {
 
     @SuppressWarnings("unused")
     @PostConstruct
-    void startup() {
-        //todo show splash, initialize cache(s) in the backgorund, and build UI
-        buildAndShow();
-    }
-
     void buildAndShow() {
         installLAF();
         final JFrame frame = new JFrame("Car Rental");

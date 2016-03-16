@@ -40,7 +40,7 @@ class HistoricalRentalsModel extends EventListHolder<HistoricalRental> {
     void setData(RentalHistory rentalHistory) {
         setData(rentalHistory.getRecords());
         delegate.clearAllData();
-        delegate.addResources(fleetCache.getFleet().stream().map(CarResource::new).collect(Collectors.toSet()));
+        delegate.addResources(fleetCache.getData().stream().map(CarResource::new).collect(Collectors.toSet()));
         delegate.assignAll(getData().stream().map(HistoricalRentalAsTask::new), t -> new CarResource(t.getAbstractAssignment()));
     }
 

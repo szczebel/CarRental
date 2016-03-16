@@ -20,7 +20,7 @@ public class AssignmentScheduleModel extends GenericScheduleModel<CarResource, A
 
     void clear() {
         clearAllData();
-        addResources(fleetCache.getFleet().stream().map(CarResource::new).collect(Collectors.toSet()));
+        addResources(fleetCache.getData().stream().map(CarResource::new).collect(Collectors.toSet()));
     }
 
     void addHistory(Collection<HistoricalRental> history) {

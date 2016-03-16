@@ -5,11 +5,8 @@ import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.command.ActiveMQTopic;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
-import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.core.JmsMessagingTemplate;
 
-import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
 public class JmsConfig {
@@ -21,31 +18,22 @@ public class JmsConfig {
 
     @DependsOn("jmsBroker")
     @Bean
-    ActiveMQConnectionFactory connectionFactory() {
+    JmsMessagingTemplate messagingTemplate() {
         ActiveMQConnectionFactory f = new ActiveMQConnectionFactory("tcp://localhost:8089");
         f.setTrustAllPackages(true);
-        return f;
-    }
-
-    @Bean
-    JmsMessagingTemplate messagingTemplate(ConnectionFactory connectionFactory) {
-        JmsMessagingTemplate t = new JmsMessagingTemplate(connectionFactory);
+        JmsMessagingTemplate t = new JmsMessagingTemplate(f);
         t.afterPropertiesSet();
         return t;
     }
 
     @Bean
     Destination newClientTopic() {
-        return new ActiveMQTopic("NEW_CLIENT_CHANNEL");
+        return new ActiveMQTopic("NEW_CLIENT_TOPIC");
     }
 
-    //this will be on client side:
     @Bean
-    JmsListenerContainerFactory<?> jmsListenerContainerFactory(ConnectionFactory connectionFactory) {
-        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
-        factory.setPubSubDomain(true);
-        factory.setConnectionFactory(connectionFactory);
-        factory.setConcurrency("1");
-        return factory;
+    Destination newCarTopic() {
+        return new ActiveMQTopic("NEW_CAR_TOPIC");
     }
+
 }
